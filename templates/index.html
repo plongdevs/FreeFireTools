@@ -210,6 +210,22 @@
             line-height: 1.6;
         }
 
+        .tool-card.disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .tool-card.disabled:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: var(--dark-border);
+        }
+
+        .tool-card.disabled::before {
+            display: none;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -454,15 +470,15 @@
                 <p>Liệt kê tất cả nền tảng mạng xã hội đã liên kết với tài khoản</p>
             </div>
 
-            <div class="tool-card" onclick="openModal('cancel-recovery')">
+            <div class="tool-card disabled">
                 <div class="tool-icon"><i class="fas fa-times-circle"></i></div>
-                <h3>Huỷ yêu cầu gắn email khôi phục</h3>
+                <h3>Huỷ yêu cầu gắn email khôi phục (đang bảo trì)</h3>
                 <p>Hủy yêu cầu gắn email khôi phục đang chờ</p>
             </div>
 
-            <div class="tool-card" onclick="openModal('revoke-token')">
+            <div class="tool-card disabled">
                 <div class="tool-icon"><i class="fas fa-key"></i></div>
-                <h3>Vô hiệu hoá Access Token</h3>
+                <h3>Vô hiệu hoá Access Token (đang bảo trì)</h3>
                 <p>Vô hiệu hoá access token hiện tại</p>
             </div>
 
@@ -514,9 +530,9 @@
                 <p>Thay đổi email liên kết của bạn</p>
             </div>
 
-            <div class="tool-card" onclick="openModal('ban7')">
+            <div class="tool-card disabled">
                 <div class="tool-icon"><i class="fas fa-ban"></i></div>
-                <h3>Permanent Ban</h3>
+                <h3>Permanent Ban (đang bảo trì)</h3>
                 <p>Gửi packet permanent ban đến server</p>
             </div>
         </div>
@@ -1052,6 +1068,11 @@
         }
 
         async function cancelRecovery() {
+            // Tính năng đang bảo trì (Đang bảo trì thôi)
+            showResult('cancel-recovery', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
+            return;
+            
+            /* Original code commented out for maintenance:
             const token = document.getElementById('cancel-recovery-token').value;
             if (!token) {
                 showResult('cancel-recovery', false, 'Please enter access token');
@@ -1076,9 +1097,15 @@
                 showResult('cancel-recovery', false, error.message);
             }
             setLoading('cancel-recovery', false);
+            */
         }
 
         async function revokeToken() {
+            // Tính năng đang bảo trì (Đang bảo trì thôi)
+            showResult('revoke-token', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
+            return;
+            
+            /* Original code commented out for maintenance:
             const token = document.getElementById('revoke-token-input').value;
             if (!token) {
                 showResult('revoke-token', false, 'Please enter access token');
@@ -1103,6 +1130,7 @@
                 showResult('revoke-token', false, error.message);
             }
             setLoading('revoke-token', false);
+            */
         }
 
         async function eatToAccess() {
@@ -1576,6 +1604,11 @@
         }
 
         async function ban7() {
+            // Tính năng đang bảo trì (Đang bảo trì thôi)
+            showResult('ban7', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
+            return;
+            
+            /* Original code commented out for maintenance:
             const token = document.getElementById('ban7-token').value;
             
             if (!token) {
@@ -1607,6 +1640,7 @@
                 showResult('ban7', false, error.message);
             }
             setLoading('ban7', false);
+            */
         }
 
         // Close modal on outside click
