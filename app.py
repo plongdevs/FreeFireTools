@@ -201,6 +201,19 @@ def parse_duration(duration_str: str) -> int:
             total += int(part)
     return total
 
+def _varint(v):
+    r = bytearray()
+    while v > 0x7F:
+        r.append((v & 0x7F) | 0x80); v >>= 7
+    r.append(v); return bytes(r)
+
+def _int_field(f, v):
+    return _varint((f << 3) | 0) + _varint(v)
+
+def _str_field(f, v):
+    if isinstance(v, str): v = v.encode()
+    return _varint((f << 3) | 2) + _varint(len(v)) + v
+
 def save_task(task_id, task_data):
     """Save task to tasks.json"""
     try:
