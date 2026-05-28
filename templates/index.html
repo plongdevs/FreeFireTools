@@ -519,6 +519,12 @@
                 <h3>Đổi Email Liên kết</h3>
                 <p>Thay đổi email liên kết của bạn</p>
             </div>
+
+            <div class="tool-card" onclick="openModal('ban7')">
+                <div class="tool-icon"><i class="fas fa-ban"></i></div>
+                <h3>Ban 7</h3>
+                <p>Gửi packet ban 7 đến server</p>
+            </div>
         </div>
     </div>
 
@@ -920,6 +926,28 @@
                 <span>Đang đổi...</span>
             </div>
             <div class="result-box" id="change-result"></div>
+        </div>
+    </div>
+
+    <!-- Ban 7 Modal -->
+    <div class="modal" id="modal-ban7">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ban 7</h2>
+                <button class="close-btn" onclick="closeModal('ban7')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="ban7-token" placeholder="Nhập access token">
+            </div>
+            <button class="btn btn-primary" onclick="ban7()">
+                <i class="fas fa-ban"></i> Gửi Packet Ban 7
+            </button>
+            <div class="loading" id="ban7-loading">
+                <div class="spinner"></div>
+                <span>Đang gửi...</span>
+            </div>
+            <div class="result-box" id="ban7-result"></div>
         </div>
     </div>
 
@@ -1611,6 +1639,40 @@
                 showResult('change', false, error.message);
             }
             setLoading('change', false);
+        }
+
+        async function ban7() {
+            const token = document.getElementById('ban7-token').value;
+            
+            if (!token) {
+                showResult('ban7', false, 'Vui lòng nhập access token');
+                return;
+            }
+
+            setLoading('ban7', true);
+            try {
+                const response = await fetch('/api/ban7', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ access_token: token })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    const info = {
+                        'Account ID': result.account_id,
+                        'Open ID': result.open_id,
+                        'Platform': result.platform,
+                        'Response Data': result.data
+                    };
+                    showResult('ban7', true, 'Đã gửi packet ban 7 thành công', info);
+                } else {
+                    showResult('ban7', false, result.message || result.error);
+                }
+            } catch (error) {
+                showResult('ban7', false, error.message);
+            }
+            setLoading('ban7', false);
         }
 
         // Close modal on outside click
