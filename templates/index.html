@@ -530,10 +530,16 @@
                 <p>Thay đổi email liên kết của bạn</p>
             </div>
 
-            <div class="tool-card disabled">
+            <div class="tool-card" onclick="openModal('ban7')">
                 <div class="tool-icon"><i class="fas fa-ban"></i></div>
-                <h3>Permanent Ban (đang bảo trì)</h3>
+                <h3>Permanent Ban</h3>
                 <p>Gửi packet permanent ban đến server</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('filter-no-recovery')">
+                <div class="tool-icon"><i class="fas fa-filter"></i></div>
+                <h3>Lọc Acc Chưa Có Recovery Email</h3>
+                <p>Lọc tài khoản chưa có email khôi phục từ tokens.json</p>
             </div>
         </div>
     </div>
@@ -932,6 +938,24 @@
                 <span>Đang gửi...</span>
             </div>
             <div class="result-box" id="ban7-result"></div>
+        </div>
+    </div>
+
+    <!-- Filter No Recovery Email Modal -->
+    <div class="modal" id="modal-filter-no-recovery">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Lọc Acc Chưa Có Recovery Email</h2>
+                <button class="close-btn" onclick="closeModal('filter-no-recovery')">&times;</button>
+            </div>
+            <button class="btn btn-primary" onclick="filterNoRecoveryEmail()">
+                <i class="fas fa-filter"></i> Lọc Tài Khoản
+            </button>
+            <div class="loading" id="filter-no-recovery-loading">
+                <div class="spinner"></div>
+                <span>Đang lọc...</span>
+            </div>
+            <div class="result-box" id="filter-no-recovery-result"></div>
         </div>
     </div>
 
@@ -1604,11 +1628,6 @@
         }
 
         async function ban7() {
-            // Tính năng đang bảo trì (Đang bảo trì thôi)
-            showResult('ban7', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
-            return;
-            
-            /* Original code commented out for maintenance:
             const token = document.getElementById('ban7-token').value;
             
             if (!token) {
@@ -1640,7 +1659,6 @@
                 showResult('ban7', false, error.message);
             }
             setLoading('ban7', false);
-            */
         }
 
         // Close modal on outside click
