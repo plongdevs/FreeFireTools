@@ -484,12 +484,6 @@
                 <p>Chuyển đổi Access Token sang JWT Token</p>
             </div>
 
-            <div class="tool-card" onclick="openModal('guest-to-jwt')">
-                <div class="tool-icon"><i class="fas fa-user"></i></div>
-                <h3>Chuyển đổi Guest sang JWT Token</h3>
-                <p>Chuyển đổi tài khoản Guest sang JWT Token</p>
-            </div>
-
             <div class="tool-card" onclick="openModal('add-recovery')">
                 <div class="tool-icon"><i class="fas fa-plus-circle"></i></div>
                 <h3>Thêm Email Phục hồi</h3>
@@ -679,32 +673,6 @@
                 <span>Đang chuyển đổi...</span>
             </div>
             <div class="result-box" id="access-to-jwt-result"></div>
-        </div>
-    </div>
-
-    <!-- Guest to JWT Modal -->
-    <div class="modal" id="modal-guest-to-jwt">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Guest sang JWT</h2>
-                <button class="close-btn" onclick="closeModal('guest-to-jwt')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>UID</label>
-                <input type="text" id="guest-to-jwt-uid" placeholder="Nhập UID">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="guest-to-jwt-password" placeholder="Nhập password">
-            </div>
-            <button class="btn btn-primary" onclick="guestToJwt()">
-                <i class="fas fa-user"></i> Chuyển đổi
-            </button>
-            <div class="loading" id="guest-to-jwt-loading">
-                <div class="spinner"></div>
-                <span>Đang chuyển đổi...</span>
-            </div>
-            <div class="result-box" id="guest-to-jwt-result"></div>
         </div>
     </div>
 
@@ -1226,40 +1194,6 @@
                 showResult('access-to-jwt', false, error.message);
             }
             setLoading('access-to-jwt', false);
-        }
-
-        async function guestToJwt() {
-            const uid = document.getElementById('guest-to-jwt-uid').value;
-            const password = document.getElementById('guest-to-jwt-password').value;
-            
-            if (!uid || !password) {
-                showResult('guest-to-jwt', false, 'Vui lòng nhập UID và password');
-                return;
-            }
-
-            setLoading('guest-to-jwt', true);
-            try {
-                const response = await fetch('/api/guest_to_jwt', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ uid, password })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    const info = {
-                        'JWT Token': data.jwt_token,
-                        'Account ID': data.decoded.account_id || 'N/A',
-                        'Nickname': data.decoded.nickname || 'N/A'
-                    };
-                    showResult('guest-to-jwt', true, 'Đã lấy JWT Token', info);
-                } else {
-                    showResult('guest-to-jwt', false, data.error);
-                }
-            } catch (error) {
-                showResult('guest-to-jwt', false, error.message);
-            }
-            setLoading('guest-to-jwt', false);
         }
 
         async function addRecoveryEmail() {

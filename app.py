@@ -906,30 +906,6 @@ def access_to_jwt_api():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
-@app.route('/api/guest_to_jwt', methods=['POST'])
-def guest_to_jwt_api():
-    try:
-        data = request.json
-        uid = data.get('uid')
-        password = data.get('password')
-        if not uid or not password:
-            return jsonify({'success': False, 'error': 'UID and Password are required'})
-        
-        open_id, access_token = guest_get_access(uid, password)
-        if not open_id or not access_token:
-            return jsonify({'success': False, 'error': 'Guest auth failed'})
-        
-        jwt, _, _ = do_major_login(open_id, access_token, 4)
-        dec = decode_jwt(jwt)
-        
-        return jsonify({
-            'success': True,
-            'jwt_token': jwt,
-            'decoded': dec
-        })
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
 @app.route('/api/add_recovery_email', methods=['POST'])
 def add_recovery_email():
     try:
