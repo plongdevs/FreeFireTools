@@ -697,6 +697,72 @@ def long_bio():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/api/send_otp_unbind', methods=['POST'])
+def send_otp_unbind():
+    try:
+        data = request.json
+        email = data.get('email')
+        access_token = data.get('access_token')
+        
+        if not all([email, access_token]):
+            return jsonify({'success': False, 'error': 'Email và access token là bắt buộc'})
+        
+        resp = requests.post("https://100067.connect.garena.com/game/account_security/bind:send_otp",
+                           headers=GARENA_HEADERS,
+                           data={"email": email, "locale": "en_MA", "region": "IND", 
+                                  "app_id": "100067", "access_token": access_token})
+        
+        if '"result":0' in resp.text.replace(" ", ""):
+            return jsonify({'success': True, 'message': 'OTP đã gửi đến email của bạn'})
+        else:
+            return jsonify({'success': False, 'error': 'Gửi OTP thất bại'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/send_otp_change_old', methods=['POST'])
+def send_otp_change_old():
+    try:
+        data = request.json
+        old_email = data.get('old_email')
+        access_token = data.get('access_token')
+        
+        if not all([old_email, access_token]):
+            return jsonify({'success': False, 'error': 'Email cũ và access token là bắt buộc'})
+        
+        resp = requests.post("https://100067.connect.garena.com/game/account_security/bind:send_otp",
+                           headers=GARENA_HEADERS,
+                           data={'email': old_email, 'locale': 'en_MA', 'region': 'IND', 
+                                  'app_id': '100067', 'access_token': access_token})
+        
+        if '"result":0' in resp.text.replace(" ", ""):
+            return jsonify({'success': True, 'message': 'OTP đã gửi đến email cũ'})
+        else:
+            return jsonify({'success': False, 'error': 'Gửi OTP thất bại'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/send_otp_change_new', methods=['POST'])
+def send_otp_change_new():
+    try:
+        data = request.json
+        new_email = data.get('new_email')
+        access_token = data.get('access_token')
+        
+        if not all([new_email, access_token]):
+            return jsonify({'success': False, 'error': 'Email mới và access token là bắt buộc'})
+        
+        resp = requests.post("https://100067.connect.garena.com/game/account_security/bind:send_otp",
+                           headers=GARENA_HEADERS,
+                           data={'email': new_email, 'locale': 'en_MA', 'region': 'IND', 
+                                  'app_id': '100067', 'access_token': access_token})
+        
+        if '"result":0' in resp.text.replace(" ", ""):
+            return jsonify({'success': True, 'message': 'OTP đã gửi đến email mới'})
+        else:
+            return jsonify({'success': False, 'error': 'Gửi OTP thất bại'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
 @app.route('/api/unbind_email', methods=['POST'])
 def unbind_email():
     try:

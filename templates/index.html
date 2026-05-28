@@ -849,6 +849,9 @@
             <div class="form-group" id="unbind-otp-group">
                 <label>OTP</label>
                 <input type="text" id="unbind-otp" placeholder="Nhập OTP nhận được">
+                <button class="btn btn-secondary" onclick="sendUnbindOTP()" style="margin-top: 0.5rem; width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Gửi OTP
+                </button>
             </div>
             <div class="form-group" id="unbind-security-group" style="display:none;">
                 <label>Mã Bảo mật (6 chữ số)</label>
@@ -894,6 +897,9 @@
             <div class="form-group" id="change-otp-old-group">
                 <label>OTP cho Email Cũ</label>
                 <input type="text" id="change-otp-old" placeholder="Nhập OTP cho email cũ">
+                <button class="btn btn-secondary" onclick="sendChangeOTPOld()" style="margin-top: 0.5rem; width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Cũ
+                </button>
             </div>
             <div class="form-group" id="change-security-group" style="display:none;">
                 <label>Mã Bảo mật (6 chữ số)</label>
@@ -902,6 +908,9 @@
             <div class="form-group">
                 <label>OTP cho Email Mới</label>
                 <input type="text" id="change-otp-new" placeholder="Nhập OTP cho email mới">
+                <button class="btn btn-secondary" onclick="sendChangeOTPNew()" style="margin-top: 0.5rem; width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Mới
+                </button>
             </div>
             <button class="btn btn-primary" onclick="changeBindEmail()">
                 <i class="fas fa-exchange-alt"></i> Đổi Email
@@ -1400,6 +1409,35 @@
             document.getElementById('unbind-security-group').style.display = method === 'password' ? 'block' : 'none';
         }
 
+        async function sendUnbindOTP() {
+            const email = document.getElementById('unbind-email').value;
+            const token = document.getElementById('unbind-token').value;
+            
+            if (!email || !token) {
+                showResult('unbind', false, 'Vui lòng nhập email và access token');
+                return;
+            }
+
+            setLoading('unbind', true);
+            try {
+                const response = await fetch('/api/send_otp_unbind', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, access_token: token })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('unbind', true, result.message);
+                } else {
+                    showResult('unbind', false, result.error);
+                }
+            } catch (error) {
+                showResult('unbind', false, error.message);
+            }
+            setLoading('unbind', false);
+        }
+
         async function unbindEmail() {
             const method = document.getElementById('unbind-method').value;
             const email = document.getElementById('unbind-email').value;
@@ -1452,6 +1490,64 @@
             const method = document.getElementById('change-method').value;
             document.getElementById('change-otp-old-group').style.display = method === 'otp' ? 'block' : 'none';
             document.getElementById('change-security-group').style.display = method === 'password' ? 'block' : 'none';
+        }
+
+        async function sendChangeOTPOld() {
+            const oldEmail = document.getElementById('change-old-email').value;
+            const token = document.getElementById('change-token').value;
+            
+            if (!oldEmail || !token) {
+                showResult('change', false, 'Vui lòng nhập email cũ và access token');
+                return;
+            }
+
+            setLoading('change', true);
+            try {
+                const response = await fetch('/api/send_otp_change_old', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ old_email: oldEmail, access_token: token })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('change', true, result.message);
+                } else {
+                    showResult('change', false, result.error);
+                }
+            } catch (error) {
+                showResult('change', false, error.message);
+            }
+            setLoading('change', false);
+        }
+
+        async function sendChangeOTPNew() {
+            const newEmail = document.getElementById('change-new-email').value;
+            const token = document.getElementById('change-token').value;
+            
+            if (!newEmail || !token) {
+                showResult('change', false, 'Vui lòng nhập email mới và access token');
+                return;
+            }
+
+            setLoading('change', true);
+            try {
+                const response = await fetch('/api/send_otp_change_new', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ new_email: newEmail, access_token: token })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('change', true, result.message);
+                } else {
+                    showResult('change', false, result.error);
+                }
+            } catch (error) {
+                showResult('change', false, error.message);
+            }
+            setLoading('change', false);
         }
 
         async function changeBindEmail() {
