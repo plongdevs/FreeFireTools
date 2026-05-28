@@ -960,15 +960,28 @@
             if (data) {
                 content += '<div style="margin-top: 1rem;">';
                 for (const [key, value] of Object.entries(data)) {
+                    const isToken = key.toLowerCase().includes('token') || key.toLowerCase().includes('jwt');
                     content += `<div class="info-item">
                         <span class="info-label">${key}:</span>
-                        <span class="info-value">${value}</span>
+                        <span class="info-value" style="word-break: break-all; flex: 1;">${value}</span>
+                        ${isToken ? `<button class="btn btn-secondary" onclick="copyToClipboard('${value}')" style="margin-left: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>` : ''}
                     </div>`;
                 }
                 content += '</div>';
             }
             
             resultBox.innerHTML = content;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Đã copy token!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Copy thất bại');
+            });
         }
 
         function setLoading(id, loading) {
@@ -1141,7 +1154,7 @@
                 
                 if (data.success) {
                     const info = {
-                        'JWT Token': data.jwt_token.substring(0, 50) + '...',
+                        'JWT Token': data.jwt_token,
                         'Account ID': data.decoded.account_id || 'N/A',
                         'Nickname': data.decoded.nickname || 'N/A'
                     };
@@ -1173,7 +1186,7 @@
                 
                 if (data.success) {
                     const info = {
-                        'JWT Token': data.jwt_token.substring(0, 50) + '...',
+                        'JWT Token': data.jwt_token,
                         'Account ID': data.decoded.account_id || 'N/A',
                         'Nickname': data.decoded.nickname || 'N/A'
                     };
@@ -1207,7 +1220,7 @@
                 
                 if (data.success) {
                     const info = {
-                        'JWT Token': data.jwt_token.substring(0, 50) + '...',
+                        'JWT Token': data.jwt_token,
                         'Account ID': data.decoded.account_id || 'N/A',
                         'Nickname': data.decoded.nickname || 'N/A'
                     };
