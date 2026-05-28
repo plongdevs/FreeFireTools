@@ -532,14 +532,8 @@
 
             <div class="tool-card" onclick="openModal('ban7')">
                 <div class="tool-icon"><i class="fas fa-ban"></i></div>
-                <h3>Permanent Ban</h3>
+                <h3>Ban 7</h3>
                 <p>Gửi packet permanent ban đến server</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('filter-no-recovery')">
-                <div class="tool-icon"><i class="fas fa-filter"></i></div>
-                <h3>Lọc Acc Chưa Có Recovery Email</h3>
-                <p>Lọc tài khoản chưa có email khôi phục từ tokens.json</p>
             </div>
         </div>
     </div>
@@ -923,7 +917,7 @@
     <div class="modal" id="modal-ban7">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Permanent Ban</h2>
+                <h2>Ban 7</h2>
                 <button class="close-btn" onclick="closeModal('ban7')">&times;</button>
             </div>
             <div class="form-group">
@@ -938,24 +932,6 @@
                 <span>Đang gửi...</span>
             </div>
             <div class="result-box" id="ban7-result"></div>
-        </div>
-    </div>
-
-    <!-- Filter No Recovery Email Modal -->
-    <div class="modal" id="modal-filter-no-recovery">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Lọc Acc Chưa Có Recovery Email</h2>
-                <button class="close-btn" onclick="closeModal('filter-no-recovery')">&times;</button>
-            </div>
-            <button class="btn btn-primary" onclick="filterNoRecoveryEmail()">
-                <i class="fas fa-filter"></i> Lọc Tài Khoản
-            </button>
-            <div class="loading" id="filter-no-recovery-loading">
-                <div class="spinner"></div>
-                <span>Đang lọc...</span>
-            </div>
-            <div class="result-box" id="filter-no-recovery-result"></div>
         </div>
     </div>
 

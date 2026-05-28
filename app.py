@@ -1278,48 +1278,5 @@ def change_bind_email():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
-@app.route('/api/filter_no_recovery_email', methods=['POST'])
-def filter_no_recovery_email():
-    try:
-        # Read tokens.json file
-        tokens_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'CliTools', 'tokens.json')
-        
-        if not os.path.exists(tokens_file):
-            return jsonify({'success': False, 'error': 'tokens.json file not found in CliTools directory'})
-        
-        with open(tokens_file, 'r', encoding='utf-8') as f:
-            tokens_data = json.load(f)
-        
-        # Filter accounts without recovery email
-        no_recovery_accounts = []
-        
-        for item in tokens_data:
-            # Skip if item is not a dictionary or doesn't have email_status
-            if not isinstance(item, dict):
-                continue
-            
-            email_status = item.get('email_status', '')
-            
-            # Filter accounts without recovery email
-            if not email_status or email_status != 'has-email':
-                no_recovery_accounts.append({
-                    'token': item.get('token', ''),
-                    'nick': item.get('nick', ''),
-                    'email': item.get('email', ''),
-                    'region': item.get('region', ''),
-                    'platforms': item.get('platforms', ''),
-                    'email_status': email_status,
-                    'time': item.get('time', ''),
-                    'type': item.get('type', '')
-                })
-        
-        return jsonify({
-            'success': True,
-            'total_accounts': len(no_recovery_accounts),
-            'accounts': no_recovery_accounts
-        })
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
