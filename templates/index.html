@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Fire Tools</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #f59e0b;
+            --accent: #22c55e;
+            --dark: #09090b;
+            --dark-card: #0c0c10;
+            --dark-border: #1a1a2e;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --gradient: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
+            --gradient-2: linear-gradient(135deg, #f59e0b, #ef4444, #ec4899);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .dot-pattern {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background-image: radial-gradient(circle, #27272a 1px, transparent 1px);
+            background-size: 30px 30px;
+            opacity: 0.5;
+        }
+
+        .meteors-container {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .meteor {
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            animation: meteor-fall linear infinite;
+            opacity: 0;
+            border-radius: 100px;
+        }
+
+        @keyframes meteor-fall {
+            0% { transform: rotate(215deg) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { transform: rotate(215deg) translateX(-800px); opacity: 0; }
+        }
+
+        .navbar {
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--dark-border);
+            background: rgba(9,9,11,0.6);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .nav-brand-text {
+            font-weight: 800;
+            font-size: 1.1rem;
+            background: linear-gradient(90deg, #00ffff, #00d4ff, #00a8cc, #00ffff, #00bcd4, #00e5ff, #00ffff, #00acc1, #00ffff);
+            background-size: 500% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: cyan-circular-flow 4s ease infinite;
+        }
+
+        @keyframes cyan-circular-flow {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 200% 50%; }
+            75% { background-position: 300% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899, #f59e0b, #6366f1);
+            background-size: 300% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 5s ease infinite;
+        }
+
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .tool-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.4), transparent 50%, rgba(168,85,247,0.4));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tool-card:hover::before { opacity: 1; }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(99,102,241,0.15);
+            border-color: rgba(99,102,241,0.2);
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            background: rgba(99,102,241,0.1);
+            color: #818cf8;
+            border: 1px solid rgba(99,102,241,0.15);
+        }
+
+        .tool-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .tool-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover { color: var(--text); }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--dark-border);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 0 30px rgba(99,102,241,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99,102,241,0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(99,102,241,0.5);
+            background: rgba(99,102,241,0.05);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--dark-border);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result-box.active { display: block; }
+
+        .result-box.success {
+            border-color: rgba(34, 197, 94, 0.3);
+            background: rgba(34, 197, 94, 0.05);
+        }
+
+        .result-box.error {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .result-box h4 {
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .result-box.success h4 { color: #22c55e; }
+        .result-box.error h4 { color: #ef4444; }
+
+        .result-content {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            word-break: break-all;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .loading.active { display: flex; }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--dark-border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .info-item:last-child { border-bottom: none; }
+
+        .info-label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .info-value {
+            color: var(--text);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .tools-grid { grid-template-columns: 1fr; }
+            .navbar { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dot-pattern"></div>
+    <div class="meteors-container" id="meteors"></div>
+
+    <nav class="navbar">
+        <a href="#" class="nav-brand">
+            <i class="fas fa-gamepad" style="color: var(--primary);"></i>
+            <span class="nav-brand-text">Free Fire Tools</span>
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Free Fire Tools</h1>
+            <p>Công cụ web mạnh mẽ về việc tra cứu hay sửa đổi thông tin trong Free Fire</p>
+        </div>
+
+        <div class="tools-grid">
+            <div class="tool-card" onclick="openModal('check-recovery')">
+                <div class="tool-icon"><i class="fas fa-envelope-check"></i></div>
+                <h3>Kiểm tra Email Khôi Phục</h3>
+                <p>Kiểm tra email khôi phục của tài khoản
+                </p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('check-platforms')">
+                <div class="tool-icon"><i class="fas fa-link"></i></div>
+                <h3>Kiểm tra nền tảng liên kết</h3>
+                <p>Liệt kê tất cả nền tảng mạng xã hội đã liên kết với tài khoản</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('cancel-recovery')">
+                <div class="tool-icon"><i class="fas fa-times-circle"></i></div>
+                <h3>Huỷ yêu cầu gắn email khôi phục</h3>
+                <p>Hủy yêu cầu gắn email khôi phục đang chờ</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('revoke-token')">
+                <div class="tool-icon"><i class="fas fa-key"></i></div>
+                <h3>Vô hiệu hoá Access Token</h3>
+                <p>Vô hiệu hoá access token hiện tại</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('eat-to-access')">
+                <div class="tool-icon"><i class="fas fa-exchange-alt"></i></div>
+                <h3>EAT sang Access Token</h3>
+                <p>Chuyển đổi EAT token sang Access Token</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('eat-to-jwt')">
+                <div class="tool-icon"><i class="fas fa-code"></i></div>
+                <h3>Chuyển đổi EAT sang JWT</h3>
+                <p>Chuyển đổi EAT token trực tiếp sang JWT Token</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('access-to-jwt')">
+                <div class="tool-icon"><i class="fas fa-ticket-alt"></i></div>
+                <h3>Access sang JWT</h3>
+                <p>Chuyển đổi Access Token sang JWT</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('guest-to-jwt')">
+                <div class="tool-icon"><i class="fas fa-user"></i></div>
+                <h3>Guest sang JWT</h3>
+                <p>Chuyển đổi thông tin Guest sang JWT</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('add-recovery')">
+                <div class="tool-icon"><i class="fas fa-plus-circle"></i></div>
+                <h3>Thêm Email Phục hồi</h3>
+                <p>Thêm email phục hồi vào tài khoản của bạn</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('spam-log')">
+                <div class="tool-icon"><i class="fas fa-bolt"></i></div>
+                <h3>Spam Log</h3>
+                <p>Gửi login packet đến game server</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('long-bio')">
+                <div class="tool-icon"><i class="fas fa-align-left"></i></div>
+                <h3>Tiểu sử Dài</h3>
+                <p>Đặt tiểu sử dài cho tài khoản của bạn</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('unbind-email')">
+                <div class="tool-icon"><i class="fas fa-unlink"></i></div>
+                <h3>Hủy Liên kết Email</h3>
+                <p>Hủy liên kết email khỏi tài khoản của bạn</p>
+            </div>
+
+            <div class="tool-card" onclick="openModal('change-bind-email')">
+                <div class="tool-icon"><i class="fas fa-exchange-alt"></i></div>
+                <h3>Đổi Email Liên kết</h3>
+                <p>Thay đổi email liên kết của bạn</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Check Recovery Email Modal -->
+    <div class="modal" id="modal-check-recovery">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Kiểm tra Email Phục hồi</h2>
+                <button class="close-btn" onclick="closeModal('check-recovery')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="check-recovery-token" placeholder="Nhập access token">
+            </div>
+            <button class="btn btn-primary" onclick="checkRecoveryEmail()">
+                <i class="fas fa-search"></i> Kiểm tra Email
+            </button>
+            <div class="loading" id="check-recovery-loading">
+                <div class="spinner"></div>
+                <span>Đang kiểm tra...</span>
+            </div>
+            <div class="result-box" id="check-recovery-result"></div>
+        </div>
+    </div>
+
+    <!-- Check Platforms Modal -->
+    <div class="modal" id="modal-check-platforms">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Kiểm tra Nền tảng Liên kết</h2>
+                <button class="close-btn" onclick="closeModal('check-platforms')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="check-platforms-token" placeholder="Nhập access token">
+            </div>
+            <button class="btn btn-primary" onclick="checkPlatforms()">
+                <i class="fas fa-search"></i> Kiểm tra Nền tảng
+            </button>
+            <div class="loading" id="check-platforms-loading">
+                <div class="spinner"></div>
+                <span>Đang kiểm tra...</span>
+            </div>
+            <div class="result-box" id="check-platforms-result"></div>
+        </div>
+    </div>
+
+    <!-- Cancel Recovery Modal -->
+    <div class="modal" id="modal-cancel-recovery">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Hủy Email Phục hồi</h2>
+                <button class="close-btn" onclick="closeModal('cancel-recovery')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="cancel-recovery-token" placeholder="Nhập access token">
+            </div>
+            <button class="btn btn-primary" onclick="cancelRecovery()">
+                <i class="fas fa-times"></i> Hủy Yêu cầu
+            </button>
+            <div class="loading" id="cancel-recovery-loading">
+                <div class="spinner"></div>
+                <span>Đang hủy...</span>
+            </div>
+            <div class="result-box" id="cancel-recovery-result"></div>
+        </div>
+    </div>
+
+    <!-- Revoke Token Modal -->
+    <div class="modal" id="modal-revoke-token">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Hủy Access Token</h2>
+                <button class="close-btn" onclick="closeModal('revoke-token')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="revoke-token-input" placeholder="Nhập access token">
+            </div>
+            <button class="btn btn-primary" onclick="revokeToken()">
+                <i class="fas fa-key"></i> Hủy Token
+            </button>
+            <div class="loading" id="revoke-token-loading">
+                <div class="spinner"></div>
+                <span>Đang hủy...</span>
+            </div>
+            <div class="result-box" id="revoke-token-result"></div>
+        </div>
+    </div>
+
+    <!-- EAT to Access Modal -->
+    <div class="modal" id="modal-eat-to-access">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>EAT sang Access Token</h2>
+                <button class="close-btn" onclick="closeModal('eat-to-access')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>EAT Token / Link</label>
+                <input type="text" id="eat-to-access-input" placeholder="Nhập EAT token hoặc link">
+            </div>
+            <button class="btn btn-primary" onclick="eatToAccess()">
+                <i class="fas fa-exchange-alt"></i> Chuyển đổi
+            </button>
+            <div class="loading" id="eat-to-access-loading">
+                <div class="spinner"></div>
+                <span>Đang chuyển đổi...</span>
+            </div>
+            <div class="result-box" id="eat-to-access-result"></div>
+        </div>
+    </div>
+
+    <!-- EAT to JWT Modal -->
+    <div class="modal" id="modal-eat-to-jwt">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>EAT sang JWT</h2>
+                <button class="close-btn" onclick="closeModal('eat-to-jwt')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>EAT Token / Link</label>
+                <input type="text" id="eat-to-jwt-input" placeholder="Nhập EAT token hoặc link">
+            </div>
+            <button class="btn btn-primary" onclick="eatToJwt()">
+                <i class="fas fa-code"></i> Chuyển đổi
+            </button>
+            <div class="loading" id="eat-to-jwt-loading">
+                <div class="spinner"></div>
+                <span>Đang chuyển đổi...</span>
+            </div>
+            <div class="result-box" id="eat-to-jwt-result"></div>
+        </div>
+    </div>
+
+    <!-- Access to JWT Modal -->
+    <div class="modal" id="modal-access-to-jwt">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Access sang JWT</h2>
+                <button class="close-btn" onclick="closeModal('access-to-jwt')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="access-to-jwt-input" placeholder="Nhập access token">
+            </div>
+            <button class="btn btn-primary" onclick="accessToJwt()">
+                <i class="fas fa-ticket-alt"></i> Chuyển đổi
+            </button>
+            <div class="loading" id="access-to-jwt-loading">
+                <div class="spinner"></div>
+                <span>Đang chuyển đổi...</span>
+            </div>
+            <div class="result-box" id="access-to-jwt-result"></div>
+        </div>
+    </div>
+
+    <!-- Guest to JWT Modal -->
+    <div class="modal" id="modal-guest-to-jwt">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Guest sang JWT</h2>
+                <button class="close-btn" onclick="closeModal('guest-to-jwt')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>UID</label>
+                <input type="text" id="guest-to-jwt-uid" placeholder="Nhập UID">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="guest-to-jwt-password" placeholder="Nhập password">
+            </div>
+            <button class="btn btn-primary" onclick="guestToJwt()">
+                <i class="fas fa-user"></i> Chuyển đổi
+            </button>
+            <div class="loading" id="guest-to-jwt-loading">
+                <div class="spinner"></div>
+                <span>Đang chuyển đổi...</span>
+            </div>
+            <div class="result-box" id="guest-to-jwt-result"></div>
+        </div>
+    </div>
+
+    <!-- Add Recovery Email Modal -->
+    <div class="modal" id="modal-add-recovery">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Thêm Email Phục hồi</h2>
+                <button class="close-btn" onclick="closeModal('add-recovery')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="add-recovery-email" placeholder="Nhập email">
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="add-recovery-token" placeholder="Nhập access token">
+            </div>
+            <div class="form-group">
+                <label>OTP</label>
+                <input type="text" id="add-recovery-otp" placeholder="Nhập OTP nhận được">
+            </div>
+            <div class="form-group">
+                <label>Mã Bảo mật (6 chữ số)</label>
+                <input type="text" id="add-recovery-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+            </div>
+            <button class="btn btn-primary" onclick="addRecoveryEmail()">
+                <i class="fas fa-plus-circle"></i> Thêm Email
+            </button>
+            <div class="loading" id="add-recovery-loading">
+                <div class="spinner"></div>
+                <span>Đang thêm...</span>
+            </div>
+            <div class="result-box" id="add-recovery-result"></div>
+        </div>
+    </div>
+
+    <!-- Spam Log Modal -->
+    <div class="modal" id="modal-spam-log">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Spam Log</h2>
+                <button class="close-btn" onclick="closeModal('spam-log')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="spam-log-token" placeholder="Nhập access token">
+            </div>
+            <div class="form-group">
+                <label>Thời gian (tối đa 15 ngày, ví dụ: 1d:2h:30m:10s)</label>
+                <input type="text" id="spam-log-duration" placeholder="10s" value="10s">
+            </div>
+            <button class="btn btn-primary" onclick="spamLog()">
+                <i class="fas fa-bolt"></i> Bắt đầu Spam Log
+            </button>
+            <div class="loading" id="spam-log-loading">
+                <div class="spinner"></div>
+                <span>Đang tạo task...</span>
+            </div>
+            <div class="result-box" id="spam-log-result"></div>
+            <div class="result-box" id="spam-log-task-info" style="display:none; margin-top: 1rem;">
+                <h4>📋 Thông tin Task</h4>
+                <div class="result-content">
+                    <div class="info-item">
+                        <span class="info-label">Task ID:</span>
+                        <span class="info-value" id="spam-log-task-id"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Trạng thái:</span>
+                        <span class="info-value" id="spam-log-task-status"></span>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="checkSpamLogStatus()" style="margin-top: 1rem;">
+                    <i class="fas fa-sync"></i> Kiểm tra Trạng thái
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Long Bio Modal -->
+    <div class="modal" id="modal-long-bio">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tiểu sử Dài</h2>
+                <button class="close-btn" onclick="closeModal('long-bio')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Phương thức</label>
+                <select id="long-bio-method" onchange="toggleLongBioMethod()">
+                    <option value="jwt">JWT Token</option>
+                    <option value="access">Access Token</option>
+                    <option value="guest">Guest (UID/Password)</option>
+                </select>
+            </div>
+            <div class="form-group" id="long-bio-jwt-group">
+                <label>JWT Token</label>
+                <input type="text" id="long-bio-jwt" placeholder="Nhập JWT token">
+            </div>
+            <div class="form-group" id="long-bio-access-group" style="display:none;">
+                <label>Access Token</label>
+                <input type="text" id="long-bio-access" placeholder="Nhập access token">
+            </div>
+            <div class="form-group" id="long-bio-guest-group" style="display:none;">
+                <label>UID</label>
+                <input type="text" id="long-bio-uid" placeholder="Nhập UID">
+            </div>
+            <div class="form-group" id="long-bio-password-group" style="display:none;">
+                <label>Password</label>
+                <input type="password" id="long-bio-password" placeholder="Nhập password">
+            </div>
+            <div class="form-group">
+                <label>Nội dung Bio</label>
+                <textarea id="long-bio-text" placeholder="Nhập nội dung bio của bạn" maxlength="200"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="longBio()">
+                <i class="fas fa-align-left"></i> Cập nhật Bio
+            </button>
+            <div class="loading" id="long-bio-loading">
+                <div class="spinner"></div>
+                <span>Đang cập nhật...</span>
+            </div>
+            <div class="result-box" id="long-bio-result"></div>
+        </div>
+    </div>
+
+    <!-- Unbind Email Modal -->
+    <div class="modal" id="modal-unbind-email">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Hủy Liên kết Email</h2>
+                <button class="close-btn" onclick="closeModal('unbind-email')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Phương thức</label>
+                <select id="unbind-method" onchange="toggleUnbindMethod()">
+                    <option value="otp">Email OTP</option>
+                    <option value="password">Mã Bảo mật</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Email Liên kết</label>
+                <input type="email" id="unbind-email" placeholder="Nhập email liên kết">
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="unbind-token" placeholder="Nhập access token">
+            </div>
+            <div class="form-group" id="unbind-otp-group">
+                <label>OTP</label>
+                <input type="text" id="unbind-otp" placeholder="Nhập OTP nhận được">
+            </div>
+            <div class="form-group" id="unbind-security-group" style="display:none;">
+                <label>Mã Bảo mật (6 chữ số)</label>
+                <input type="text" id="unbind-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+            </div>
+            <button class="btn btn-primary" onclick="unbindEmail()">
+                <i class="fas fa-unlink"></i> Hủy Liên kết Email
+            </button>
+            <div class="loading" id="unbind-loading">
+                <div class="spinner"></div>
+                <span>Đang hủy liên kết...</span>
+            </div>
+            <div class="result-box" id="unbind-result"></div>
+        </div>
+    </div>
+
+    <!-- Change Bind Email Modal -->
+    <div class="modal" id="modal-change-bind-email">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Đổi Email Liên kết</h2>
+                <button class="close-btn" onclick="closeModal('change-bind-email')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Phương thức</label>
+                <select id="change-method" onchange="toggleChangeMethod()">
+                    <option value="otp">Email OTP</option>
+                    <option value="password">Mã Bảo mật</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Access Token</label>
+                <input type="text" id="change-token" placeholder="Nhập access token">
+            </div>
+            <div class="form-group">
+                <label>Email Cũ</label>
+                <input type="email" id="change-old-email" placeholder="Nhập email cũ">
+            </div>
+            <div class="form-group">
+                <label>Email Mới</label>
+                <input type="email" id="change-new-email" placeholder="Nhập email mới">
+            </div>
+            <div class="form-group" id="change-otp-old-group">
+                <label>OTP cho Email Cũ</label>
+                <input type="text" id="change-otp-old" placeholder="Nhập OTP cho email cũ">
+            </div>
+            <div class="form-group" id="change-security-group" style="display:none;">
+                <label>Mã Bảo mật (6 chữ số)</label>
+                <input type="text" id="change-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+            </div>
+            <div class="form-group">
+                <label>OTP cho Email Mới</label>
+                <input type="text" id="change-otp-new" placeholder="Nhập OTP cho email mới">
+            </div>
+            <button class="btn btn-primary" onclick="changeBindEmail()">
+                <i class="fas fa-exchange-alt"></i> Đổi Email
+            </button>
+            <div class="loading" id="change-loading">
+                <div class="spinner"></div>
+                <span>Đang đổi...</span>
+            </div>
+            <div class="result-box" id="change-result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Create meteors
+        const meteorsContainer = document.getElementById('meteors');
+        for (let i = 0; i < 10; i++) {
+            const meteor = document.createElement('div');
+            meteor.className = 'meteor';
+            meteor.style.left = `${Math.random() * 100}%`;
+            meteor.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            meteor.style.animationDelay = `${Math.random() * 5}s`;
+            meteorsContainer.appendChild(meteor);
+        }
+
+        function openModal(id) {
+            document.getElementById(`modal-${id}`).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(`modal-${id}`).classList.remove('active');
+            // Clear results
+            const resultBox = document.getElementById(`${id}-result`);
+            if (resultBox) {
+                resultBox.classList.remove('active', 'success', 'error');
+                resultBox.innerHTML = '';
+            }
+        }
+
+        function showResult(id, success, message, data = null) {
+            const resultBox = document.getElementById(`${id}-result`);
+            resultBox.classList.remove('active', 'success', 'error');
+            resultBox.classList.add('active', success ? 'success' : 'error');
+            
+            let content = `<h4>${success ? '✓ Success' : '✗ Error'}</h4>`;
+            content += `<div class="result-content">${message}</div>`;
+            
+            if (data) {
+                content += '<div style="margin-top: 1rem;">';
+                for (const [key, value] of Object.entries(data)) {
+                    content += `<div class="info-item">
+                        <span class="info-label">${key}:</span>
+                        <span class="info-value">${value}</span>
+                    </div>`;
+                }
+                content += '</div>';
+            }
+            
+            resultBox.innerHTML = content;
+        }
+
+        function setLoading(id, loading) {
+            const loadingEl = document.getElementById(`${id}-loading`);
+            if (loadingEl) {
+                loadingEl.classList.toggle('active', loading);
+            }
+        }
+
+        async function checkRecoveryEmail() {
+            const token = document.getElementById('check-recovery-token').value;
+            if (!token) {
+                showResult('check-recovery', false, 'Please enter access token');
+                return;
+            }
+
+            setLoading('check-recovery', true);
+            try {
+                const response = await fetch('/api/check_recovery_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ access_token: token })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const info = {
+                        'Email': data.email || 'None',
+                        'Pending Email': data.email_to_be || 'None',
+                        'Countdown': data.countdown || 'N/A',
+                        'Status': data.status
+                    };
+                    showResult('check-recovery', true, 'Recovery email info retrieved', info);
+                } else {
+                    showResult('check-recovery', false, data.error);
+                }
+            } catch (error) {
+                showResult('check-recovery', false, error.message);
+            }
+            setLoading('check-recovery', false);
+        }
+
+        async function checkPlatforms() {
+            const token = document.getElementById('check-platforms-token').value;
+            if (!token) {
+                showResult('check-platforms', false, 'Please enter access token');
+                return;
+            }
+
+            setLoading('check-platforms', true);
+            try {
+                const response = await fetch('/api/check_platforms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ access_token: token })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const info = {
+                        'Main Platform': data.main_platform,
+                        'Linked Accounts': data.bounded.length > 0 ? data.bounded.map(a => `${a.platform}: ${a.email || a.nickname}`).join(', ') : 'None'
+                    };
+                    showResult('check-platforms', true, 'Platform info retrieved', info);
+                } else {
+                    showResult('check-platforms', false, data.error);
+                }
+            } catch (error) {
+                showResult('check-platforms', false, error.message);
+            }
+            setLoading('check-platforms', false);
+        }
+
+        async function cancelRecovery() {
+            const token = document.getElementById('cancel-recovery-token').value;
+            if (!token) {
+                showResult('cancel-recovery', false, 'Please enter access token');
+                return;
+            }
+
+            setLoading('cancel-recovery', true);
+            try {
+                const response = await fetch('/api/cancel_recovery_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ access_token: token })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('cancel-recovery', true, data.message);
+                } else {
+                    showResult('cancel-recovery', false, data.error);
+                }
+            } catch (error) {
+                showResult('cancel-recovery', false, error.message);
+            }
+            setLoading('cancel-recovery', false);
+        }
+
+        async function revokeToken() {
+            const token = document.getElementById('revoke-token-input').value;
+            if (!token) {
+                showResult('revoke-token', false, 'Please enter access token');
+                return;
+            }
+
+            setLoading('revoke-token', true);
+            try {
+                const response = await fetch('/api/revoke_token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ access_token: token })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('revoke-token', true, data.message);
+                } else {
+                    showResult('revoke-token', false, data.error);
+                }
+            } catch (error) {
+                showResult('revoke-token', false, error.message);
+            }
+            setLoading('revoke-token', false);
+        }
+
+        async function eatToAccess() {
+            const eat = document.getElementById('eat-to-access-input').value;
+            if (!eat) {
+                showResult('eat-to-access', false, 'Please enter EAT token');
+                return;
+            }
+
+            setLoading('eat-to-access', true);
+            try {
+                const response = await fetch('/api/eat_to_access', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eat_token: eat })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('eat-to-access', true, 'Đã lấy Access Token', { 'Access Token': data.access_token });
+                } else {
+                    showResult('eat-to-access', false, data.error);
+                }
+            } catch (error) {
+                showResult('eat-to-access', false, error.message);
+            }
+            setLoading('eat-to-access', false);
+        }
+
+        async function eatToJwt() {
+            const eat = document.getElementById('eat-to-jwt-input').value;
+            if (!eat) {
+                showResult('eat-to-jwt', false, 'Vui lòng nhập EAT token');
+                return;
+            }
+
+            setLoading('eat-to-jwt', true);
+            try {
+                const response = await fetch('/api/eat_to_jwt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ eat_token: eat })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const info = {
+                        'JWT Token': data.jwt_token.substring(0, 50) + '...',
+                        'Account ID': data.decoded.account_id || 'N/A',
+                        'Nickname': data.decoded.nickname || 'N/A'
+                    };
+                    showResult('eat-to-jwt', true, 'Đã lấy JWT Token', info);
+                } else {
+                    showResult('eat-to-jwt', false, data.error);
+                }
+            } catch (error) {
+                showResult('eat-to-jwt', false, error.message);
+            }
+            setLoading('eat-to-jwt', false);
+        }
+
+        async function accessToJwt() {
+            const token = document.getElementById('access-to-jwt-input').value;
+            if (!token) {
+                showResult('access-to-jwt', false, 'Vui lòng nhập access token');
+                return;
+            }
+
+            setLoading('access-to-jwt', true);
+            try {
+                const response = await fetch('/api/access_to_jwt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ access_token: token })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const info = {
+                        'JWT Token': data.jwt_token.substring(0, 50) + '...',
+                        'Account ID': data.decoded.account_id || 'N/A',
+                        'Nickname': data.decoded.nickname || 'N/A'
+                    };
+                    showResult('access-to-jwt', true, 'Đã lấy JWT Token', info);
+                } else {
+                    showResult('access-to-jwt', false, data.error);
+                }
+            } catch (error) {
+                showResult('access-to-jwt', false, error.message);
+            }
+            setLoading('access-to-jwt', false);
+        }
+
+        async function guestToJwt() {
+            const uid = document.getElementById('guest-to-jwt-uid').value;
+            const password = document.getElementById('guest-to-jwt-password').value;
+            
+            if (!uid || !password) {
+                showResult('guest-to-jwt', false, 'Vui lòng nhập UID và password');
+                return;
+            }
+
+            setLoading('guest-to-jwt', true);
+            try {
+                const response = await fetch('/api/guest_to_jwt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ uid, password })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const info = {
+                        'JWT Token': data.jwt_token.substring(0, 50) + '...',
+                        'Account ID': data.decoded.account_id || 'N/A',
+                        'Nickname': data.decoded.nickname || 'N/A'
+                    };
+                    showResult('guest-to-jwt', true, 'Đã lấy JWT Token', info);
+                } else {
+                    showResult('guest-to-jwt', false, data.error);
+                }
+            } catch (error) {
+                showResult('guest-to-jwt', false, error.message);
+            }
+            setLoading('guest-to-jwt', false);
+        }
+
+        async function addRecoveryEmail() {
+            const email = document.getElementById('add-recovery-email').value;
+            const token = document.getElementById('add-recovery-token').value;
+            const otp = document.getElementById('add-recovery-otp').value;
+            const security = document.getElementById('add-recovery-security').value;
+            
+            if (!email || !token || !otp || !security) {
+                showResult('add-recovery', false, 'Vui lòng điền tất cả các trường');
+                return;
+            }
+
+            if (security.length !== 6 || !security.match(/^\d+$/)) {
+                showResult('add-recovery', false, 'Mã bảo mật phải là 6 chữ số');
+                return;
+            }
+
+            setLoading('add-recovery', true);
+            try {
+                const response = await fetch('/api/add_recovery_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email, 
+                        access_token: token, 
+                        otp, 
+                        security_code: security 
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('add-recovery', true, data.message);
+                } else {
+                    showResult('add-recovery', false, data.error);
+                }
+            } catch (error) {
+                showResult('add-recovery', false, error.message);
+            }
+            setLoading('add-recovery', false);
+        }
+
+        async function spamLog() {
+            const token = document.getElementById('spam-log-token').value;
+            const duration = document.getElementById('spam-log-duration').value;
+            
+            if (!token) {
+                showResult('spam-log', false, 'Vui lòng nhập access token');
+                return;
+            }
+
+            setLoading('spam-log', true);
+            try {
+                const response = await fetch('/api/spam_log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        access_token: token,
+                        duration: duration 
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('spam-log', true, data.message);
+                    
+                    // Show task info
+                    document.getElementById('spam-log-task-id').textContent = data.task_id;
+                    document.getElementById('spam-log-task-status').textContent = data.status;
+                    document.getElementById('spam-log-task-info').style.display = 'block';
+                    
+                    // Store task ID for status checking
+                    window.currentTaskId = data.task_id;
+                } else {
+                    showResult('spam-log', false, data.error);
+                }
+            } catch (error) {
+                showResult('spam-log', false, error.message);
+            }
+            setLoading('spam-log', false);
+        }
+
+        async function checkSpamLogStatus() {
+            if (!window.currentTaskId) {
+                showResult('spam-log', false, 'Không có task ID');
+                return;
+            }
+
+            setLoading('spam-log', true);
+            try {
+                const response = await fetch(`/api/task_status/${window.currentTaskId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const task = data.task;
+                    document.getElementById('spam-log-task-status').textContent = task.status;
+                    
+                    if (task.status === 'completed' && task.result) {
+                        const info = {
+                            'Total Sent': task.result.total_sent,
+                            'Errors': task.result.errors,
+                            'Duration': task.result.duration + 's',
+                            'Server': task.result.server
+                        };
+                        showResult('spam-log', true, 'Task đã hoàn thành!', info);
+                    } else if (task.status === 'failed') {
+                        showResult('spam-log', false, `Task thất bại: ${task.result?.error || 'Lỗi không xác định'}`);
+                    } else {
+                        showResult('spam-log', true, `Task ${task.status} - Kiểm tra lại sau`);
+                    }
+                } else {
+                    showResult('spam-log', false, data.error);
+                }
+            } catch (error) {
+                showResult('spam-log', false, error.message);
+            }
+            setLoading('spam-log', false);
+        }
+
+        function toggleLongBioMethod() {
+            const method = document.getElementById('long-bio-method').value;
+            document.getElementById('long-bio-jwt-group').style.display = method === 'jwt' ? 'block' : 'none';
+            document.getElementById('long-bio-access-group').style.display = method === 'access' ? 'block' : 'none';
+            document.getElementById('long-bio-guest-group').style.display = method === 'guest' ? 'block' : 'none';
+            document.getElementById('long-bio-password-group').style.display = method === 'guest' ? 'block' : 'none';
+        }
+
+        async function longBio() {
+            const method = document.getElementById('long-bio-method').value;
+            const bioText = document.getElementById('long-bio-text').value;
+            
+            if (!bioText) {
+                showResult('long-bio', false, 'Vui lòng nhập nội dung bio');
+                return;
+            }
+
+            const data = { method, bio_text: bioText };
+
+            if (method === 'jwt') {
+                const jwt = document.getElementById('long-bio-jwt').value;
+                if (!jwt) {
+                    showResult('long-bio', false, 'Vui lòng nhập JWT token');
+                    return;
+                }
+                data.jwt_token = jwt;
+            } else if (method === 'access') {
+                const access = document.getElementById('long-bio-access').value;
+                if (!access) {
+                    showResult('long-bio', false, 'Vui lòng nhập access token');
+                    return;
+                }
+                data.access_token = access;
+            } else if (method === 'guest') {
+                const uid = document.getElementById('long-bio-uid').value;
+                const password = document.getElementById('long-bio-password').value;
+                if (!uid || !password) {
+                    showResult('long-bio', false, 'Vui lòng nhập UID và password');
+                    return;
+                }
+                data.uid = uid;
+                data.password = password;
+            }
+
+            setLoading('long-bio', true);
+            try {
+                const response = await fetch('/api/long_bio', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('long-bio', true, result.message);
+                } else {
+                    showResult('long-bio', false, result.error);
+                }
+            } catch (error) {
+                showResult('long-bio', false, error.message);
+            }
+            setLoading('long-bio', false);
+        }
+
+        function toggleUnbindMethod() {
+            const method = document.getElementById('unbind-method').value;
+            document.getElementById('unbind-otp-group').style.display = method === 'otp' ? 'block' : 'none';
+            document.getElementById('unbind-security-group').style.display = method === 'password' ? 'block' : 'none';
+        }
+
+        async function unbindEmail() {
+            const method = document.getElementById('unbind-method').value;
+            const email = document.getElementById('unbind-email').value;
+            const token = document.getElementById('unbind-token').value;
+            
+            if (!email || !token) {
+                showResult('unbind', false, 'Vui lòng điền tất cả các trường bắt buộc');
+                return;
+            }
+
+            const data = { email, access_token: token, method };
+
+            if (method === 'otp') {
+                const otp = document.getElementById('unbind-otp').value;
+                if (!otp) {
+                    showResult('unbind', false, 'Vui lòng nhập OTP');
+                    return;
+                }
+                data.otp = otp;
+            } else if (method === 'password') {
+                const security = document.getElementById('unbind-security').value;
+                if (!security || security.length !== 6 || !security.match(/^\d+$/)) {
+                    showResult('unbind', false, 'Mã bảo mật phải là 6 chữ số');
+                    return;
+                }
+                data.security_code = security;
+            }
+
+            setLoading('unbind', true);
+            try {
+                const response = await fetch('/api/unbind_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('unbind', true, result.message);
+                } else {
+                    showResult('unbind', false, result.error);
+                }
+            } catch (error) {
+                showResult('unbind', false, error.message);
+            }
+            setLoading('unbind', false);
+        }
+
+        function toggleChangeMethod() {
+            const method = document.getElementById('change-method').value;
+            document.getElementById('change-otp-old-group').style.display = method === 'otp' ? 'block' : 'none';
+            document.getElementById('change-security-group').style.display = method === 'password' ? 'block' : 'none';
+        }
+
+        async function changeBindEmail() {
+            const method = document.getElementById('change-method').value;
+            const token = document.getElementById('change-token').value;
+            const oldEmail = document.getElementById('change-old-email').value;
+            const newEmail = document.getElementById('change-new-email').value;
+            const otpNew = document.getElementById('change-otp-new').value;
+            
+            if (!token || !oldEmail || !newEmail || !otpNew) {
+                showResult('change', false, 'Vui lòng điền tất cả các trường bắt buộc');
+                return;
+            }
+
+            const data = { access_token: token, old_email: oldEmail, new_email: newEmail, method, otp_new: otpNew };
+
+            if (method === 'otp') {
+                const otpOld = document.getElementById('change-otp-old').value;
+                if (!otpOld) {
+                    showResult('change', false, 'Vui lòng nhập OTP cho email cũ');
+                    return;
+                }
+                data.otp_old = otpOld;
+            } else if (method === 'password') {
+                const security = document.getElementById('change-security').value;
+                if (!security || security.length !== 6 || !security.match(/^\d+$/)) {
+                    showResult('change', false, 'Mã bảo mật phải là 6 chữ số');
+                    return;
+                }
+                data.security_code = security;
+            }
+
+            setLoading('change', true);
+            try {
+                const response = await fetch('/api/change_bind_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('change', true, result.message);
+                } else {
+                    showResult('change', false, result.error);
+                }
+            } catch (error) {
+                showResult('change', false, error.message);
+            }
+            setLoading('change', false);
+        }
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
