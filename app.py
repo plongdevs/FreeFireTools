@@ -27,35 +27,47 @@ SECRET_KEY = b"1e5898ccb8dfdd921f9bdea848768b64a201"
 AES_KEY = bytes([89,103,38,116,99,37,68,69,117,104,54,37,90,99,94,56])
 AES_IV  = bytes([54,111,121,90,68,114,50,50,69,51,121,99,104,106,77,37])
 
-# User database file
-USERS_FILE = os.path.join(os.path.dirname(__file__), 'users.json')
-USAGE_FILE = os.path.join(os.path.dirname(__file__), 'usage.json')
+# Firebase configuration
+FIREBASE_URL = "https://freefiretools-a5470-default-rtdb.asia-southeast1.firebasedatabase.app"
+FIREBASE_SECRET = "bIIZjhwOHgrkxLawK2Lbcfbdd75zxQQ3JVqWQC4b"
+
+def firebase_get(path):
+    """Get data from Firebase"""
+    url = f"{FIREBASE_URL}/{path}.json?auth={FIREBASE_SECRET}"
+    response = requests.get(url)
+    return response.json() if response.status_code == 200 else None
+
+def firebase_set(path, data):
+    """Set data in Firebase"""
+    url = f"{FIREBASE_URL}/{path}.json?auth={FIREBASE_SECRET}"
+    response = requests.put(url, json=data)
+    return response.status_code == 200
+
+def firebase_update(path, data):
+    """Update data in Firebase"""
+    url = f"{FIREBASE_URL}/{path}.json?auth={FIREBASE_SECRET}"
+    response = requests.patch(url, json=data)
+    return response.status_code == 200
 
 def load_users():
     try:
-        if os.path.exists(USERS_FILE):
-            with open(USERS_FILE, 'r') as f:
-                return json.load(f)
+        users = firebase_get('users')
+        return users if users else {}
     except:
-        pass
-    return {}
+        return {}
 
 def save_users(users):
-    with open(USERS_FILE, 'w') as f:
-        json.dump(users, f, indent=2)
+    firebase_set('users', users)
 
 def load_usage():
     try:
-        if os.path.exists(USAGE_FILE):
-            with open(USAGE_FILE, 'r') as f:
-                return json.load(f)
+        usage = firebase_get('usage')
+        return usage if usage else {}
     except:
-        pass
-    return {}
+        return {}
 
 def save_usage(usage):
-    with open(USAGE_FILE, 'w') as f:
-        json.dump(usage, f, indent=2)
+    firebase_set('usage', usage)
 
 def get_user_usage(username):
     usage = load_usage()
