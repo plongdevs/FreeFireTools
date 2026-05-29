@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Admin Dashboard - Free Fire Tools</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/static/css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <!-- Sidebar - Brand -->
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/dashboard">
+                <div class="sidebar-brand-icon rotate-n-15">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <div class="sidebar-brand-text mx-3">Free Fire Tools</div>
+            </a>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider my-0">
+
+            <!-- Nav Item - Dashboard -->
+            <li class="nav-item active">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span>Dashboard</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                Quản lý
+            </div>
+
+            <!-- Nav Item - Users -->
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showSection('users')">
+                    <i class="fas fa-fw fa-users"></i>
+                    <span>Người dùng</span></a>
+            </li>
+
+            <!-- Nav Item - Features -->
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showSection('features')">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Tính năng</span></a>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Sidebar Toggler (Sidebar) -->
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+        </ul>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+
+                        <div class="topbar-divider d-none d-sm-block"></div>
+
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="nav-username">Admin</span>
+                                <img class="img-profile rounded-circle"
+                                    src="/static/img/undraw_profile.svg"
+                                    alt="">
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="/">
+                                    <i class="fas fa-home fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Trang chủ
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    Đăng xuất
+                                </a>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                    </div>
+
+                    <!-- Content Rows -->
+                    <div class="row">
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Tổng Users</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="stat-total-users">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Users Pro</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="stat-pro-users">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-crown fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Earnings (Monthly) Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Lượt truy cập hôm nay</div>
+                                            <div class="row no-gutters align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="stat-visits-today">0</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-eye fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Requests Card Example -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Tổng lượt dùng</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="stat-total-usage">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-chart-line fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Row -->
+                    <div class="row" id="dashboard-content">
+                        
+                        <!-- Charts Row -->
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Biểu đồ Lượt Dùng</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-area" style="position: relative; height:320px;">
+                                        <canvas id="usageChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Phân loại Users</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-pie pt-4 pb-2" style="position: relative; height:250px;">
+                                        <canvas id="userChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Users Section -->
+                        <div class="col-12" id="users-section">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Quản lý Users</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Username</th>
+                                                    <th>Email</th>
+                                                    <th>Pro</th>
+                                                    <th>Admin</th>
+                                                    <th>Ban7</th>
+                                                    <th>Spam Log</th>
+                                                    <th>Ngày tạo</th>
+                                                    <th>Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="users-table-body">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Features Section (Hidden by default) -->
+                        <div class="col-12" id="features-section" style="display: none;">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Quản lý Tính năng</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card border-left-primary shadow h-100 py-2">
+                                                <div class="card-body">
+                                                    <div class="row no-gutters align-items-center">
+                                                        <div class="col mr-2">
+                                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                                Tính năng Ban7</div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="feature-ban7-status">Đang bật</div>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <i class="fas fa-ban fa-2x text-gray-300"></i>
+                                                        </div>
+                                                    </div>
+                                                    <button class="btn btn-primary btn-sm mt-2" onclick="toggleFeature('ban7')">Toggle</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card border-left-success shadow h-100 py-2">
+                                                <div class="card-body">
+                                                    <div class="row no-gutters align-items-center">
+                                                        <div class="col mr-2">
+                                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                                Tính năng Spam Log</div>
+                                                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="feature-spam-log-status">Đang bật</div>
+                                                        </div>
+                                                        <div class="col-auto">
+                                                            <i class="fas fa-bolt fa-2x text-gray-300"></i>
+                                                        </div>
+                                                    </div>
+                                                    <button class="btn btn-success btn-sm mt-2" onclick="toggleFeature('spam_log')">Toggle</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; Free Fire Tools 2026</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="#" onclick="logout()">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/static/js/sb-admin-2.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Dashboard JavaScript -->
+    <script>
+        // Check authentication
+        async function checkAuth() {
+            try {
+                // For admin dashboard, we check if admin is logged in
+                // Since we're using server-side session check, we just need to verify
+                // If we're on this page, we should be authenticated
+                const response = await fetch('/api/admin/stats');
+                const data = await response.json();
+                
+                if (!data.success && data.error === 'Unauthorized') {
+                    window.location.href = '/admin/login';
+                    return;
+                }
+                
+                document.getElementById('nav-username').textContent = 'Admin';
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/admin/login';
+            }
+        }
+
+        // Load dashboard statistics
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/admin/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('stat-total-users').textContent = data.stats.total_users;
+                    document.getElementById('stat-pro-users').textContent = data.stats.pro_users;
+                    document.getElementById('stat-visits-today').textContent = data.stats.visits_today;
+                    document.getElementById('stat-total-usage').textContent = data.stats.total_ban7 + data.stats.total_spam_log;
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const tbody = document.getElementById('users-table-body');
+                    tbody.innerHTML = data.users.map(user => `
+                        <tr>
+                            <td>${user.username}</td>
+                            <td>${user.email}</td>
+                            <td>
+                                <span class="badge ${user.is_pro ? 'badge-success' : 'badge-secondary'}">
+                                    ${user.is_pro ? 'PRO' : 'Free'}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge ${user.is_admin ? 'badge-primary' : 'badge-secondary'}">
+                                    ${user.is_admin ? 'Admin' : 'User'}
+                                </span>
+                            </td>
+                            <td>${user.ban7_usage}</td>
+                            <td>${user.spam_log_usage}</td>
+                            <td>${user.created_at ? new Date(user.created_at).toLocaleDateString('vi-VN') : 'N/A'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editUser('${user.username}')">Sửa</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteUser('${user.username}')">Xóa</button>
+                                <button class="btn btn-sm btn-warning" onclick="togglePro('${user.username}')">${user.is_pro ? 'Hủy Pro' : 'Nâng Pro'}</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load users:', error);
+            }
+        }
+
+        // Show section
+        function showSection(section) {
+            document.getElementById('users-section').style.display = section === 'users' ? 'block' : 'none';
+            document.getElementById('features-section').style.display = section === 'features' ? 'block' : 'none';
+        }
+
+        // Edit user
+        function editUser(username) {
+            const newEmail = prompt('Nhập email mới:');
+            if (newEmail) {
+                fetch(`/api/admin/user/${username}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: newEmail })
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Đã cập nhật email');
+                        loadUsers();
+                    } else {
+                        alert('Lỗi: ' + data.error);
+                    }
+                });
+            }
+        }
+
+        // Delete user
+        function deleteUser(username) {
+            if (confirm(`Bạn có chắc muốn xóa user ${username}?`)) {
+                fetch(`/api/admin/user/${username}`, {
+                    method: 'DELETE'
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Đã xóa user');
+                        loadUsers();
+                        loadStats();
+                    } else {
+                        alert('Lỗi: ' + data.error);
+                    }
+                });
+            }
+        }
+
+        // Toggle pro status
+        function togglePro(username) {
+            fetch(`/api/admin/user/${username}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ is_pro: true })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Đã cập nhật status Pro');
+                    loadUsers();
+                    loadStats();
+                } else {
+                    alert('Lỗi: ' + data.error);
+                }
+            });
+        }
+
+        // Toggle feature
+        function toggleFeature(feature) {
+            const enabled = confirm(`Bạn có muốn ${feature === 'ban7' ? 'bật' : 'bật'} tính năng ${feature}?`);
+            fetch('/api/admin/feature_toggle', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ feature: feature, enabled: enabled })
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    loadFeatures();
+                } else {
+                    alert('Lỗi: ' + data.error);
+                }
+            });
+        }
+
+        // Load features
+        function loadFeatures() {
+            // This would fetch feature status from Firebase
+            // For now, just show default status
+        }
+
+        // Load and render charts
+        async function loadCharts() {
+            try {
+                const response = await fetch('/api/admin/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Usage Chart
+                    const usageCtx = document.getElementById('usageChart').getContext('2d');
+                    new Chart(usageCtx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Ban7', 'Spam Log'],
+                            datasets: [{
+                                label: 'Lượt dùng',
+                                data: [data.stats.total_ban7, data.stats.total_spam_log],
+                                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                                borderColor: 'rgba(78, 115, 223, 1)',
+                                pointRadius: 3,
+                                pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                                pointBorderColor: 'rgba(78, 115, 223, 1)',
+                                pointHoverRadius: 3,
+                                pointHoverBackgroundColor: 'rgba(78, 115, 223, 1)',
+                                pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                                pointHitRadius: 10,
+                                pointBorderWidth: 2,
+                            }],
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            layout: { padding: { left: 10, right: 25, top: 25, bottom: 0 } },
+                            scales: {
+                                x: { grid: { display: false, drawBorder: false }, ticks: { maxTicksLimit: 7 } },
+                                y: { ticks: { maxTicksLimit: 5, padding: 10, callback: function(value) { return value } }, grid: { color: 'rgb(234, 236, 244)', zeroLineColor: 'rgb(234, 236, 244)', drawBorder: false, borderDash: [2], zeroLineBorderDash: [2] } },
+                            },
+                            plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgb(255,255,255)', bodyColor: '#858796', borderColor: '#dddfeb', borderWidth: 1, xPadding: 15, yPadding: 15, displayColors: false, caretPadding: 10 } }
+                        }
+                    });
+
+                    // User Chart
+                    const userCtx = document.getElementById('userChart').getContext('2d');
+                    new Chart(userCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Pro Users', 'Free Users'],
+                            datasets: [{
+                                data: [data.stats.pro_users, data.stats.free_users],
+                                backgroundColor: ['#4e73df', '#1cc88a'],
+                                hoverBackgroundColor: ['#2e59d9', '#17a673'],
+                                hoverBorderColor: 'rgba(234, 236, 244, 1)',
+                            }],
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            tooltips: { backgroundColor: 'rgb(255,255,255)', bodyFontColor: '#858796', borderColor: '#dddfeb', borderWidth: 1, xPadding: 15, yPadding: 15, displayColors: false, caretPadding: 10 },
+                            plugins: { legend: { display: false }, cutoutPercentage: 80 },
+                        },
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load charts:', error);
+            }
+        }
+
+        // Logout
+        function logout() {
+            fetch('/api/admin/logout', { method: 'POST' })
+                .then(() => window.location.href = '/admin/login');
+        }
+
+        // Initialize
+        checkAuth();
+        loadStats();
+        loadUsers();
+        loadCharts();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            loadStats();
+            loadUsers();
+        }, 30000);
+    </script>
+
+</body>
+
+</html>

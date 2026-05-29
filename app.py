@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify, session, redirect
 import hashlib
 import requests
 import time
@@ -48,6 +48,20 @@ def firebase_update(path, data):
     url = f"{FIREBASE_URL}/{path}.json?auth={FIREBASE_SECRET}"
     response = requests.patch(url, json=data)
     return response.status_code == 200
+
+def track_visit():
+    """Track website visit"""
+    try:
+        visits = firebase_get('visits')
+        if not visits:
+            visits = {}
+        
+        today = datetime.now().strftime('%Y-%m-%d')
+        visits[today] = visits.get(today, 0) + 1
+        
+        firebase_set('visits', visits)
+    except Exception as e:
+        print(f"Error tracking visit: {e}")
 
 def load_users():
     try:
@@ -800,7 +814,20 @@ def guest_get_access(uid, password):
 
 @app.route('/')
 def index():
+    # Track visit
+    track_visit()
     return render_template('index.html')
+
+@app.route('/admin/login')
+def admin_login():
+    return render_template('admin_login.html')
+
+@app.route('/dashboard')
+def dashboard():
+    # Check if user is logged in as admin
+    if 'admin_logged_in' not in session or not session['admin_logged_in']:
+        return redirect('/admin/login')
+    return render_template('dashboard.html')
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -878,6 +905,10 @@ def check_auth():
     if 'logged_in' in session and session['logged_in']:
         username = session.get('username')
         usage = get_user_usage(username)
+        users = load_users()
+        user_data = users.get(username, {})
+        # Get is_pro from users collection
+        usage['is_pro'] = user_data.get('is_pro', False)
         return jsonify({
             'success': True,
             'logged_in': True,
@@ -904,7 +935,194 @@ def upgrade_pro():
         usage[username]['is_pro'] = True
         save_usage(usage)
         
+        # Also update users collection
+        users = load_users()
+        if username in users:
+            users[username]['is_pro'] = True
+            save_users(users)
+        
         return jsonify({'success': True, 'message': 'Đã nâng cấp lên gói Pro'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+# Dashboard API endpoints
+@app.route('/api/admin/stats', methods=['GET'])
+def admin_stats():
+    try:
+        if 'admin_logged_in' not in session or not session['admin_logged_in']:
+            return jsonify({'success': False, 'error': 'Unauthorized'})
+        
+        # Get statistics
+        total_users = len(users)
+        pro_users = sum(1 for u in users.values() if u.get('is_pro', False))
+        usage = load_usage()
+        
+        # Calculate total usage
+        total_ban7 = sum(u.get('ban7', 0) for u in usage.values())
+        total_spam_log = sum(u.get('spam_log', 0) for u in usage.values())
+        
+        # Get visits today
+        visits = firebase_get('visits')
+        today = datetime.now().strftime('%Y-%m-%d')
+        visits_today = visits.get(today, 0) if visits else 0
+        
+        return jsonify({
+            'success': True,
+            'stats': {
+                'total_users': total_users,
+                'pro_users': pro_users,
+                'free_users': total_users - pro_users,
+                'total_ban7': total_ban7,
+                'total_spam_log': total_spam_log,
+                'visits_today': visits_today
+            }
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/admin/users', methods=['GET'])
+def admin_users():
+    try:
+        if 'admin_logged_in' not in session or not session['admin_logged_in']:
+            return jsonify({'success': False, 'error': 'Unauthorized'})
+        
+        usage = load_usage()
+        
+        # Combine user data with usage
+        users_list = []
+        for uname, udata in users.items():
+            uusage = usage.get(uname, {'ban7': 0, 'spam_log': 0, 'is_pro': False})
+            users_list.append({
+                'username': uname,
+                'email': udata.get('email', ''),
+                'is_pro': udata.get('is_pro', False) or uusage.get('is_pro', False),
+                'is_admin': udata.get('is_admin', False),
+                'created_at': udata.get('created_at', ''),
+                'ban7_usage': uusage.get('ban7', 0),
+                'spam_log_usage': uusage.get('spam_log', 0)
+            })
+        
+        return jsonify({'success': True, 'users': users_list})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/admin/user/<username>', methods=['GET', 'PUT', 'DELETE'])
+def admin_user(username):
+    try:
+        if 'admin_logged_in' not in session or not session['admin_logged_in']:
+            return jsonify({'success': False, 'error': 'Unauthorized'})
+        
+        if request.method == 'GET':
+            if username not in users:
+                return jsonify({'success': False, 'error': 'User not found'})
+            
+            usage = load_usage()
+            uusage = usage.get(username, {'ban7': 0, 'spam_log': 0, 'is_pro': False})
+            
+            return jsonify({
+                'success': True,
+                'user': {
+                    'username': username,
+                    'email': users[username].get('email', ''),
+                    'is_pro': users[username].get('is_pro', False) or uusage.get('is_pro', False),
+                    'is_admin': users[username].get('is_admin', False),
+                    'created_at': users[username].get('created_at', ''),
+                    'ban7_usage': uusage.get('ban7', 0),
+                    'spam_log_usage': uusage.get('spam_log', 0)
+                }
+            })
+        
+        elif request.method == 'PUT':
+            data = request.json
+            if username not in users:
+                return jsonify({'success': False, 'error': 'User not found'})
+            
+            # Update user data
+            if 'email' in data:
+                users[username]['email'] = data['email']
+            if 'password' in data:
+                users[username]['password'] = hashlib.sha256(data['password'].encode()).hexdigest()
+            if 'is_pro' in data:
+                users[username]['is_pro'] = data['is_pro']
+                # Also update usage
+                usage = load_usage()
+                if username not in usage:
+                    usage[username] = {'ban7': 0, 'spam_log': 0, 'is_pro': False}
+                usage[username]['is_pro'] = data['is_pro']
+                save_usage(usage)
+            if 'is_admin' in data:
+                users[username]['is_admin'] = data['is_admin']
+            
+            save_users(users)
+            return jsonify({'success': True, 'message': 'User updated successfully'})
+        
+        elif request.method == 'DELETE':
+            if username not in users:
+                return jsonify({'success': False, 'error': 'User not found'})
+            
+            # Delete user
+            del users[username]
+            save_users(users)
+            
+            # Delete usage
+            usage = load_usage()
+            if username in usage:
+                del usage[username]
+                save_usage(usage)
+            
+            return jsonify({'success': True, 'message': 'User deleted successfully'})
+    
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/admin/feature_toggle', methods=['POST'])
+def admin_feature_toggle():
+    try:
+        if 'admin_logged_in' not in session or not session['admin_logged_in']:
+            return jsonify({'success': False, 'error': 'Unauthorized'})
+        
+        data = request.json
+        feature = data.get('feature')  # 'ban7' or 'spam_log'
+        enabled = data.get('enabled', True)
+        
+        # Store feature toggle in Firebase
+        features = firebase_get('features') or {}
+        features[feature] = enabled
+        firebase_set('features', features)
+        
+        return jsonify({'success': True, 'message': f'Feature {feature} {"enabled" if enabled else "disabled"}'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/admin/login', methods=['POST'])
+def admin_login_api():
+    try:
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username or not password:
+            return jsonify({'success': False, 'error': 'Username và password là bắt buộc'})
+        
+        # Hardcoded admin credentials (you can change this)
+        ADMIN_USERNAME = "admin"
+        ADMIN_PASSWORD = "admin123"
+        
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
+            session['admin_username'] = username
+            return jsonify({'success': True, 'message': 'Đăng nhập thành công'})
+        else:
+            return jsonify({'success': False, 'error': 'Username hoặc password không đúng'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/admin/logout', methods=['POST'])
+def admin_logout():
+    try:
+        session.pop('admin_logged_in', None)
+        session.pop('admin_username', None)
+        return jsonify({'success': True, 'message': 'Đăng xuất thành công'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Admin Login - Free Fire Tools</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Custom fonts for this template-->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .login-image {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-image img {
+            max-width: 80%;
+            opacity: 0.9;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-md-12">
+                <div class="card login-card my-5">
+                    <div class="card-body p-0">
+                        <div class="row">
+                            <div class="col-lg-6 d-none d-lg-block login-image">
+                                <div class="text-center text-white">
+                                    <i class="bi bi-shield-lock" style="font-size: 150px;"></i>
+                                    <h3 class="mt-4">Admin Panel</h3>
+                                    <p>Free Fire Tools Management</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center mb-4">
+                                        <h1 class="h4 text-gray-900 mb-4">Admin Login</h1>
+                                        <p class="text-muted">Đăng nhập để quản lý hệ thống</p>
+                                    </div>
+                                    <form id="adminLoginForm" class="user">
+                                        <div class="form-group mb-3">
+                                            <label for="username">Username</label>
+                                            <input type="text" class="form-control form-control-user" 
+                                                id="username" aria-describedby="usernameHelp" 
+                                                placeholder="Nhập username" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label for="password">Password</label>
+                                            <input type="password" class="form-control form-control-user" 
+                                                id="password" placeholder="Nhập password" required>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                                <label class="form-check-label" for="rememberMe">
+                                                    Ghi nhớ đăng nhập
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-user btn-block w-100">
+                                            <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                                        </button>
+                                        <hr>
+                                        <div class="text-center">
+                                            <a class="small" href="/">Quay lại trang chủ</a>
+                                        </div>
+                                    </form>
+                                    <div id="loginError" class="alert alert-danger mt-3" style="display: none;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#adminLoginForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                const username = $('#username').val();
+                const password = $('#password').val();
+                
+                $.ajax({
+                    url: '/api/admin/login',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        username: username,
+                        password: password
+                    }),
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = '/dashboard';
+                        } else {
+                            $('#loginError').text(response.error || 'Đăng nhập thất bại').show();
+                        }
+                    },
+                    error: function() {
+                        $('#loginError').text('Có lỗi xảy ra, vui lòng thử lại').show();
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>
