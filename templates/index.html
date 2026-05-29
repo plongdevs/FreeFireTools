@@ -99,6 +99,88 @@
             animation: cyan-circular-flow 4s ease infinite;
         }
 
+        .nav-auth {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-user-info {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-user-info.active {
+            display: flex;
+        }
+
+        .nav-user-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .nav-user-usage {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .nav-btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .nav-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99,102,241,0.4);
+        }
+
+        .nav-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: var(--text);
+        }
+
+        .nav-btn-secondary:hover {
+            border-color: rgba(99,102,241,0.5);
+            background: rgba(99,102,241,0.05);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .pro-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
         @keyframes cyan-circular-flow {
             0% { background-position: 0% 50%; }
             25% { background-position: 100% 50%; }
@@ -448,6 +530,25 @@
             <i class="fas fa-gamepad" style="color: var(--primary);"></i>
             <span class="nav-brand-text">Free Fire Tools</span>
         </a>
+        <div class="nav-auth">
+            <div class="nav-user-info" id="nav-user-info">
+                <div>
+                    <span class="nav-user-name" id="nav-username"></span>
+                    <span class="pro-badge" id="nav-pro-badge" style="display: none;">PRO</span>
+                </div>
+                <div class="nav-user-usage">
+                    Ban: <span id="usage-ban7">0</span>/1 | Spam Log: <span id="usage-spam-log">0</span>/1
+                </div>
+                <button class="nav-btn nav-btn-primary" id="upgrade-pro-btn" onclick="openModal('upgrade-pro')" style="display: none;">
+                    <i class="fas fa-crown"></i> Nâng cấp Pro
+                </button>
+                <button class="nav-btn nav-btn-secondary" onclick="logout()">Đăng xuất</button>
+            </div>
+            <div id="nav-auth-buttons">
+                <button class="nav-btn nav-btn-secondary" onclick="openModal('login')">Đăng nhập</button>
+                <button class="nav-btn nav-btn-primary" onclick="openModal('register')">Đăng ký</button>
+            </div>
+        </div>
     </nav>
 
     <div class="container">
@@ -738,33 +839,16 @@
                 <input type="text" id="spam-log-token" placeholder="Nhập access token">
             </div>
             <div class="form-group">
-                <label>Thời gian (tối đa 15 ngày, ví dụ: 1d:2h:30m:10s)</label>
+                <label>Thời gian (tối đa 15 ngày, ví dụ: 10s, 1m, 1h)</label>
                 <input type="text" id="spam-log-duration" placeholder="10s" value="10s">
             </div>
-            <button class="btn btn-primary" onclick="spamLog()">
-                <i class="fas fa-bolt"></i> Bắt đầu Spam Log
+            <button class="btn btn-primary" id="spam-log-toggle-btn" onclick="toggleSpamLog()">
+                <i class="fas fa-bolt"></i> Chạy Spam Log
             </button>
-            <div class="loading" id="spam-log-loading">
-                <div class="spinner"></div>
-                <span>Đang tạo task...</span>
+            <div class="progress-bar" id="spam-log-progress" style="display: none;">
+                <div class="progress-fill" id="spam-log-progress-fill" style="width: 0%;"></div>
             </div>
             <div class="result-box" id="spam-log-result"></div>
-            <div class="result-box" id="spam-log-task-info" style="display:none; margin-top: 1rem;">
-                <h4>📋 Thông tin Task</h4>
-                <div class="result-content">
-                    <div class="info-item">
-                        <span class="info-label">Task ID:</span>
-                        <span class="info-value" id="spam-log-task-id"></span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-label">Trạng thái:</span>
-                        <span class="info-value" id="spam-log-task-status"></span>
-                    </div>
-                </div>
-                <button class="btn btn-secondary" onclick="checkSpamLogStatus()" style="margin-top: 1rem;">
-                    <i class="fas fa-sync"></i> Kiểm tra Trạng thái
-                </button>
-            </div>
         </div>
     </div>
 
@@ -935,6 +1019,91 @@
         </div>
     </div>
 
+    <!-- Login Modal -->
+    <div class="modal" id="modal-login">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Đăng nhập</h2>
+                <button class="close-btn" onclick="closeModal('login')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Tên đăng nhập</label>
+                <input type="text" id="login-username" placeholder="Nhập tên đăng nhập">
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="login-password" placeholder="Nhập mật khẩu">
+            </div>
+            <button class="btn btn-primary" onclick="login()">
+                <i class="fas fa-sign-in-alt"></i> Đăng nhập
+            </button>
+            <div class="loading" id="login-loading">
+                <div class="spinner"></div>
+                <span>Đang đăng nhập...</span>
+            </div>
+            <div class="result-box" id="login-result"></div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal" id="modal-register">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Đăng ký</h2>
+                <button class="close-btn" onclick="closeModal('register')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="register-email" placeholder="Nhập email">
+            </div>
+            <div class="form-group">
+                <label>Tên đăng nhập</label>
+                <input type="text" id="register-username" placeholder="Nhập tên đăng nhập">
+            </div>
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <input type="password" id="register-password" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)">
+            </div>
+            <button class="btn btn-primary" onclick="register()">
+                <i class="fas fa-user-plus"></i> Đăng ký
+            </button>
+            <div class="loading" id="register-loading">
+                <div class="spinner"></div>
+                <span>Đang đăng ký...</span>
+            </div>
+            <div class="result-box" id="register-result"></div>
+        </div>
+    </div>
+
+    <!-- Upgrade Pro Modal -->
+    <div class="modal" id="modal-upgrade-pro">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nâng cấp gói Pro</h2>
+                <button class="close-btn" onclick="closeModal('upgrade-pro')">&times;</button>
+            </div>
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <i class="fas fa-crown" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                <h3 style="margin-bottom: 0.5rem;">Gói Pro</h3>
+                <p style="color: var(--text-muted);">Sử dụng không giới hạn tính năng Ban và Spam Log</p>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid var(--dark-border); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem;">
+                <h4 style="margin-bottom: 0.5rem; color: #f59e0b;">✨ Tính năng Pro:</h4>
+                <ul style="list-style: none; padding: 0; color: var(--text-muted);">
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #22c55e; margin-right: 0.5rem;"></i> Sử dụng Ban không giới hạn</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #22c55e; margin-right: 0.5rem;"></i> Sử dụng Spam Log không giới hạn</li>
+                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #22c55e; margin-right: 0.5rem;"></i> Hỗ trợ ưu tiên</li>
+                </ul>
+            </div>
+            <a href="https://t.me/minhdevtcp" target="_blank" class="btn btn-primary" style="width: 100%; justify-content: center; text-decoration: none;">
+                <i class="fab fa-telegram"></i> Mua gói Pro trên Telegram
+            </a>
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                Liên hệ @minhdevtcp trên Telegram để mua gói Pro
+            </p>
+        </div>
+    </div>
+
     <script>
         // Create meteors
         const meteorsContainer = document.getElementById('meteors');
@@ -946,6 +1115,194 @@
             meteor.style.animationDelay = `${Math.random() * 5}s`;
             meteorsContainer.appendChild(meteor);
         }
+
+        // Check authentication status on page load
+        window.currentUser = null;
+        window.userUsage = null;
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/check_auth');
+                const data = await response.json();
+                
+                if (data.logged_in) {
+                    window.currentUser = data.username;
+                    window.userUsage = data.usage;
+                    updateAuthUI(true);
+                } else {
+                    updateAuthUI(false);
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                updateAuthUI(false);
+            }
+        }
+
+        function updateAuthUI(loggedIn) {
+            const navUserInfo = document.getElementById('nav-user-info');
+            const navAuthButtons = document.getElementById('nav-auth-buttons');
+            const upgradeProBtn = document.getElementById('upgrade-pro-btn');
+            
+            if (loggedIn) {
+                navUserInfo.classList.add('active');
+                navAuthButtons.style.display = 'none';
+                document.getElementById('nav-username').textContent = window.currentUser;
+                document.getElementById('usage-ban7').textContent = window.userUsage.ban7 || 0;
+                document.getElementById('usage-spam-log').textContent = window.userUsage.spam_log || 0;
+                
+                if (window.userUsage.is_pro) {
+                    document.getElementById('nav-pro-badge').style.display = 'inline';
+                    if (upgradeProBtn) upgradeProBtn.style.display = 'none';
+                } else {
+                    document.getElementById('nav-pro-badge').style.display = 'none';
+                    if (upgradeProBtn) upgradeProBtn.style.display = 'inline-flex';
+                }
+            } else {
+                navUserInfo.classList.remove('active');
+                navAuthButtons.style.display = 'flex';
+            }
+            
+            // Update tool cards based on auth status
+            updateToolCards();
+        }
+
+        function updateToolCards() {
+            const ban7Card = document.querySelector('.tool-card[onclick*="ban7"]');
+            const spamLogCard = document.querySelector('.tool-card[onclick*="spam-log"]');
+            
+            if (window.currentUser) {
+                // User is logged in
+                if (ban7Card) {
+                    ban7Card.classList.remove('disabled');
+                    ban7Card.onclick = () => openModal('ban7');
+                }
+                if (spamLogCard) {
+                    spamLogCard.classList.remove('disabled');
+                    spamLogCard.onclick = () => openModal('spam-log');
+                }
+            } else {
+                // User is not logged in
+                if (ban7Card) {
+                    ban7Card.classList.add('disabled');
+                    ban7Card.onclick = () => showAuthRequired();
+                }
+                if (spamLogCard) {
+                    spamLogCard.classList.add('disabled');
+                    spamLogCard.onclick = () => showAuthRequired();
+                }
+            }
+        }
+
+        function showAuthRequired() {
+            alert('Bạn cần đăng nhập để sử dụng tính năng này');
+            openModal('login');
+        }
+
+        async function login() {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (!username || !password) {
+                showResult('login', false, 'Vui lòng nhập tên đăng nhập và mật khẩu');
+                return;
+            }
+            
+            setLoading('login', true);
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('login', true, 'Đăng nhập thành công');
+                    window.currentUser = data.username;
+                    await checkAuth();
+                    closeModal('login');
+                } else {
+                    showResult('login', false, data.error);
+                }
+            } catch (error) {
+                showResult('login', false, error.message);
+            }
+            setLoading('login', false);
+        }
+
+        async function register() {
+            const email = document.getElementById('register-email').value;
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            
+            if (!email || !username || !password) {
+                showResult('register', false, 'Vui lòng điền tất cả các trường');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showResult('register', false, 'Mật khẩu phải có ít nhất 6 ký tự');
+                return;
+            }
+            
+            setLoading('register', true);
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, username, password })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('register', true, 'Đăng ký thành công');
+                    closeModal('register');
+                    openModal('login');
+                } else {
+                    showResult('register', false, data.error);
+                }
+            } catch (error) {
+                showResult('register', false, error.message);
+            }
+            setLoading('register', false);
+        }
+
+        async function logout() {
+            try {
+                const response = await fetch('/api/logout', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.currentUser = null;
+                    window.userUsage = null;
+                    updateAuthUI(false);
+                    alert('Đăng xuất thành công');
+                }
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        }
+
+        async function upgradePro() {
+            try {
+                const response = await fetch('/api/upgrade_pro', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(data.message);
+                    await checkAuth();
+                    closeModal('upgrade-pro');
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                console.error('Upgrade failed:', error);
+                alert('Lỗi khi nâng cấp');
+            }
+        }
+
+        // Initialize auth check on page load
+        checkAuth();
 
         function openModal(id) {
             document.getElementById(`modal-${id}`).classList.add('active');
@@ -1265,7 +1622,21 @@
             setLoading('add-recovery', false);
         }
 
-        async function spamLog() {
+        // Spam log state
+        let spamLogRunning = false;
+        let spamLogInterval = null;
+        let spamLogStartTime = null;
+        let spamLogDuration = 0;
+
+        function toggleSpamLog() {
+            if (spamLogRunning) {
+                stopSpamLog();
+            } else {
+                startSpamLog();
+            }
+        }
+
+        async function startSpamLog() {
             const token = document.getElementById('spam-log-token').value;
             const duration = document.getElementById('spam-log-duration').value;
             
@@ -1274,72 +1645,103 @@
                 return;
             }
 
-            setLoading('spam-log', true);
             try {
                 const response = await fetch('/api/spam_log', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         access_token: token,
-                        duration: duration 
+                        duration: duration,
+                        action: 'start'
                     })
                 });
                 const data = await response.json();
                 
                 if (data.success) {
-                    showResult('spam-log', true, data.message);
+                    spamLogRunning = true;
+                    spamLogDuration = data.duration;
+                    spamLogStartTime = Date.now();
                     
-                    // Show task info
-                    document.getElementById('spam-log-task-id').textContent = data.task_id;
-                    document.getElementById('spam-log-task-status').textContent = data.status;
-                    document.getElementById('spam-log-task-info').style.display = 'block';
+                    // Update button
+                    const btn = document.getElementById('spam-log-toggle-btn');
+                    btn.innerHTML = '<i class="fas fa-stop"></i> Dừng Spam Log';
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-secondary');
                     
-                    // Store task ID for status checking
-                    window.currentTaskId = data.task_id;
+                    // Show progress bar
+                    const progressBar = document.getElementById('spam-log-progress');
+                    progressBar.style.display = 'block';
+                    
+                    // Start progress animation
+                    updateProgress();
+                    spamLogInterval = setInterval(updateProgress, 100);
+                    
+                    showResult('spam-log', true, 'Đã bắt đầu spam log');
                 } else {
                     showResult('spam-log', false, data.error);
                 }
             } catch (error) {
                 showResult('spam-log', false, error.message);
             }
-            setLoading('spam-log', false);
         }
 
-        async function checkSpamLogStatus() {
-            if (!window.currentTaskId) {
-                showResult('spam-log', false, 'Không có task ID');
-                return;
-            }
-
-            setLoading('spam-log', true);
+        async function stopSpamLog() {
             try {
-                const response = await fetch(`/api/task_status/${window.currentTaskId}`);
+                const response = await fetch('/api/spam_log', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'stop' })
+                });
                 const data = await response.json();
                 
                 if (data.success) {
-                    const task = data.task;
-                    document.getElementById('spam-log-task-status').textContent = task.status;
+                    spamLogRunning = false;
+                    clearInterval(spamLogInterval);
                     
-                    if (task.status === 'completed' && task.result) {
-                        const info = {
-                            'Total Sent': task.result.total_sent,
-                            'Errors': task.result.errors,
-                            'Duration': task.result.duration + 's',
-                            'Server': task.result.server
-                        };
-                        showResult('spam-log', true, 'Task đã hoàn thành!', info);
-                    } else if (task.status === 'failed') {
-                        showResult('spam-log', false, `Task thất bại: ${task.result?.error || 'Lỗi không xác định'}`);
-                    } else {
-                        showResult('spam-log', true, `Task ${task.status} - Kiểm tra lại sau`);
-                    }
+                    // Update button
+                    const btn = document.getElementById('spam-log-toggle-btn');
+                    btn.innerHTML = '<i class="fas fa-bolt"></i> Chạy Spam Log';
+                    btn.classList.remove('btn-secondary');
+                    btn.classList.add('btn-primary');
+                    
+                    // Hide progress bar
+                    const progressBar = document.getElementById('spam-log-progress');
+                    progressBar.style.display = 'none';
+                    document.getElementById('spam-log-progress-fill').style.width = '0%';
+                    
+                    showResult('spam-log', true, 'Đã dừng spam log');
+                    
+                    // Update usage
+                    await checkAuth();
                 } else {
                     showResult('spam-log', false, data.error);
                 }
             } catch (error) {
                 showResult('spam-log', false, error.message);
             }
-            setLoading('spam-log', false);
+        }
+
+        function updateProgress() {
+            if (!spamLogRunning || !spamLogStartTime) return;
+            
+            const elapsed = (Date.now() - spamLogStartTime) / 1000;
+            const progress = Math.min((elapsed / spamLogDuration) * 100, 100);
+            
+            document.getElementById('spam-log-progress-fill').style.width = progress + '%';
+            
+            if (progress >= 100) {
+                stopSpamLog();
+            }
+        }
+
+        async function spamLog() {
+            // This function is deprecated, use toggleSpamLog instead
+            toggleSpamLog();
+        }
+
+        async function checkSpamLogStatus() {
+            // This function is deprecated
+            showResult('spam-log', false, 'Tính năng này đã được thay thế');
         }
 
         function toggleLongBioMethod() {

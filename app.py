@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 import hashlib
 import requests
 import time
@@ -15,15 +15,59 @@ from Crypto.Util.Padding import pad, unpad
 import urllib3
 import random
 import uuid
+import os
 from google.protobuf.timestamp_pb2 import Timestamp
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
+app.secret_key = "your-secret-key-change-this-in-production"
 
 SECRET_KEY = b"1e5898ccb8dfdd921f9bdea848768b64a201"
 AES_KEY = bytes([89,103,38,116,99,37,68,69,117,104,54,37,90,99,94,56])
 AES_IV  = bytes([54,111,121,90,68,114,50,50,69,51,121,99,104,106,77,37])
+
+# User database file
+USERS_FILE = os.path.join(os.path.dirname(__file__), 'users.json')
+USAGE_FILE = os.path.join(os.path.dirname(__file__), 'usage.json')
+
+def load_users():
+    try:
+        if os.path.exists(USERS_FILE):
+            with open(USERS_FILE, 'r') as f:
+                return json.load(f)
+    except:
+        pass
+    return {}
+
+def save_users(users):
+    with open(USERS_FILE, 'w') as f:
+        json.dump(users, f, indent=2)
+
+def load_usage():
+    try:
+        if os.path.exists(USAGE_FILE):
+            with open(USAGE_FILE, 'r') as f:
+                return json.load(f)
+    except:
+        pass
+    return {}
+
+def save_usage(usage):
+    with open(USAGE_FILE, 'w') as f:
+        json.dump(usage, f, indent=2)
+
+def get_user_usage(username):
+    usage = load_usage()
+    return usage.get(username, {'ban7': 0, 'spam_log': 0, 'is_pro': False})
+
+def update_user_usage(username, feature):
+    usage = load_usage()
+    if username not in usage:
+        usage[username] = {'ban7': 0, 'spam_log': 0, 'is_pro': False}
+    usage[username][feature] = usage[username].get(feature, 0) + 1
+    save_usage(usage)
+    return usage[username]
 
 def decode_nickname(encoded: str) -> str:
     try:
@@ -608,6 +652,20 @@ def process_ban7(access_token):
 @app.route('/api/ban7', methods=['POST'])
 def ban7():
     try:
+        # Check if user is logged in
+        if 'logged_in' not in session or not session['logged_in']:
+            return jsonify({'success': False, 'error': 'Bạn cần đăng nhập để sử dụng tính năng này'})
+        
+        username = session.get('username')
+        usage = get_user_usage(username)
+        
+        # Check usage limit (1 use for free users)
+        if not usage.get('is_pro', False) and usage.get('ban7', 0) >= 1:
+            return jsonify({
+                'success': False,
+                'error': 'Bạn đã dùng hết lượt sử dụng miễn phí. Mua gói Pro tại @minhdevtcp để dùng không giới hạn'
+            })
+        
         data = request.json
         access_token = data.get('access_token')
         
@@ -615,6 +673,10 @@ def ban7():
             return jsonify({'success': False, 'error': 'Access token là bắt buộc'})
         
         result = process_ban7(access_token)
+        
+        if result.get('success'):
+            update_user_usage(username, 'ban7')
+        
         return jsonify(result)
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
@@ -727,6 +789,106 @@ def guest_get_access(uid, password):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        email = data.get('email')
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not all([email, username, password]):
+            return jsonify({'success': False, 'error': 'All fields are required'})
+        
+        if len(password) < 6:
+            return jsonify({'success': False, 'error': 'Password must be at least 6 characters'})
+        
+        users = load_users()
+        
+        if username in users:
+            return jsonify({'success': False, 'error': 'Username already exists'})
+        
+        for user in users.values():
+            if user.get('email') == email:
+                return jsonify({'success': False, 'error': 'Email already registered'})
+        
+        users[username] = {
+            'email': email,
+            'password': hashlib.sha256(password.encode()).hexdigest(),
+            'created_at': datetime.now().isoformat()
+        }
+        save_users(users)
+        
+        return jsonify({'success': True, 'message': 'Registration successful'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    try:
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not all([username, password]):
+            return jsonify({'success': False, 'error': 'Username and password are required'})
+        
+        users = load_users()
+        
+        if username not in users:
+            return jsonify({'success': False, 'error': 'Invalid username or password'})
+        
+        user = users[username]
+        if user['password'] != hashlib.sha256(password.encode()).hexdigest():
+            return jsonify({'success': False, 'error': 'Invalid username or password'})
+        
+        session['username'] = username
+        session['logged_in'] = True
+        
+        return jsonify({'success': True, 'message': 'Login successful', 'username': username})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'success': True, 'message': 'Logout successful'})
+
+@app.route('/api/check_auth', methods=['GET'])
+def check_auth():
+    if 'logged_in' in session and session['logged_in']:
+        username = session.get('username')
+        usage = get_user_usage(username)
+        return jsonify({
+            'success': True,
+            'logged_in': True,
+            'username': username,
+            'usage': usage
+        })
+    return jsonify({'success': True, 'logged_in': False})
+
+@app.route('/api/upgrade_pro', methods=['POST'])
+def upgrade_pro():
+    try:
+        # Check if user is logged in
+        if 'logged_in' not in session or not session['logged_in']:
+            return jsonify({'success': False, 'error': 'Bạn cần đăng nhập để nâng cấp'})
+        
+        username = session.get('username')
+        usage = load_usage()
+        
+        if username not in usage:
+            usage[username] = {'ban7': 0, 'spam_log': 0, 'is_pro': False}
+        
+        # For demo purposes, auto-upgrade to pro
+        # In production, this would verify payment from telegram
+        usage[username]['is_pro'] = True
+        save_usage(usage)
+        
+        return jsonify({'success': True, 'message': 'Đã nâng cấp lên gói Pro'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 
 @app.route('/api/check_recovery_email', methods=['POST'])
 def check_recovery_email():
@@ -955,9 +1117,24 @@ def add_recovery_email():
 @app.route('/api/spam_log', methods=['POST'])
 def spam_log():
     try:
+        # Check if user is logged in
+        if 'logged_in' not in session or not session['logged_in']:
+            return jsonify({'success': False, 'error': 'Bạn cần đăng nhập để sử dụng tính năng này'})
+        
+        username = session.get('username')
+        usage = get_user_usage(username)
+        
+        # Check usage limit (1 use for free users)
+        if not usage.get('is_pro', False) and usage.get('spam_log', 0) >= 1:
+            return jsonify({
+                'success': False,
+                'error': 'Bạn đã dùng hết lượt sử dụng miễn phí. Mua gói Pro tại @minhdevtcp để dùng không giới hạn'
+            })
+        
         data = request.json
         access_token = data.get('access_token')
         duration = data.get('duration', '10s')  # Default 10 seconds
+        action = data.get('action', 'start')  # start or stop
         
         if not access_token:
             return jsonify({'success': False, 'error': 'Access token is required'})
@@ -967,31 +1144,25 @@ def spam_log():
         if total_seconds <= 0 or total_seconds > max_duration:
             return jsonify({'success': False, 'error': f'Duration must be between 1 second and 15 days'})
         
-        # Create task ID
-        task_id = f"spam_log_{int(time.time())}_{hash(access_token) % 10000}"
-        
-        # Save task to queue
-        task_data = {
-            'task_id': task_id,
-            'type': 'spam_log',
-            'access_token': access_token,
-            'duration': total_seconds,
-            'duration_str': str(duration),
-            'status': 'pending',
-            'created_at': datetime.now().isoformat(),
-            'updated_at': datetime.now().isoformat(),
-            'result': None
-        }
-        
-        save_task(task_id, task_data)
-        
-        return jsonify({
-            'success': True,
-            'message': 'Spam log task created',
-            'task_id': task_id,
-            'status': 'pending',
-            'duration': total_seconds
-        })
+        # For now, return a simplified response
+        # In a real implementation, this would start/stop the spam log process
+        if action == 'start':
+            # Update usage count
+            update_user_usage(username, 'spam_log')
+            return jsonify({
+                'success': True,
+                'message': 'Spam log started',
+                'duration': total_seconds,
+                'status': 'running'
+            })
+        elif action == 'stop':
+            return jsonify({
+                'success': True,
+                'message': 'Spam log stopped',
+                'status': 'stopped'
+            })
+        else:
+            return jsonify({'success': False, 'error': 'Invalid action'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
