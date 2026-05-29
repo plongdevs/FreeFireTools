@@ -800,31 +800,53 @@
                 <h2>Thêm Email Phục hồi</h2>
                 <button class="close-btn" onclick="closeModal('add-recovery')">&times;</button>
             </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="add-recovery-email" placeholder="Nhập email">
-            </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="add-recovery-token" placeholder="Nhập access token">
-            </div>
-            <div class="form-group">
-                <label>OTP</label>
-                <input type="text" id="add-recovery-otp" placeholder="Nhập OTP nhận được">
-                <button class="btn btn-secondary" onclick="sendAddRecoveryOTP()" style="margin-top: 0.5rem; width: 100%;">
+            
+            <!-- Step 1: Nhập email và token -->
+            <div id="add-recovery-step-1">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="add-recovery-email" placeholder="Nhập email">
+                </div>
+                <div class="form-group">
+                    <label>Access Token</label>
+                    <input type="text" id="add-recovery-token" placeholder="Nhập access token">
+                </div>
+                <button class="btn btn-primary" onclick="sendAddRecoveryOTP()">
                     <i class="fas fa-paper-plane"></i> Gửi OTP
                 </button>
             </div>
-            <div class="form-group">
-                <label>Mã Bảo mật (6 chữ số)</label>
-                <input type="text" id="add-recovery-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+            
+            <!-- Step 2: Nhập OTP -->
+            <div id="add-recovery-step-2" style="display: none;">
+                <div class="form-group">
+                    <label>OTP đã gửi đến email</label>
+                    <input type="text" id="add-recovery-otp" placeholder="Nhập OTP nhận được">
+                </div>
+                <button class="btn btn-primary" onclick="verifyAddRecoveryOTP()">
+                    <i class="fas fa-check"></i> Xác thực OTP
+                </button>
+                <button class="btn btn-secondary" onclick="backToAddRecoveryStep1()" style="margin-left: 0.5rem;">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </button>
             </div>
-            <button class="btn btn-primary" onclick="addRecoveryEmail()">
-                <i class="fas fa-plus-circle"></i> Thêm Email
-            </button>
+            
+            <!-- Step 3: Nhập security code -->
+            <div id="add-recovery-step-3" style="display: none;">
+                <div class="form-group">
+                    <label>Mã Bảo mật (6 chữ số)</label>
+                    <input type="text" id="add-recovery-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+                </div>
+                <button class="btn btn-primary" onclick="createAddRecoveryBind()">
+                    <i class="fas fa-plus-circle"></i> Thêm Email
+                </button>
+                <button class="btn btn-secondary" onclick="backToAddRecoveryStep2()" style="margin-left: 0.5rem;">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </button>
+            </div>
+            
             <div class="loading" id="add-recovery-loading">
                 <div class="spinner"></div>
-                <span>Đang thêm...</span>
+                <span>Đang xử lý...</span>
             </div>
             <div class="result-box" id="add-recovery-result"></div>
         </div>
@@ -1319,6 +1341,17 @@
                 resultBox.classList.remove('active', 'success', 'error');
                 resultBox.innerHTML = '';
             }
+            
+            // Reset add-recovery modal to step 1
+            if (id === 'add-recovery') {
+                document.getElementById('add-recovery-step-1').style.display = 'block';
+                document.getElementById('add-recovery-step-2').style.display = 'none';
+                document.getElementById('add-recovery-step-3').style.display = 'none';
+                document.getElementById('add-recovery-email').value = '';
+                document.getElementById('add-recovery-token').value = '';
+                document.getElementById('add-recovery-otp').value = '';
+                document.getElementById('add-recovery-security').value = '';
+            }
         }
 
         function showResult(id, success, message, data = null) {
@@ -1603,7 +1636,10 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showResult('add-recovery', true, result.message);
+                    showResult('add-recovery', true, 'OTP đã được gửi đến email của bạn');
+                    // Move to step 2
+                    document.getElementById('add-recovery-step-1').style.display = 'none';
+                    document.getElementById('add-recovery-step-2').style.display = 'block';
                 } else {
                     showResult('add-recovery', false, result.error);
                 }
@@ -1613,18 +1649,46 @@
             setLoading('add-recovery', false);
         }
 
-        async function addRecoveryEmail() {
+        async function verifyAddRecoveryOTP() {
+            const email = document.getElementById('add-recovery-email').value;
+            const token = document.getElementById('add-recovery-token').value;
+            const otp = document.getElementById('add-recovery-otp').value;
+            
+            if (!otp) {
+                showResult('add-recovery', false, 'Vui lòng nhập OTP');
+                return;
+            }
+
+            setLoading('add-recovery', true);
+            try {
+                const response = await fetch('/api/verify_otp_add_recovery', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, access_token: token, otp })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('add-recovery', true, 'OTP xác thực thành công');
+                    // Move to step 3
+                    document.getElementById('add-recovery-step-2').style.display = 'none';
+                    document.getElementById('add-recovery-step-3').style.display = 'block';
+                } else {
+                    showResult('add-recovery', false, result.error);
+                }
+            } catch (error) {
+                showResult('add-recovery', false, error.message);
+            }
+            setLoading('add-recovery', false);
+        }
+
+        async function createAddRecoveryBind() {
             const email = document.getElementById('add-recovery-email').value;
             const token = document.getElementById('add-recovery-token').value;
             const otp = document.getElementById('add-recovery-otp').value;
             const security = document.getElementById('add-recovery-security').value;
             
-            if (!email || !token || !otp || !security) {
-                showResult('add-recovery', false, 'Vui lòng điền tất cả các trường');
-                return;
-            }
-
-            if (security.length !== 6 || !security.match(/^\d+$/)) {
+            if (!security || security.length !== 6 || !security.match(/^\d+$/)) {
                 showResult('add-recovery', false, 'Mã bảo mật phải là 6 chữ số');
                 return;
             }
@@ -1634,24 +1698,66 @@
                 const response = await fetch('/api/add_recovery_email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        email, 
-                        access_token: token, 
-                        otp, 
-                        security_code: security 
-                    })
+                    body: JSON.stringify({ email, access_token: token, otp, security_code: security })
                 });
-                const data = await response.json();
+                const result = await response.json();
                 
-                if (data.success) {
-                    showResult('add-recovery', true, data.message);
+                if (result.success) {
+                    showResult('add-recovery', true, result.message);
+                    // Reset and close
+                    setTimeout(() => closeModal('add-recovery'), 2000);
                 } else {
-                    showResult('add-recovery', false, data.error);
+                    showResult('add-recovery', false, result.error);
                 }
             } catch (error) {
                 showResult('add-recovery', false, error.message);
             }
             setLoading('add-recovery', false);
+        }
+
+        function backToAddRecoveryStep1() {
+            document.getElementById('add-recovery-step-2').style.display = 'none';
+            document.getElementById('add-recovery-step-1').style.display = 'block';
+            document.getElementById('add-recovery-result').classList.remove('active');
+        }
+
+        function backToAddRecoveryStep2() {
+            document.getElementById('add-recovery-step-3').style.display = 'none';
+            document.getElementById('add-recovery-step-2').style.display = 'block';
+            document.getElementById('add-recovery-result').classList.remove('active');
+        }
+
+        async function checkRecoveryEmail() {
+            const token = document.getElementById('check-recovery-token').value;
+            if (!token) {
+                showResult('check-recovery', false, 'Please enter access token');
+                return;
+            }
+
+            setLoading('check-recovery', true);
+            try {
+                const response = await fetch('/api/check_recovery_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ access_token: token })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const info = {
+                        'Email': data.email || 'None',
+                        'Pending Email': data.email_to_be || 'None',
+                        'Countdown': data.countdown || 'N/A',
+                        'Status': data.status
+                    };
+                    showResult('check-recovery', true, 'Recovery email info retrieved', info);
+                } else {
+                    showResult('check-recovery', false, data.error);
+                }
+            } catch (error) {
+                showResult('check-recovery', false, error.message);
+            }
+            setLoading('check-recovery', false);
         }
 
         // Spam log state

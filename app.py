@@ -1511,6 +1511,29 @@ def send_otp_add_recovery():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+@app.route('/api/verify_otp_add_recovery', methods=['POST'])
+def verify_otp_add_recovery():
+    try:
+        data = request.json
+        email = data.get('email')
+        access_token = data.get('access_token')
+        otp = data.get('otp')
+        
+        if not all([email, access_token, otp]):
+            return jsonify({'success': False, 'error': 'Email, access token và OTP là bắt buộc'})
+        
+        vr = verify_otp(otp, email, access_token)
+        if vr.status_code != 200:
+            return jsonify({'success': False, 'error': 'OTP verification failed'})
+        
+        verifier_token = vr.json().get("verifier_token")
+        if not verifier_token:
+            return jsonify({'success': False, 'error': 'No verifier token'})
+        
+        return jsonify({'success': True, 'message': 'OTP xác thực thành công'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
 @app.route('/api/send_otp_unbind', methods=['POST'])
 def send_otp_unbind():
     try:
