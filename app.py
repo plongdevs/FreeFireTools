@@ -828,9 +828,15 @@ def register():
         users[username] = {
             'email': email,
             'password': hashlib.sha256(password.encode()).hexdigest(),
-            'created_at': datetime.now().isoformat()
+            'created_at': datetime.now().isoformat(),
+            'is_pro': False
         }
         save_users(users)
+        
+        # Initialize usage for new user
+        usage = load_usage()
+        usage[username] = {'ban7': 0, 'spam_log': 0, 'is_pro': False}
+        save_usage(usage)
         
         return jsonify({'success': True, 'message': 'Registration successful'})
     except Exception as e:
