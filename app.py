@@ -21,7 +21,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 app = Flask(__name__)
-app.secret_key = "your-secret-key-change-this-in-production"
+app.secret_key = os.environ.get("SECRET_KEY", "7a64c38271e2dc4485d8d51b523a8b6b21c00b147a5346c762966d84146cbbf1")
 
 SECRET_KEY = b"1e5898ccb8dfdd921f9bdea848768b64a201"
 AES_KEY = bytes([89,103,38,116,99,37,68,69,117,104,54,37,90,99,94,56])
@@ -226,16 +226,6 @@ def eat_to_access(eat_token: str) -> str:
     parsed = urlparse(resp.url)
     params = parse_qs(parsed.query)
     return params.get('access_token', [None])[0]
-
-def _varint(v):
-    r = bytearray()
-    while v > 0x7F:
-        r.append((v & 0x7F) | 0x80); v >>= 7
-    r.append(v); return bytes(r)
-
-def _str_field(f, v):
-    if isinstance(v, str): v = v.encode()
-    return _varint((f << 3) | 2) + _varint(len(v)) + v
 
 def build_login_payload(open_id: str, access_token: str, platform: int) -> bytes:
     now = str(datetime.now())[:19]
@@ -715,8 +705,11 @@ def ban7():
 def save_task(task_id, task_data):
     """Save task to tasks.json"""
     try:
-        with open('tasks.json', 'r') as f:
-            tasks = json.load(f)
+        if os.path.exists('tasks.json'):
+            with open('tasks.json', 'r') as f:
+                tasks = json.load(f)
+        else:
+            tasks = []
     except:
         tasks = []
     
@@ -958,6 +951,7 @@ def admin_stats():
             return jsonify({'success': False, 'error': 'Unauthorized'})
         
         # Get statistics
+        users = load_users()
         total_users = len(users)
         pro_users = sum(1 for u in users.values() if u.get('is_pro', False))
         usage = load_usage()
@@ -992,6 +986,7 @@ def admin_users():
             return jsonify({'success': False, 'error': 'Unauthorized'})
         
         usage = load_usage()
+        users = load_users()
         
         # Combine user data with usage
         users_list = []
@@ -1016,6 +1011,8 @@ def admin_user(username):
     try:
         if 'admin_logged_in' not in session or not session['admin_logged_in']:
             return jsonify({'success': False, 'error': 'Unauthorized'})
+        
+        users = load_users()
         
         if request.method == 'GET':
             if username not in users:
@@ -1387,20 +1384,28 @@ def spam_log():
         # For now, return a simplified response
         # In a real implementation, this would start/stop the spam log process
         if action == 'start':
-            # Update usage count
+            import uuid as _uuid
+            task_id = _uuid.uuid4().hex
+            task_data = {
+                'task_id':      task_id,
+                'type':         'spam_log',
+                'username':     username,
+                'access_token': access_token,
+                'duration':     total_seconds,
+                'status':       'pending',
+                'created_at':   datetime.now().isoformat()
+            }
+            save_task(task_id, task_data)
             update_user_usage(username, 'spam_log')
             return jsonify({
-                'success': True,
-                'message': 'Spam log started',
+                'success':  True,
+                'message':  'Spam log queued — worker sẽ xử lý',
+                'task_id':  task_id,
                 'duration': total_seconds,
-                'status': 'running'
+                'status':   'pending'
             })
         elif action == 'stop':
-            return jsonify({
-                'success': True,
-                'message': 'Spam log stopped',
-                'status': 'stopped'
-            })
+            return jsonify({'success': True, 'message': 'Spam log stopped', 'status': 'stopped'})
         else:
             return jsonify({'success': False, 'error': 'Invalid action'})
     except Exception as e:

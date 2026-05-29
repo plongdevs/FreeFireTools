@@ -801,8 +801,22 @@
                 <button class="close-btn" onclick="closeModal('add-recovery')">&times;</button>
             </div>
             
+            <!-- Step indicator -->
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; padding: 0 1rem;">
+                <div id="step-indicator-1" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--primary); border-radius: 8px; color: white; font-weight: 600;">
+                    Bước 1/3
+                </div>
+                <div id="step-indicator-2" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted); margin: 0 0.5rem;">
+                    Bước 2/3
+                </div>
+                <div id="step-indicator-3" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted);">
+                    Bước 3/3
+                </div>
+            </div>
+            
             <!-- Step 1: Nhập email và token -->
             <div id="add-recovery-step-1">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập thông tin email</h3>
                 <div class="form-group">
                     <label>Email</label>
                     <input type="email" id="add-recovery-email" placeholder="Nhập email">
@@ -818,6 +832,7 @@
             
             <!-- Step 2: Nhập OTP -->
             <div id="add-recovery-step-2" style="display: none;">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập mã OTP</h3>
                 <div class="form-group">
                     <label>OTP đã gửi đến email</label>
                     <input type="text" id="add-recovery-otp" placeholder="Nhập OTP nhận được">
@@ -832,6 +847,7 @@
             
             <!-- Step 3: Nhập security code -->
             <div id="add-recovery-step-3" style="display: none;">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập mã bảo mật</h3>
                 <div class="form-group">
                     <label>Mã Bảo mật (6 chữ số)</label>
                     <input type="text" id="add-recovery-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
@@ -930,38 +946,79 @@
                 <h2>Hủy Liên kết Email</h2>
                 <button class="close-btn" onclick="closeModal('unbind-email')">&times;</button>
             </div>
-            <div class="form-group">
-                <label>Phương thức</label>
-                <select id="unbind-method" onchange="toggleUnbindMethod()">
-                    <option value="otp">Email OTP</option>
-                    <option value="password">Mã Bảo mật</option>
-                </select>
+            
+            <!-- Step indicator -->
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; padding: 0 1rem;">
+                <div id="unbind-step-indicator-1" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--primary); border-radius: 8px; color: white; font-weight: 600;">
+                    Bước 1/3
+                </div>
+                <div id="unbind-step-indicator-2" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted); margin: 0 0.5rem;">
+                    Bước 2/3
+                </div>
+                <div id="unbind-step-indicator-3" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted);">
+                    Bước 3/3
+                </div>
             </div>
-            <div class="form-group">
-                <label>Email Liên kết</label>
-                <input type="email" id="unbind-email" placeholder="Nhập email liên kết">
-            </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="unbind-token" placeholder="Nhập access token">
-            </div>
-            <div class="form-group" id="unbind-otp-group">
-                <label>OTP</label>
-                <input type="text" id="unbind-otp" placeholder="Nhập OTP nhận được">
-                <button class="btn btn-secondary" onclick="sendUnbindOTP()" style="margin-top: 0.5rem; width: 100%;">
-                    <i class="fas fa-paper-plane"></i> Gửi OTP
+            
+            <!-- Step 1: Chọn phương thức -->
+            <div id="unbind-step-1">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Chọn phương thức xác thực</h3>
+                <div class="form-group">
+                    <label>Phương thức</label>
+                    <select id="unbind-method">
+                        <option value="otp">Email OTP</option>
+                        <option value="password">Mã Bảo mật</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="goToUnbindStep2()">
+                    <i class="fas fa-arrow-right"></i> Tiếp tục
                 </button>
             </div>
-            <div class="form-group" id="unbind-security-group" style="display:none;">
-                <label>Mã Bảo mật (6 chữ số)</label>
-                <input type="text" id="unbind-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+            
+            <!-- Step 2: Nhập thông tin -->
+            <div id="unbind-step-2" style="display: none;">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập thông tin</h3>
+                <div class="form-group">
+                    <label>Email Liên kết</label>
+                    <input type="email" id="unbind-email" placeholder="Nhập email liên kết">
+                </div>
+                <div class="form-group">
+                    <label>Access Token</label>
+                    <input type="text" id="unbind-token" placeholder="Nhập access token">
+                </div>
+                <button class="btn btn-primary" onclick="goToUnbindStep3()">
+                    <i class="fas fa-arrow-right"></i> Tiếp tục
+                </button>
+                <button class="btn btn-secondary" onclick="backToUnbindStep1()" style="margin-left: 0.5rem;">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </button>
             </div>
-            <button class="btn btn-primary" onclick="unbindEmail()">
-                <i class="fas fa-unlink"></i> Hủy Liên kết Email
-            </button>
+            
+            <!-- Step 3: Xác thực -->
+            <div id="unbind-step-3" style="display: none;">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Xác thực</h3>
+                <div class="form-group" id="unbind-otp-group">
+                    <label>OTP</label>
+                    <input type="text" id="unbind-otp" placeholder="Nhập OTP nhận được">
+                    <button class="btn btn-secondary" onclick="sendUnbindOTP()" style="margin-top: 0.5rem; width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Gửi OTP
+                    </button>
+                </div>
+                <div class="form-group" id="unbind-security-group" style="display:none;">
+                    <label>Mã Bảo mật (6 chữ số)</label>
+                    <input type="text" id="unbind-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+                </div>
+                <button class="btn btn-primary" onclick="unbindEmail()">
+                    <i class="fas fa-unlink"></i> Hủy Liên kết Email
+                </button>
+                <button class="btn btn-secondary" onclick="backToUnbindStep2()" style="margin-left: 0.5rem;">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </button>
+            </div>
+            
             <div class="loading" id="unbind-loading">
                 <div class="spinner"></div>
-                <span>Đang hủy liên kết...</span>
+                <span>Đang xử lý...</span>
             </div>
             <div class="result-box" id="unbind-result"></div>
         </div>
@@ -974,49 +1031,104 @@
                 <h2>Đổi Email Liên kết</h2>
                 <button class="close-btn" onclick="closeModal('change-bind-email')">&times;</button>
             </div>
-            <div class="form-group">
-                <label>Phương thức</label>
-                <select id="change-method" onchange="toggleChangeMethod()">
-                    <option value="otp">Email OTP</option>
-                    <option value="password">Mã Bảo mật</option>
-                </select>
+            
+            <!-- Step indicator -->
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; padding: 0 1rem;">
+                <div id="change-step-indicator-1" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--primary); border-radius: 8px; color: white; font-weight: 600;">
+                    Bước 1/4
+                </div>
+                <div id="change-step-indicator-2" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted); margin: 0 0.5rem;">
+                    Bước 2/4
+                </div>
+                <div id="change-step-indicator-3" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted); margin: 0 0.5rem;">
+                    Bước 3/4
+                </div>
+                <div id="change-step-indicator-4" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted);">
+                    Bước 4/4
+                </div>
             </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="change-token" placeholder="Nhập access token">
-            </div>
-            <div class="form-group">
-                <label>Email Cũ</label>
-                <input type="email" id="change-old-email" placeholder="Nhập email cũ">
-            </div>
-            <div class="form-group">
-                <label>Email Mới</label>
-                <input type="email" id="change-new-email" placeholder="Nhập email mới">
-            </div>
-            <div class="form-group" id="change-otp-old-group">
-                <label>OTP cho Email Cũ</label>
-                <input type="text" id="change-otp-old" placeholder="Nhập OTP cho email cũ">
-                <button class="btn btn-secondary" onclick="sendChangeOTPOld()" style="margin-top: 0.5rem; width: 100%;">
-                    <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Cũ
+            
+            <!-- Step 1: Chọn phương thức -->
+            <div id="change-step-1">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Chọn phương thức xác thực</h3>
+                <div class="form-group">
+                    <label>Phương thức</label>
+                    <select id="change-method">
+                        <option value="otp">Email OTP</option>
+                        <option value="password">Mã Bảo mật</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="goToChangeStep2()">
+                    <i class="fas fa-arrow-right"></i> Tiếp tục
                 </button>
             </div>
-            <div class="form-group" id="change-security-group" style="display:none;">
-                <label>Mã Bảo mật (6 chữ số)</label>
-                <input type="text" id="change-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
-            </div>
-            <div class="form-group">
-                <label>OTP cho Email Mới</label>
-                <input type="text" id="change-otp-new" placeholder="Nhập OTP cho email mới">
-                <button class="btn btn-secondary" onclick="sendChangeOTPNew()" style="margin-top: 0.5rem; width: 100%;">
-                    <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Mới
+            
+            <!-- Step 2: Nhập thông tin -->
+            <div id="change-step-2" style="display: none;">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập thông tin email</h3>
+                <div class="form-group">
+                    <label>Access Token</label>
+                    <input type="text" id="change-token" placeholder="Nhập access token">
+                </div>
+                <div class="form-group">
+                    <label>Email Cũ</label>
+                    <input type="email" id="change-old-email" placeholder="Nhập email cũ">
+                </div>
+                <div class="form-group">
+                    <label>Email Mới</label>
+                    <input type="email" id="change-new-email" placeholder="Nhập email mới">
+                </div>
+                <button class="btn btn-primary" onclick="goToChangeStep3()">
+                    <i class="fas fa-arrow-right"></i> Tiếp tục
+                </button>
+                <button class="btn btn-secondary" onclick="backToChangeStep1()" style="margin-left: 0.5rem;">
+                    <i class="fas fa-arrow-left"></i> Quay lại
                 </button>
             </div>
-            <button class="btn btn-primary" onclick="changeBindEmail()">
-                <i class="fas fa-exchange-alt"></i> Đổi Email
-            </button>
+            
+            <!-- Step 3: Xác thực email cũ -->
+            <div id="change-step-3" style="display: none;">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Xác thực Email Cũ</h3>
+                <div class="form-group" id="change-otp-old-group">
+                    <label>OTP cho Email Cũ</label>
+                    <input type="text" id="change-otp-old" placeholder="Nhập OTP cho email cũ">
+                    <button class="btn btn-secondary" onclick="sendChangeOTPOld()" style="margin-top: 0.5rem; width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Cũ
+                    </button>
+                </div>
+                <div class="form-group" id="change-security-group" style="display:none;">
+                    <label>Mã Bảo mật (6 chữ số)</label>
+                    <input type="text" id="change-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+                </div>
+                <button class="btn btn-primary" onclick="goToChangeStep4()">
+                    <i class="fas fa-arrow-right"></i> Tiếp tục
+                </button>
+                <button class="btn btn-secondary" onclick="backToChangeStep2()" style="margin-left: 0.5rem;">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </button>
+            </div>
+            
+            <!-- Step 4: Xác thực email mới -->
+            <div id="change-step-4" style="display: none;">
+                <h3 style="margin-bottom: 1rem; color: var(--text);">Xác thực Email Mới</h3>
+                <div class="form-group">
+                    <label>OTP cho Email Mới</label>
+                    <input type="text" id="change-otp-new" placeholder="Nhập OTP cho email mới">
+                    <button class="btn btn-secondary" onclick="sendChangeOTPNew()" style="margin-top: 0.5rem; width: 100%;">
+                        <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Mới
+                    </button>
+                </div>
+                <button class="btn btn-primary" onclick="changeBindEmail()">
+                    <i class="fas fa-exchange-alt"></i> Đổi Email
+                </button>
+                <button class="btn btn-secondary" onclick="backToChangeStep3()" style="margin-left: 0.5rem;">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </button>
+            </div>
+            
             <div class="loading" id="change-loading">
                 <div class="spinner"></div>
-                <span>Đang đổi...</span>
+                <span>Đang xử lý...</span>
             </div>
             <div class="result-box" id="change-result"></div>
         </div>
@@ -1351,6 +1463,54 @@
                 document.getElementById('add-recovery-token').value = '';
                 document.getElementById('add-recovery-otp').value = '';
                 document.getElementById('add-recovery-security').value = '';
+                // Reset step indicators
+                document.getElementById('step-indicator-1').style.background = 'var(--primary)';
+                document.getElementById('step-indicator-1').style.color = 'white';
+                document.getElementById('step-indicator-2').style.background = 'var(--dark-border)';
+                document.getElementById('step-indicator-2').style.color = 'var(--text-muted)';
+                document.getElementById('step-indicator-3').style.background = 'var(--dark-border)';
+                document.getElementById('step-indicator-3').style.color = 'var(--text-muted)';
+            }
+            
+            // Reset unbind-email modal to step 1
+            if (id === 'unbind-email') {
+                document.getElementById('unbind-step-1').style.display = 'block';
+                document.getElementById('unbind-step-2').style.display = 'none';
+                document.getElementById('unbind-step-3').style.display = 'none';
+                document.getElementById('unbind-email').value = '';
+                document.getElementById('unbind-token').value = '';
+                document.getElementById('unbind-otp').value = '';
+                document.getElementById('unbind-security').value = '';
+                // Reset step indicators
+                document.getElementById('unbind-step-indicator-1').style.background = 'var(--primary)';
+                document.getElementById('unbind-step-indicator-1').style.color = 'white';
+                document.getElementById('unbind-step-indicator-2').style.background = 'var(--dark-border)';
+                document.getElementById('unbind-step-indicator-2').style.color = 'var(--text-muted)';
+                document.getElementById('unbind-step-indicator-3').style.background = 'var(--dark-border)';
+                document.getElementById('unbind-step-indicator-3').style.color = 'var(--text-muted)';
+            }
+            
+            // Reset change-bind-email modal to step 1
+            if (id === 'change-bind-email') {
+                document.getElementById('change-step-1').style.display = 'block';
+                document.getElementById('change-step-2').style.display = 'none';
+                document.getElementById('change-step-3').style.display = 'none';
+                document.getElementById('change-step-4').style.display = 'none';
+                document.getElementById('change-token').value = '';
+                document.getElementById('change-old-email').value = '';
+                document.getElementById('change-new-email').value = '';
+                document.getElementById('change-otp-old').value = '';
+                document.getElementById('change-security').value = '';
+                document.getElementById('change-otp-new').value = '';
+                // Reset step indicators
+                document.getElementById('change-step-indicator-1').style.background = 'var(--primary)';
+                document.getElementById('change-step-indicator-1').style.color = 'white';
+                document.getElementById('change-step-indicator-2').style.background = 'var(--dark-border)';
+                document.getElementById('change-step-indicator-2').style.color = 'var(--text-muted)';
+                document.getElementById('change-step-indicator-3').style.background = 'var(--dark-border)';
+                document.getElementById('change-step-indicator-3').style.color = 'var(--text-muted)';
+                document.getElementById('change-step-indicator-4').style.background = 'var(--dark-border)';
+                document.getElementById('change-step-indicator-4').style.color = 'var(--text-muted)';
             }
         }
 
@@ -1640,6 +1800,11 @@
                     // Move to step 2
                     document.getElementById('add-recovery-step-1').style.display = 'none';
                     document.getElementById('add-recovery-step-2').style.display = 'block';
+                    // Update step indicators
+                    document.getElementById('step-indicator-1').style.background = 'var(--dark-border)';
+                    document.getElementById('step-indicator-1').style.color = 'var(--text-muted)';
+                    document.getElementById('step-indicator-2').style.background = 'var(--primary)';
+                    document.getElementById('step-indicator-2').style.color = 'white';
                 } else {
                     showResult('add-recovery', false, result.error);
                 }
@@ -1673,6 +1838,11 @@
                     // Move to step 3
                     document.getElementById('add-recovery-step-2').style.display = 'none';
                     document.getElementById('add-recovery-step-3').style.display = 'block';
+                    // Update step indicators
+                    document.getElementById('step-indicator-2').style.background = 'var(--dark-border)';
+                    document.getElementById('step-indicator-2').style.color = 'var(--text-muted)';
+                    document.getElementById('step-indicator-3').style.background = 'var(--primary)';
+                    document.getElementById('step-indicator-3').style.color = 'white';
                 } else {
                     showResult('add-recovery', false, result.error);
                 }
@@ -1719,12 +1889,22 @@
             document.getElementById('add-recovery-step-2').style.display = 'none';
             document.getElementById('add-recovery-step-1').style.display = 'block';
             document.getElementById('add-recovery-result').classList.remove('active');
+            // Update step indicators
+            document.getElementById('step-indicator-2').style.background = 'var(--dark-border)';
+            document.getElementById('step-indicator-2').style.color = 'var(--text-muted)';
+            document.getElementById('step-indicator-1').style.background = 'var(--primary)';
+            document.getElementById('step-indicator-1').style.color = 'white';
         }
 
         function backToAddRecoveryStep2() {
             document.getElementById('add-recovery-step-3').style.display = 'none';
             document.getElementById('add-recovery-step-2').style.display = 'block';
             document.getElementById('add-recovery-result').classList.remove('active');
+            // Update step indicators
+            document.getElementById('step-indicator-3').style.background = 'var(--dark-border)';
+            document.getElementById('step-indicator-3').style.color = 'var(--text-muted)';
+            document.getElementById('step-indicator-2').style.background = 'var(--primary)';
+            document.getElementById('step-indicator-2').style.color = 'white';
         }
 
         async function checkRecoveryEmail() {
@@ -1952,6 +2132,60 @@
             document.getElementById('unbind-security-group').style.display = method === 'password' ? 'block' : 'none';
         }
 
+        function goToUnbindStep2() {
+            document.getElementById('unbind-step-1').style.display = 'none';
+            document.getElementById('unbind-step-2').style.display = 'block';
+            // Update step indicators
+            document.getElementById('unbind-step-indicator-1').style.background = 'var(--dark-border)';
+            document.getElementById('unbind-step-indicator-1').style.color = 'var(--text-muted)';
+            document.getElementById('unbind-step-indicator-2').style.background = 'var(--primary)';
+            document.getElementById('unbind-step-indicator-2').style.color = 'white';
+        }
+
+        function goToUnbindStep3() {
+            const email = document.getElementById('unbind-email').value;
+            const token = document.getElementById('unbind-token').value;
+            
+            if (!email || !token) {
+                showResult('unbind', false, 'Vui lòng nhập email và access token');
+                return;
+            }
+
+            document.getElementById('unbind-step-2').style.display = 'none';
+            document.getElementById('unbind-step-3').style.display = 'block';
+            
+            // Show/hide OTP or security based on method
+            toggleUnbindMethod();
+            
+            // Update step indicators
+            document.getElementById('unbind-step-indicator-2').style.background = 'var(--dark-border)';
+            document.getElementById('unbind-step-indicator-2').style.color = 'var(--text-muted)';
+            document.getElementById('unbind-step-indicator-3').style.background = 'var(--primary)';
+            document.getElementById('unbind-step-indicator-3').style.color = 'white';
+        }
+
+        function backToUnbindStep1() {
+            document.getElementById('unbind-step-2').style.display = 'none';
+            document.getElementById('unbind-step-1').style.display = 'block';
+            document.getElementById('unbind-result').classList.remove('active');
+            // Update step indicators
+            document.getElementById('unbind-step-indicator-2').style.background = 'var(--dark-border)';
+            document.getElementById('unbind-step-indicator-2').style.color = 'var(--text-muted)';
+            document.getElementById('unbind-step-indicator-1').style.background = 'var(--primary)';
+            document.getElementById('unbind-step-indicator-1').style.color = 'white';
+        }
+
+        function backToUnbindStep2() {
+            document.getElementById('unbind-step-3').style.display = 'none';
+            document.getElementById('unbind-step-2').style.display = 'block';
+            document.getElementById('unbind-result').classList.remove('active');
+            // Update step indicators
+            document.getElementById('unbind-step-indicator-3').style.background = 'var(--dark-border)';
+            document.getElementById('unbind-step-indicator-3').style.color = 'var(--text-muted)';
+            document.getElementById('unbind-step-indicator-2').style.background = 'var(--primary)';
+            document.getElementById('unbind-step-indicator-2').style.color = 'white';
+        }
+
         async function sendUnbindOTP() {
             const email = document.getElementById('unbind-email').value;
             const token = document.getElementById('unbind-token').value;
@@ -2033,6 +2267,96 @@
             const method = document.getElementById('change-method').value;
             document.getElementById('change-otp-old-group').style.display = method === 'otp' ? 'block' : 'none';
             document.getElementById('change-security-group').style.display = method === 'password' ? 'block' : 'none';
+        }
+
+        function goToChangeStep2() {
+            document.getElementById('change-step-1').style.display = 'none';
+            document.getElementById('change-step-2').style.display = 'block';
+            // Update step indicators
+            document.getElementById('change-step-indicator-1').style.background = 'var(--dark-border)';
+            document.getElementById('change-step-indicator-1').style.color = 'var(--text-muted)';
+            document.getElementById('change-step-indicator-2').style.background = 'var(--primary)';
+            document.getElementById('change-step-indicator-2').style.color = 'white';
+        }
+
+        function goToChangeStep3() {
+            const token = document.getElementById('change-token').value;
+            const oldEmail = document.getElementById('change-old-email').value;
+            const newEmail = document.getElementById('change-new-email').value;
+            
+            if (!token || !oldEmail || !newEmail) {
+                showResult('change', false, 'Vui lòng nhập access token, email cũ và email mới');
+                return;
+            }
+
+            document.getElementById('change-step-2').style.display = 'none';
+            document.getElementById('change-step-3').style.display = 'block';
+            
+            // Show/hide OTP or security based on method
+            toggleChangeMethod();
+            
+            // Update step indicators
+            document.getElementById('change-step-indicator-2').style.background = 'var(--dark-border)';
+            document.getElementById('change-step-indicator-2').style.color = 'var(--text-muted)';
+            document.getElementById('change-step-indicator-3').style.background = 'var(--primary)';
+            document.getElementById('change-step-indicator-3').style.color = 'white';
+        }
+
+        function goToChangeStep4() {
+            const method = document.getElementById('change-method').value;
+            const otpOld = document.getElementById('change-otp-old').value;
+            const security = document.getElementById('change-security').value;
+            
+            if (method === 'otp' && !otpOld) {
+                showResult('change', false, 'Vui lòng nhập OTP cho email cũ');
+                return;
+            }
+            if (method === 'password' && (!security || security.length !== 6 || !security.match(/^\d+$/))) {
+                showResult('change', false, 'Mã bảo mật phải là 6 chữ số');
+                return;
+            }
+
+            document.getElementById('change-step-3').style.display = 'none';
+            document.getElementById('change-step-4').style.display = 'block';
+            
+            // Update step indicators
+            document.getElementById('change-step-indicator-3').style.background = 'var(--dark-border)';
+            document.getElementById('change-step-indicator-3').style.color = 'var(--text-muted)';
+            document.getElementById('change-step-indicator-4').style.background = 'var(--primary)';
+            document.getElementById('change-step-indicator-4').style.color = 'white';
+        }
+
+        function backToChangeStep1() {
+            document.getElementById('change-step-2').style.display = 'none';
+            document.getElementById('change-step-1').style.display = 'block';
+            document.getElementById('change-result').classList.remove('active');
+            // Update step indicators
+            document.getElementById('change-step-indicator-2').style.background = 'var(--dark-border)';
+            document.getElementById('change-step-indicator-2').style.color = 'var(--text-muted)';
+            document.getElementById('change-step-indicator-1').style.background = 'var(--primary)';
+            document.getElementById('change-step-indicator-1').style.color = 'white';
+        }
+
+        function backToChangeStep2() {
+            document.getElementById('change-step-3').style.display = 'none';
+            document.getElementById('change-step-2').style.display = 'block';
+            document.getElementById('change-result').classList.remove('active');
+            // Update step indicators
+            document.getElementById('change-step-indicator-3').style.background = 'var(--dark-border)';
+            document.getElementById('change-step-indicator-3').style.color = 'var(--text-muted)';
+            document.getElementById('change-step-indicator-2').style.background = 'var(--primary)';
+            document.getElementById('change-step-indicator-2').style.color = 'white';
+        }
+
+        function backToChangeStep3() {
+            document.getElementById('change-step-4').style.display = 'none';
+            document.getElementById('change-step-3').style.display = 'block';
+            document.getElementById('change-result').classList.remove('active');
+            // Update step indicators
+            document.getElementById('change-step-indicator-4').style.background = 'var(--dark-border)';
+            document.getElementById('change-step-indicator-4').style.color = 'var(--text-muted)';
+            document.getElementById('change-step-indicator-3').style.background = 'var(--primary)';
+            document.getElementById('change-step-indicator-3').style.color = 'white';
         }
 
         async function sendChangeOTPOld() {
