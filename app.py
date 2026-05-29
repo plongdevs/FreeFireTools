@@ -85,7 +85,12 @@ def save_usage(usage):
 
 def get_user_usage(username):
     usage = load_usage()
-    return usage.get(username, {'ban7': 0, 'spam_log': 0, 'is_pro': False})
+    users = load_users()
+    user_data = users.get(username, {})
+    user_usage = usage.get(username, {'ban7': 0, 'spam_log': 0, 'is_pro': False})
+    # Get is_pro from users collection
+    user_usage['is_pro'] = user_data.get('is_pro', False) or user_usage.get('is_pro', False)
+    return user_usage
 
 def update_user_usage(username, feature):
     usage = load_usage()
@@ -1147,7 +1152,7 @@ def check_recovery_email():
                 'email': email,
                 'email_to_be': email_to_be,
                 'countdown': convert_time(countdown),
-                'status': 'verified' if email else ('pending' if email_to_be else 'none')
+                'status': 'Đã xác minh' if email else ('Đang chờ' if email_to_be else 'Không có')
             }
             return jsonify(result)
         else:
@@ -1318,12 +1323,7 @@ def add_recovery_email():
         if len(security_code) != 6 or not security_code.isdigit():
             return jsonify({'success': False, 'error': 'Security code must be 6 digits'})
         
-        cancel_request(access_token)
-        
-        resp = send_otp(email, access_token)
-        if not resp or resp.status_code != 200:
-            return jsonify({'success': False, 'error': 'Failed to send OTP'})
-        
+        # Verify OTP
         vr = verify_otp(otp, email, access_token)
         if vr.status_code != 200:
             return jsonify({'success': False, 'error': 'OTP verification failed'})
@@ -1332,6 +1332,10 @@ def add_recovery_email():
         if not verifier_token:
             return jsonify({'success': False, 'error': 'No verifier token'})
         
+        # Cancel any existing request
+        cancel_request(access_token)
+        
+        # Create bind request with security code
         hashed_password = hashlib.sha256(security_code.encode('utf-8')).hexdigest().upper()
         url = "https://100067.connect.garena.com/game/account_security/bind:create_bind_request"
         data = {
@@ -1482,6 +1486,28 @@ def long_bio():
             return jsonify({'success': False, 'error': 'JWT invalid or expired'})
         else:
             return jsonify({'success': False, 'error': f'Server error: {r.status_code}'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/send_otp_add_recovery', methods=['POST'])
+def send_otp_add_recovery():
+    try:
+        data = request.json
+        email = data.get('email')
+        access_token = data.get('access_token')
+        
+        if not all([email, access_token]):
+            return jsonify({'success': False, 'error': 'Email và access token là bắt buộc'})
+        
+        resp = requests.post("https://100067.connect.garena.com/game/account_security/bind:send_otp",
+                           headers=GARENA_HEADERS,
+                           data={"email": email, "locale": "en_MA", "region": "IND", 
+                                  "app_id": "100067", "access_token": access_token})
+        
+        if resp.status_code == 200:
+            return jsonify({'success': True, 'message': 'OTP đã được gửi'})
+        else:
+            return jsonify({'success': False, 'error': 'Failed to send OTP'})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 

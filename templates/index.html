@@ -643,7 +643,7 @@
     <div class="modal" id="modal-check-recovery">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Kiểm tra Email Phục hồi</h2>
+                <h2>Kiểm tra Email Khôi Phục</h2>
                 <button class="close-btn" onclick="closeModal('check-recovery')">&times;</button>
             </div>
             <div class="form-group">
@@ -811,6 +811,9 @@
             <div class="form-group">
                 <label>OTP</label>
                 <input type="text" id="add-recovery-otp" placeholder="Nhập OTP nhận được">
+                <button class="btn btn-secondary" onclick="sendAddRecoveryOTP()" style="margin-top: 0.5rem; width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Gửi OTP
+                </button>
             </div>
             <div class="form-group">
                 <label>Mã Bảo mật (6 chữ số)</label>
@@ -1323,7 +1326,7 @@
             resultBox.classList.remove('active', 'success', 'error');
             resultBox.classList.add('active', success ? 'success' : 'error');
             
-            let content = `<h4>${success ? '✓ Success' : '✗ Error'}</h4>`;
+            let content = `<h4>${success ? '✓ Thành Công' : '✗ Lỗi'}</h4>`;
             content += `<div class="result-content">${message}</div>`;
             
             if (data) {
@@ -1363,7 +1366,7 @@
         async function checkRecoveryEmail() {
             const token = document.getElementById('check-recovery-token').value;
             if (!token) {
-                showResult('check-recovery', false, 'Please enter access token');
+                showResult('check-recovery', false, 'Vui lòng nhập Access Token');
                 return;
             }
 
@@ -1378,12 +1381,12 @@
                 
                 if (data.success) {
                     const info = {
-                        'Email': data.email || 'None',
-                        'Pending Email': data.email_to_be || 'None',
-                        'Countdown': data.countdown || 'N/A',
-                        'Status': data.status
+                        'Email khôi phục' : data.email || 'Không có',
+                        'Email chờ' : data.email_to_be || 'Không có',
+                        'Thời gian chờ' : data.countdown || 'N/A',
+                        'Trạng thái': data.status
                     };
-                    showResult('check-recovery', true, 'Recovery email info retrieved', info);
+                    showResult('check-recovery', true, 'Thông tin email khôi phục', info);
                 } else {
                     showResult('check-recovery', false, data.error);
                 }
@@ -1411,10 +1414,10 @@
                 
                 if (data.success) {
                     const info = {
-                        'Main Platform': data.main_platform,
-                        'Linked Accounts': data.bounded.length > 0 ? data.bounded.map(a => `${a.platform}: ${a.email || a.nickname}`).join(', ') : 'None'
+                        'Liên kết chính': data.main_platform,
+                        'Liên kết phụ': data.bounded.length > 0 ? data.bounded.map(a => `${a.platform}: ${a.email || a.nickname}`).join(', ') : 'None'
                     };
-                    showResult('check-platforms', true, 'Platform info retrieved', info);
+                    showResult('check-platforms', true, 'Thông tin liên kết', info);
                 } else {
                     showResult('check-platforms', false, data.error);
                 }
@@ -1579,6 +1582,35 @@
                 showResult('access-to-jwt', false, error.message);
             }
             setLoading('access-to-jwt', false);
+        }
+
+        async function sendAddRecoveryOTP() {
+            const email = document.getElementById('add-recovery-email').value;
+            const token = document.getElementById('add-recovery-token').value;
+            
+            if (!email || !token) {
+                showResult('add-recovery', false, 'Vui lòng nhập email và access token');
+                return;
+            }
+
+            setLoading('add-recovery', true);
+            try {
+                const response = await fetch('/api/send_otp_add_recovery', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, access_token: token })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult('add-recovery', true, result.message);
+                } else {
+                    showResult('add-recovery', false, result.error);
+                }
+            } catch (error) {
+                showResult('add-recovery', false, error.message);
+            }
+            setLoading('add-recovery', false);
         }
 
         async function addRecoveryEmail() {
