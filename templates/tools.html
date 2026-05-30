@@ -1617,10 +1617,6 @@
         }
 
         async function cancelRecovery() {
-
-            showResult('cancel-recovery', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
-            return;
-            
             const token = document.getElementById('cancel-recovery-token').value;
             if (!token) {
                 showResult('cancel-recovery', false, 'Please enter access token');
@@ -1647,10 +1643,7 @@
             setLoading('cancel-recovery', false);
         }
 
-        async function revokeToken() {
-            showResult('revoke-token', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
-            return;
-            
+        async function revokeToken() {            
             const token = document.getElementById('revoke-token-input').value;
             if (!token) {
                 showResult('revoke-token', false, 'Please enter access token');
