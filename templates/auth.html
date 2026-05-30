@@ -95,6 +95,7 @@
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
+            pointer-events: none;
         }
 
         .auth-header {
@@ -193,6 +194,8 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .btn-primary {
@@ -311,7 +314,7 @@
                 <p>Chào mừng trở lại với Free Fire Tools</p>
             </div>
 
-            <form id="login-form" onsubmit="handleLogin(event)">
+            <form id="login-form" onsubmit="handleLogin(event)" action="javascript:void(0)">
                 <div class="form-group">
                     <label for="username">Tên đăng nhập</label>
                     <input type="text" id="username" name="username" placeholder="Nhập tên đăng nhập" required>
@@ -359,6 +362,7 @@
 
         async function handleLogin(event) {
             event.preventDefault();
+            console.log('Login form submitted');
             
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;

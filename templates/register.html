@@ -95,6 +95,7 @@
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
+            pointer-events: none;
         }
 
         .auth-header {
@@ -193,6 +194,8 @@
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .btn-primary {
@@ -311,7 +314,7 @@
                 <p>Tạo tài khoản mới để sử dụng Free Fire Tools</p>
             </div>
 
-            <form id="register-form" onsubmit="handleRegister(event)">
+            <form id="register-form" onsubmit="handleRegister(event)" action="javascript:void(0)">
                 <div class="form-group">
                     <label for="username">Tên đăng nhập</label>
                     <input type="text" id="username" name="username" placeholder="Nhập tên đăng nhập" required minlength="3" maxlength="20">
@@ -389,6 +392,7 @@
 
         async function handleRegister(event) {
             event.preventDefault();
+            console.log('Register form submitted');
             
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
