@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template, request, jsonify, session, redirect
+from flask import Flask, render_template, request, jsonify, session, redirect, make_response
 import hashlib
 import requests
 import time
@@ -8,7 +8,7 @@ import re
 import json
 import base64
 import socket
-from datetime import datetime
+from datetime import datetime, timedelta
 from urllib.parse import urlparse, parse_qs
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
@@ -816,6 +816,10 @@ def index():
     track_visit()
     return render_template('index.html')
 
+@app.route('/tools')
+def tools():
+    return render_template('tools.html')
+
 @app.route('/admin/login')
 def admin_login():
     return render_template('admin_login.html')
@@ -826,94 +830,6 @@ def dashboard():
     if 'admin_logged_in' not in session or not session['admin_logged_in']:
         return redirect('/admin/login')
     return render_template('dashboard.html')
-
-@app.route('/api/register', methods=['POST'])
-def register():
-    try:
-        data = request.json
-        email = data.get('email')
-        username = data.get('username')
-        password = data.get('password')
-        
-        if not all([email, username, password]):
-            return jsonify({'success': False, 'error': 'All fields are required'})
-        
-        if len(password) < 6:
-            return jsonify({'success': False, 'error': 'Password must be at least 6 characters'})
-        
-        users = load_users()
-        
-        if username in users:
-            return jsonify({'success': False, 'error': 'Username already exists'})
-        
-        for user in users.values():
-            if user.get('email') == email:
-                return jsonify({'success': False, 'error': 'Email already registered'})
-        
-        users[username] = {
-            'email': email,
-            'password': hashlib.sha256(password.encode()).hexdigest(),
-            'created_at': datetime.now().isoformat(),
-            'is_pro': False
-        }
-        save_users(users)
-        
-        # Initialize usage for new user
-        usage = load_usage()
-        usage[username] = {'ban7': 0, 'spam_log': 0, 'is_pro': False}
-        save_usage(usage)
-        
-        return jsonify({'success': True, 'message': 'Registration successful'})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
-@app.route('/api/login', methods=['POST'])
-def login():
-    try:
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        
-        if not all([username, password]):
-            return jsonify({'success': False, 'error': 'Username and password are required'})
-        
-        users = load_users()
-        
-        if username not in users:
-            return jsonify({'success': False, 'error': 'Invalid username or password'})
-        
-        user = users[username]
-        if user['password'] != hashlib.sha256(password.encode()).hexdigest():
-            return jsonify({'success': False, 'error': 'Invalid username or password'})
-        
-        session['username'] = username
-        session['logged_in'] = True
-        
-        return jsonify({'success': True, 'message': 'Login successful', 'username': username})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)})
-
-@app.route('/api/logout', methods=['POST'])
-def logout():
-    session.clear()
-    return jsonify({'success': True, 'message': 'Logout successful'})
-
-@app.route('/api/check_auth', methods=['GET'])
-def check_auth():
-    if 'logged_in' in session and session['logged_in']:
-        username = session.get('username')
-        usage = get_user_usage(username)
-        users = load_users()
-        user_data = users.get(username, {})
-        # Get is_pro from users collection
-        usage['is_pro'] = user_data.get('is_pro', False)
-        return jsonify({
-            'success': True,
-            'logged_in': True,
-            'username': username,
-            'usage': usage
-        })
-    return jsonify({'success': True, 'logged_in': False})
 
 @app.route('/api/upgrade_pro', methods=['POST'])
 def upgrade_pro():
@@ -1736,6 +1652,162 @@ def change_bind_email():
             return jsonify({'success': True, 'message': 'Email rebind created successfully'})
         else:
             return jsonify({'success': False, 'error': r.text})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+# Authentication routes
+@app.route('/auth')
+def auth_page():
+    return render_template('auth.html')
+
+@app.route('/register')
+def register_page():
+    return render_template('register.html')
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    try:
+        data = request.json
+        username = data.get('username')
+        password = data.get('password')
+        remember_me = data.get('remember_me', False)
+        
+        if not username or not password:
+            return jsonify({'success': False, 'error': 'Username and password are required'})
+        
+        users = load_users()
+        user = users.get(username)
+        
+        if not user:
+            return jsonify({'success': False, 'error': 'Invalid username or password'})
+        
+        # Hash the password and compare
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        if user.get('password') != hashed_password:
+            return jsonify({'success': False, 'error': 'Invalid username or password'})
+        
+        # Set session
+        session['username'] = username
+        session['authenticated'] = True
+        
+        # Create response
+        response = jsonify({'success': True, 'message': 'Login successful'})
+        
+        # Set remember me cookie
+        if remember_me:
+            # Create a remember token
+            remember_token = str(uuid.uuid4())
+            expires = datetime.now() + timedelta(days=30)
+            
+            # Store remember token in Firebase
+            users[username]['remember_token'] = remember_token
+            save_users(users)
+            
+            # Set cookie
+            response.set_cookie('remember_token', remember_token, 
+                             expires=expires, 
+                             httponly=True, 
+                             secure=False,  # Set to True in production with HTTPS
+                             samesite='Lax')
+        
+        return response
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        
+        if not all([username, email, password]):
+            return jsonify({'success': False, 'error': 'All fields are required'})
+        
+        if len(username) < 3 or len(username) > 20:
+            return jsonify({'success': False, 'error': 'Username must be between 3 and 20 characters'})
+        
+        if len(password) < 6:
+            return jsonify({'success': False, 'error': 'Password must be at least 6 characters'})
+        
+        users = load_users()
+        
+        if username in users:
+            return jsonify({'success': False, 'error': 'Username already exists'})
+        
+        # Check if email already exists
+        for user_data in users.values():
+            if user_data.get('email') == email:
+                return jsonify({'success': False, 'error': 'Email already exists'})
+        
+        # Hash password
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        
+        # Create user
+        users[username] = {
+            'username': username,
+            'email': email,
+            'password': hashed_password,
+            'created_at': datetime.now().isoformat(),
+            'is_pro': False
+        }
+        
+        # Initialize usage
+        usage = load_usage()
+        usage[username] = {'ban7': 0, 'spam_log': 0, 'is_pro': False}
+        save_usage(usage)
+        
+        save_users(users)
+        
+        return jsonify({'success': True, 'message': 'Registration successful'})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/check_auth', methods=['GET'])
+def check_auth():
+    try:
+        # Check session
+        if session.get('authenticated') and session.get('username'):
+            username = session.get('username')
+            usage = get_user_usage(username)
+            return jsonify({'authenticated': True, 'username': username, 'usage': usage})
+        
+        # Check remember me cookie
+        remember_token = request.cookies.get('remember_token')
+        if remember_token:
+            users = load_users()
+            for username, user_data in users.items():
+                if user_data.get('remember_token') == remember_token:
+                    session['username'] = username
+                    session['authenticated'] = True
+                    usage = get_user_usage(username)
+                    return jsonify({'authenticated': True, 'username': username, 'usage': usage})
+        
+        return jsonify({'authenticated': False})
+    except Exception as e:
+        return jsonify({'authenticated': False})
+
+@app.route('/api/logout', methods=['POST'])
+def logout():
+    try:
+        username = session.get('username')
+        
+        # Clear remember token from Firebase
+        if username:
+            users = load_users()
+            if username in users:
+                users[username]['remember_token'] = None
+                save_users(users)
+        
+        # Clear session
+        session.clear()
+        
+        # Create response and clear cookie
+        response = jsonify({'success': True, 'message': 'Logout successful'})
+        response.set_cookie('remember_token', '', expires=0)
+        
+        return response
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 

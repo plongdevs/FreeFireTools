@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Fire Tools</title>
+    <title>Free Fire Tools - Portfolio</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -99,88 +99,6 @@
             animation: cyan-circular-flow 4s ease infinite;
         }
 
-        .nav-auth {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .nav-user-info {
-            display: none;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .nav-user-info.active {
-            display: flex;
-        }
-
-        .nav-user-name {
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .nav-user-usage {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .nav-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-        }
-
-        .nav-btn-primary {
-            background: var(--gradient);
-            color: white;
-        }
-
-        .nav-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(99,102,241,0.4);
-        }
-
-        .nav-btn-secondary {
-            background: transparent;
-            border: 1px solid var(--dark-border);
-            color: var(--text);
-        }
-
-        .nav-btn-secondary:hover {
-            border-color: rgba(99,102,241,0.5);
-            background: rgba(99,102,241,0.05);
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(15, 23, 42, 0.5);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--gradient);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
-        .pro-badge {
-            background: linear-gradient(135deg, #f59e0b, #ef4444);
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 700;
-        }
-
         @keyframes cyan-circular-flow {
             0% { background-position: 0% 50%; }
             25% { background-position: 100% 50%; }
@@ -197,13 +115,13 @@
 
         .hero {
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 6rem 2rem 4rem;
         }
 
         .hero h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899, #f59e0b, #6366f1);
             background-size: 300% 100%;
             -webkit-background-clip: text;
@@ -220,304 +138,327 @@
 
         .hero p {
             color: var(--text-muted);
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             margin-bottom: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .tools-grid {
+        .hero-description {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+        }
+
+        .services-section {
+            padding: 4rem 0;
+        }
+
+        .services-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-flow 5s ease infinite;
+        }
+
+        .services-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
-        .tool-card {
+        .service-card {
             background: var(--dark-card);
             border: 1px solid var(--dark-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: all 0.3s;
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
 
-        .tool-card::before {
+        .service-card::before {
             content: '';
             position: absolute;
             inset: 0;
-            border-radius: 16px;
-            padding: 1px;
-            background: linear-gradient(135deg, rgba(99,102,241,0.4), transparent 50%, rgba(168,85,247,0.4));
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(99,102,241,0.5), transparent 50%, rgba(168,85,247,0.5));
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.4s;
         }
 
-        .tool-card:hover::before { opacity: 1; }
+        .service-card:hover::before { opacity: 1; }
 
-        .tool-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(99,102,241,0.15);
-            border-color: rgba(99,102,241,0.2);
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(99,102,241,0.2);
+            border-color: rgba(99,102,241,0.3);
         }
 
-        .tool-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            background: rgba(99,102,241,0.1);
-            color: #818cf8;
-            border: 1px solid rgba(99,102,241,0.15);
-        }
-
-        .tool-card h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--text);
-        }
-
-        .tool-card p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        .tool-card.disabled {
+        .service-card.disabled {
             cursor: not-allowed;
-            opacity: 0.5;
-            pointer-events: none;
+            opacity: 0.4;
+            background: #0a0a0d;
         }
 
-        .tool-card.disabled:hover {
+        .service-card.disabled:hover {
             transform: none;
             box-shadow: none;
             border-color: var(--dark-border);
         }
 
-        .tool-card.disabled::before {
+        .service-card.disabled::before {
             display: none;
         }
 
-        .modal {
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(99,102,241,0.1);
+            color: #818cf8;
+            border: 2px solid rgba(99,102,241,0.2);
+            transition: all 0.4s;
+        }
+
+        .service-card:hover .service-icon {
+            background: rgba(99,102,241,0.2);
+            transform: scale(1.1);
+        }
+
+        .service-card.disabled .service-icon {
+            background: rgba(100, 100, 100, 0.1);
+            color: #666;
+            border-color: rgba(100, 100, 100, 0.2);
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        .service-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Floating Tooltip */
+        .floating-tooltip {
+            position: fixed;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 1rem;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -100%) translateY(-15px);
+            transition: opacity 0.3s, transform 0.3s;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            max-width: 280px;
+        }
+
+        .floating-tooltip.active {
+            opacity: 1;
+            transform: translate(-50%, -100%) translateY(-20px);
+        }
+
+        .floating-tooltip.unavailable {
+            background: rgba(30, 30, 30, 0.95);
+            border-color: #333;
+        }
+
+        .tooltip-content {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .tooltip-content.unavailable-text {
+            color: #ef4444;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .tooltip-functions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .tooltip-function {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.2s;
+        }
+
+        .tooltip-function:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .tooltip-function i {
+            color: #818cf8;
+            font-size: 0.9rem;
+        }
+
+        .tooltip-function span {
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+
+        /* Login Required Modal */
+        .login-modal {
             display: none;
             position: fixed;
             inset: 0;
-            z-index: 1000;
-            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             align-items: center;
             justify-content: center;
             padding: 2rem;
         }
 
-        .modal.active { display: flex; }
+        .login-modal.active {
+            display: flex;
+        }
 
-        .modal-content {
+        .login-modal-content {
             background: var(--dark-card);
             border: 1px solid var(--dark-border);
             border-radius: 20px;
-            padding: 2rem;
-            max-width: 500px;
+            padding: 2.5rem;
+            max-width: 400px;
             width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
+            text-align: center;
             position: relative;
         }
 
-        .modal-header {
+        .login-modal-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid rgba(99, 102, 241, 0.2);
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+            color: #818cf8;
         }
 
-        .modal-header h2 {
+        .login-modal h2 {
             font-size: 1.5rem;
             font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--text);
         }
 
-        .close-btn {
-            background: none;
-            border: none;
+        .login-modal p {
             color: var(--text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.2s;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
         }
 
-        .close-btn:hover { color: var(--text); }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--text);
-            font-size: 0.9rem;
-        }
-
-        .form-group input,
-        .form-group textarea {
+        .login-modal-btn {
             width: 100%;
-            padding: 0.75rem 1rem;
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--dark-border);
-            border-radius: 10px;
-            color: var(--text);
-            font-size: 0.9rem;
-            font-family: inherit;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            font-size: 0.9rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             border: none;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
             justify-content: center;
-        }
-
-        .btn-primary {
+            gap: 0.5rem;
             background: var(--gradient);
             color: white;
             box-shadow: 0 0 30px rgba(99,102,241,0.3);
         }
 
-        .btn-primary:hover {
+        .login-modal-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(99,102,241,0.4);
         }
 
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--dark-border);
-            color: var(--text);
-        }
-
-        .btn-secondary:hover {
-            border-color: rgba(99,102,241,0.5);
-            background: rgba(99,102,241,0.05);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .result-box {
-            margin-top: 1.5rem;
-            padding: 1rem;
-            background: rgba(15, 23, 42, 0.5);
-            border: 1px solid var(--dark-border);
-            border-radius: 10px;
-            display: none;
-        }
-
-        .result-box.active { display: block; }
-
-        .result-box.success {
-            border-color: rgba(34, 197, 94, 0.3);
-            background: rgba(34, 197, 94, 0.05);
-        }
-
-        .result-box.error {
-            border-color: rgba(239, 68, 68, 0.3);
-            background: rgba(239, 68, 68, 0.05);
-        }
-
-        .result-box h4 {
-            margin-bottom: 0.75rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        .result-box.success h4 { color: #22c55e; }
-        .result-box.error h4 { color: #ef4444; }
-
-        .result-content {
-            font-size: 0.85rem;
+        .login-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
             color: var(--text-muted);
-            word-break: break-all;
-        }
-
-        .loading {
-            display: none;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .loading.active { display: flex; }
-
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--dark-border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .info-item {
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0;
+            width: 32px;
+            height: 32px;
             display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid var(--dark-border);
+            align-items: center;
+            justify-content: center;
         }
 
-        .info-item:last-child { border-bottom: none; }
-
-        .info-label {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .info-value {
+        .login-modal-close:hover {
             color: var(--text);
-            font-size: 0.85rem;
-            font-weight: 500;
         }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            .tools-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2.5rem; }
+            .services-grid { grid-template-columns: 1fr; padding: 0 1rem; }
             .navbar { padding: 1rem; }
+            .hero { padding: 4rem 1rem 2rem; }
         }
     </style>
 </head>
@@ -530,714 +471,69 @@
             <i class="fas fa-gamepad" style="color: var(--primary);"></i>
             <span class="nav-brand-text">Free Fire Tools</span>
         </a>
-        <div class="nav-auth">
-            <div class="nav-user-info" id="nav-user-info">
-                <div>
-                    <span class="nav-user-name" id="nav-username"></span>
-                    <span class="pro-badge" id="nav-pro-badge" style="display: none;">PRO</span>
-                </div>
-                <div class="nav-user-usage">
-                    Ban: <span id="usage-ban7">0</span>/1 | Spam Log: <span id="usage-spam-log">0</span>/1
-                </div>
-                <button class="nav-btn nav-btn-primary" id="upgrade-pro-btn" onclick="openModal('upgrade-pro')" style="display: none;">
-                    <i class="fas fa-crown"></i> Nâng cấp Pro
-                </button>
-                <button class="nav-btn nav-btn-secondary" onclick="logout()">Đăng xuất</button>
-            </div>
-            <div id="nav-auth-buttons">
-                <button class="nav-btn nav-btn-secondary" onclick="openModal('login')">Đăng nhập</button>
-                <button class="nav-btn nav-btn-primary" onclick="openModal('register')">Đăng ký</button>
-            </div>
-        </div>
     </nav>
 
     <div class="container">
         <div class="hero">
             <h1>Free Fire Tools</h1>
-            <p>Công cụ web mạnh mẽ về việc tra cứu hay sửa đổi thông tin trong Free Fire</p>
+            <p>Nền tảng công cụ tiện ích hàng đầu cho Free Fire</p>
+            <div class="hero-description">
+                Chào mừng bạn đến với Free Fire Tools - nơi cung cấp các công cụ tiện ích mạnh mẽ giúp bạn quản lý và tối ưu hóa tài khoản Free Fire của mình. Chúng tôi cam kết mang lại trải nghiệm tốt nhất với các tính năng đa dạng và dễ sử dụng.
+            </div>
         </div>
 
-        <div class="tools-grid">
-            <div class="tool-card" onclick="openModal('check-recovery')">
-                <div class="tool-icon"><i class="fas fa-envelope-check"></i></div>
-                <h3>Kiểm tra Email Khôi Phục</h3>
-                <p>Kiểm tra email khôi phục của tài khoản
-                </p>
-            </div>
+        <div class="services-section">
+            <h2 class="services-title">Dịch Vụ Của Chúng Tôi</h2>
+            <p class="services-subtitle">Khám phá các dịch vụ tiện ích được thiết kế chuyên biệt cho bạn</p>
+            
+            <div class="services-grid">
+                <!-- Section 1: Công cụ Free Fire -->
+                <div class="service-card" data-service="free-fire-tools" onmouseenter="showTooltip(event, 'free-fire-tools')" onmouseleave="hideTooltip()" onmousemove="moveTooltip(event)" onclick="checkAuthAndRedirect()">
+                    <div class="service-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Công cụ Free Fire</h3>
+                    <p>Công cụ tiện ích về Free Fire</p>
+                </div>
 
-            <div class="tool-card" onclick="openModal('check-platforms')">
-                <div class="tool-icon"><i class="fas fa-link"></i></div>
-                <h3>Kiểm tra nền tảng liên kết</h3>
-                <p>Liệt kê tất cả nền tảng mạng xã hội đã liên kết với tài khoản</p>
-            </div>
+                <!-- Section 2: Bot TCP (Disabled) -->
+                <div class="service-card disabled" data-service="bot-tcp" onmouseenter="showTooltip(event, 'bot-tcp')" onmouseleave="hideTooltip()" onmousemove="moveTooltip(event)">
+                    <div class="service-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Bot TCP</h3>
+                    <p>Bot thông minh giúp tương tác với người dùng ngay trong game thông qua chat game</p>
+                </div>
 
-            <div class="tool-card disabled">
-                <div class="tool-icon"><i class="fas fa-times-circle"></i></div>
-                <h3>Huỷ yêu cầu gắn email khôi phục (đang bảo trì)</h3>
-                <p>Hủy yêu cầu gắn email khôi phục đang chờ</p>
-            </div>
-
-            <div class="tool-card disabled">
-                <div class="tool-icon"><i class="fas fa-key"></i></div>
-                <h3>Vô hiệu hoá Access Token (đang bảo trì)</h3>
-                <p>Vô hiệu hoá access token hiện tại</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('eat-to-access')">
-                <div class="tool-icon"><i class="fas fa-exchange-alt"></i></div>
-                <h3>Chuyển đổi EAT Token sang Access Token</h3>
-                <p>Chuyển đổi EAT token sang Access Token</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('eat-to-jwt')">
-                <div class="tool-icon"><i class="fas fa-code"></i></div>
-                <h3>Chuyển đổi EAT Token sang JWT</h3>
-                <p>Chuyển đổi EAT Token sang JWT Token</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('access-to-jwt')">
-                <div class="tool-icon"><i class="fas fa-ticket-alt"></i></div>
-                <h3>Chuyển đổi Access Token sang JWT Token</h3>
-                <p>Chuyển đổi Access Token sang JWT Token</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('add-recovery')">
-                <div class="tool-icon"><i class="fas fa-plus-circle"></i></div>
-                <h3>Thêm Email Khôi Phục</h3>
-                <p>Thêm email khôi phục vào tài khoản của bạn</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('spam-log')">
-                <div class="tool-icon"><i class="fas fa-bolt"></i></div>
-                <h3>Spam Log</h3>
-                <p>Spam Login để đá người khác ra khỏi tài khoản</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('long-bio')">
-                <div class="tool-icon"><i class="fas fa-align-left"></i></div>
-                <h3>Tiểu Sử Dài</h3>
-                <p>Đặt tiểu sử dài cho tài khoản của bạn</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('unbind-email')">
-                <div class="tool-icon"><i class="fas fa-unlink"></i></div>
-                <h3>Hủy Liên Kết Email Khôi Phục</h3>
-                <p>Hủy liên kết email khôi phục khỏi tài khoản của bạn</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('change-bind-email')">
-                <div class="tool-icon"><i class="fas fa-exchange-alt"></i></div>
-                <h3>Đổi Email Khôi Phục</h3>
-                <p>Thay đổi email liên kết của bạn</p>
-            </div>
-
-            <div class="tool-card" onclick="openModal('ban7')">
-                <div class="tool-icon"><i class="fas fa-ban"></i></div>
-                <h3>Ban 7 Ngày</h3>
-                <p>Ban tài khoản đó trong 7 ngày</p>
+                <!-- Section 3: Bot cày Quân Đoàn (Disabled) -->
+                <div class="service-card disabled" data-service="bot-quan-doan" onmouseenter="showTooltip(event, 'bot-quan-doan')" onmouseleave="hideTooltip()" onmousemove="moveTooltip(event)">
+                    <div class="service-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Bot cày Quân Đoàn</h3>
+                    <p>Chỉ với 4 tài khoản clone bạn đã sở hữu ngày 400k điểm quân đoàn giúp quân đoàn từ lv 1 lên lv 7 chỉ trong 1 tuần giúp quân đoàn của bạn đạt top bảng xếp hạng</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Check Recovery Email Modal -->
-    <div class="modal" id="modal-check-recovery">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Kiểm tra Email Khôi Phục</h2>
-                <button class="close-btn" onclick="closeModal('check-recovery')">&times;</button>
+    <!-- Floating Tooltip -->
+    <div class="floating-tooltip" id="tooltip">
+        <div class="tooltip-content" id="tooltip-content"></div>
+    </div>
+
+    <!-- Login Required Modal -->
+    <div class="login-modal" id="login-modal">
+        <div class="login-modal-content">
+            <button class="login-modal-close" onclick="closeLoginModal()">&times;</button>
+            <div class="login-modal-icon">
+                <i class="fas fa-lock"></i>
             </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="check-recovery-token" placeholder="Nhập access token">
-            </div>
-            <button class="btn btn-primary" onclick="checkRecoveryEmail()">
-                <i class="fas fa-search"></i> Kiểm tra Email
+            <h2>Bạn chưa đăng nhập</h2>
+            <p>Vui lòng đăng nhập để sử dụng các dịch vụ của chúng tôi</p>
+            <button class="login-modal-btn" onclick="goToLogin()">
+                <i class="fas fa-sign-in-alt"></i> Đăng nhập ngay
             </button>
-            <div class="loading" id="check-recovery-loading">
-                <div class="spinner"></div>
-                <span>Đang kiểm tra...</span>
-            </div>
-            <div class="result-box" id="check-recovery-result"></div>
-        </div>
-    </div>
-
-    <!-- Check Platforms Modal -->
-    <div class="modal" id="modal-check-platforms">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Kiểm tra Nền tảng Liên kết</h2>
-                <button class="close-btn" onclick="closeModal('check-platforms')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="check-platforms-token" placeholder="Nhập access token">
-            </div>
-            <button class="btn btn-primary" onclick="checkPlatforms()">
-                <i class="fas fa-search"></i> Kiểm tra Nền tảng
-            </button>
-            <div class="loading" id="check-platforms-loading">
-                <div class="spinner"></div>
-                <span>Đang kiểm tra...</span>
-            </div>
-            <div class="result-box" id="check-platforms-result"></div>
-        </div>
-    </div>
-
-    <!-- Cancel Recovery Modal -->
-    <div class="modal" id="modal-cancel-recovery">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Hủy Email Phục hồi</h2>
-                <button class="close-btn" onclick="closeModal('cancel-recovery')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="cancel-recovery-token" placeholder="Nhập access token">
-            </div>
-            <button class="btn btn-primary" onclick="cancelRecovery()">
-                <i class="fas fa-times"></i> Hủy Yêu cầu
-            </button>
-            <div class="loading" id="cancel-recovery-loading">
-                <div class="spinner"></div>
-                <span>Đang hủy...</span>
-            </div>
-            <div class="result-box" id="cancel-recovery-result"></div>
-        </div>
-    </div>
-
-    <!-- Revoke Token Modal -->
-    <div class="modal" id="modal-revoke-token">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Hủy Access Token</h2>
-                <button class="close-btn" onclick="closeModal('revoke-token')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="revoke-token-input" placeholder="Nhập access token">
-            </div>
-            <button class="btn btn-primary" onclick="revokeToken()">
-                <i class="fas fa-key"></i> Hủy Token
-            </button>
-            <div class="loading" id="revoke-token-loading">
-                <div class="spinner"></div>
-                <span>Đang hủy...</span>
-            </div>
-            <div class="result-box" id="revoke-token-result"></div>
-        </div>
-    </div>
-
-    <!-- EAT to Access Modal -->
-    <div class="modal" id="modal-eat-to-access">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>EAT sang Access Token</h2>
-                <button class="close-btn" onclick="closeModal('eat-to-access')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>EAT Token / Link</label>
-                <input type="text" id="eat-to-access-input" placeholder="Nhập EAT token hoặc link">
-            </div>
-            <button class="btn btn-primary" onclick="eatToAccess()">
-                <i class="fas fa-exchange-alt"></i> Chuyển đổi
-            </button>
-            <div class="loading" id="eat-to-access-loading">
-                <div class="spinner"></div>
-                <span>Đang chuyển đổi...</span>
-            </div>
-            <div class="result-box" id="eat-to-access-result"></div>
-        </div>
-    </div>
-
-    <!-- EAT to JWT Modal -->
-    <div class="modal" id="modal-eat-to-jwt">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>EAT sang JWT</h2>
-                <button class="close-btn" onclick="closeModal('eat-to-jwt')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>EAT Token / Link</label>
-                <input type="text" id="eat-to-jwt-input" placeholder="Nhập EAT token hoặc link">
-            </div>
-            <button class="btn btn-primary" onclick="eatToJwt()">
-                <i class="fas fa-code"></i> Chuyển đổi
-            </button>
-            <div class="loading" id="eat-to-jwt-loading">
-                <div class="spinner"></div>
-                <span>Đang chuyển đổi...</span>
-            </div>
-            <div class="result-box" id="eat-to-jwt-result"></div>
-        </div>
-    </div>
-
-    <!-- Access to JWT Modal -->
-    <div class="modal" id="modal-access-to-jwt">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Access sang JWT</h2>
-                <button class="close-btn" onclick="closeModal('access-to-jwt')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="access-to-jwt-input" placeholder="Nhập access token">
-            </div>
-            <button class="btn btn-primary" onclick="accessToJwt()">
-                <i class="fas fa-ticket-alt"></i> Chuyển đổi
-            </button>
-            <div class="loading" id="access-to-jwt-loading">
-                <div class="spinner"></div>
-                <span>Đang chuyển đổi...</span>
-            </div>
-            <div class="result-box" id="access-to-jwt-result"></div>
-        </div>
-    </div>
-
-    <!-- Add Recovery Email Modal -->
-    <div class="modal" id="modal-add-recovery">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Thêm Email Phục hồi</h2>
-                <button class="close-btn" onclick="closeModal('add-recovery')">&times;</button>
-            </div>
-            
-            <!-- Step indicator -->
-            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; padding: 0 1rem;">
-                <div id="step-indicator-1" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--primary); border-radius: 8px; color: white; font-weight: 600;">
-                    Bước 1/3
-                </div>
-                <div id="step-indicator-2" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted); margin: 0 0.5rem;">
-                    Bước 2/3
-                </div>
-                <div id="step-indicator-3" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted);">
-                    Bước 3/3
-                </div>
-            </div>
-            
-            <!-- Step 1: Nhập email và token -->
-            <div id="add-recovery-step-1">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập thông tin email</h3>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="add-recovery-email" placeholder="Nhập email">
-                </div>
-                <div class="form-group">
-                    <label>Access Token</label>
-                    <input type="text" id="add-recovery-token" placeholder="Nhập access token">
-                </div>
-                <button class="btn btn-primary" onclick="sendAddRecoveryOTP()">
-                    <i class="fas fa-paper-plane"></i> Gửi OTP
-                </button>
-            </div>
-            
-            <!-- Step 2: Nhập OTP -->
-            <div id="add-recovery-step-2" style="display: none;">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập mã OTP</h3>
-                <div class="form-group">
-                    <label>OTP đã gửi đến email</label>
-                    <input type="text" id="add-recovery-otp" placeholder="Nhập OTP nhận được">
-                </div>
-                <button class="btn btn-primary" onclick="verifyAddRecoveryOTP()">
-                    <i class="fas fa-check"></i> Xác thực OTP
-                </button>
-                <button class="btn btn-secondary" onclick="backToAddRecoveryStep1()" style="margin-left: 0.5rem;">
-                    <i class="fas fa-arrow-left"></i> Quay lại
-                </button>
-            </div>
-            
-            <!-- Step 3: Nhập security code -->
-            <div id="add-recovery-step-3" style="display: none;">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập mã bảo mật</h3>
-                <div class="form-group">
-                    <label>Mã Bảo mật (6 chữ số)</label>
-                    <input type="text" id="add-recovery-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
-                </div>
-                <button class="btn btn-primary" onclick="createAddRecoveryBind()">
-                    <i class="fas fa-plus-circle"></i> Thêm Email
-                </button>
-                <button class="btn btn-secondary" onclick="backToAddRecoveryStep2()" style="margin-left: 0.5rem;">
-                    <i class="fas fa-arrow-left"></i> Quay lại
-                </button>
-            </div>
-            
-            <div class="loading" id="add-recovery-loading">
-                <div class="spinner"></div>
-                <span>Đang xử lý...</span>
-            </div>
-            <div class="result-box" id="add-recovery-result"></div>
-        </div>
-    </div>
-
-    <!-- Spam Log Modal -->
-    <div class="modal" id="modal-spam-log">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Spam Log</h2>
-                <button class="close-btn" onclick="closeModal('spam-log')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="spam-log-token" placeholder="Nhập access token">
-            </div>
-            <div class="form-group">
-                <label>Thời gian (tối đa 15 ngày, ví dụ: 10s, 1m, 1h)</label>
-                <input type="text" id="spam-log-duration" placeholder="10s" value="10s">
-            </div>
-            <button class="btn btn-primary" id="spam-log-toggle-btn" onclick="toggleSpamLog()">
-                <i class="fas fa-bolt"></i> Chạy Spam Log
-            </button>
-            <div class="progress-bar" id="spam-log-progress" style="display: none;">
-                <div class="progress-fill" id="spam-log-progress-fill" style="width: 0%;"></div>
-            </div>
-            <div class="result-box" id="spam-log-result"></div>
-        </div>
-    </div>
-
-    <!-- Long Bio Modal -->
-    <div class="modal" id="modal-long-bio">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Tiểu sử Dài</h2>
-                <button class="close-btn" onclick="closeModal('long-bio')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Phương thức</label>
-                <select id="long-bio-method" onchange="toggleLongBioMethod()">
-                    <option value="jwt">JWT Token</option>
-                    <option value="access">Access Token</option>
-                    <option value="guest">Guest (UID/Password)</option>
-                </select>
-            </div>
-            <div class="form-group" id="long-bio-jwt-group">
-                <label>JWT Token</label>
-                <input type="text" id="long-bio-jwt" placeholder="Nhập JWT token">
-            </div>
-            <div class="form-group" id="long-bio-access-group" style="display:none;">
-                <label>Access Token</label>
-                <input type="text" id="long-bio-access" placeholder="Nhập access token">
-            </div>
-            <div class="form-group" id="long-bio-guest-group" style="display:none;">
-                <label>UID</label>
-                <input type="text" id="long-bio-uid" placeholder="Nhập UID">
-            </div>
-            <div class="form-group" id="long-bio-password-group" style="display:none;">
-                <label>Password</label>
-                <input type="password" id="long-bio-password" placeholder="Nhập password">
-            </div>
-            <div class="form-group">
-                <label>Nội dung Bio</label>
-                <textarea id="long-bio-text" placeholder="Nhập nội dung bio của bạn" maxlength="200"></textarea>
-            </div>
-            <button class="btn btn-primary" onclick="longBio()">
-                <i class="fas fa-align-left"></i> Cập nhật Bio
-            </button>
-            <div class="loading" id="long-bio-loading">
-                <div class="spinner"></div>
-                <span>Đang cập nhật...</span>
-            </div>
-            <div class="result-box" id="long-bio-result"></div>
-        </div>
-    </div>
-
-    <!-- Unbind Email Modal -->
-    <div class="modal" id="modal-unbind-email">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Hủy Liên kết Email</h2>
-                <button class="close-btn" onclick="closeModal('unbind-email')">&times;</button>
-            </div>
-            
-            <!-- Step indicator -->
-            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; padding: 0 1rem;">
-                <div id="unbind-step-indicator-1" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--primary); border-radius: 8px; color: white; font-weight: 600;">
-                    Bước 1/3
-                </div>
-                <div id="unbind-step-indicator-2" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted); margin: 0 0.5rem;">
-                    Bước 2/3
-                </div>
-                <div id="unbind-step-indicator-3" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted);">
-                    Bước 3/3
-                </div>
-            </div>
-            
-            <!-- Step 1: Chọn phương thức -->
-            <div id="unbind-step-1">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Chọn phương thức xác thực</h3>
-                <div class="form-group">
-                    <label>Phương thức</label>
-                    <select id="unbind-method">
-                        <option value="otp">Email OTP</option>
-                        <option value="password">Mã Bảo mật</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" onclick="goToUnbindStep2()">
-                    <i class="fas fa-arrow-right"></i> Tiếp tục
-                </button>
-            </div>
-            
-            <!-- Step 2: Nhập thông tin -->
-            <div id="unbind-step-2" style="display: none;">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập thông tin</h3>
-                <div class="form-group">
-                    <label>Email Liên kết</label>
-                    <input type="email" id="unbind-email" placeholder="Nhập email liên kết">
-                </div>
-                <div class="form-group">
-                    <label>Access Token</label>
-                    <input type="text" id="unbind-token" placeholder="Nhập access token">
-                </div>
-                <button class="btn btn-primary" onclick="goToUnbindStep3()">
-                    <i class="fas fa-arrow-right"></i> Tiếp tục
-                </button>
-                <button class="btn btn-secondary" onclick="backToUnbindStep1()" style="margin-left: 0.5rem;">
-                    <i class="fas fa-arrow-left"></i> Quay lại
-                </button>
-            </div>
-            
-            <!-- Step 3: Xác thực -->
-            <div id="unbind-step-3" style="display: none;">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Xác thực</h3>
-                <div class="form-group" id="unbind-otp-group">
-                    <label>OTP</label>
-                    <input type="text" id="unbind-otp" placeholder="Nhập OTP nhận được">
-                    <button class="btn btn-secondary" onclick="sendUnbindOTP()" style="margin-top: 0.5rem; width: 100%;">
-                        <i class="fas fa-paper-plane"></i> Gửi OTP
-                    </button>
-                </div>
-                <div class="form-group" id="unbind-security-group" style="display:none;">
-                    <label>Mã Bảo mật (6 chữ số)</label>
-                    <input type="text" id="unbind-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
-                </div>
-                <button class="btn btn-primary" onclick="unbindEmail()">
-                    <i class="fas fa-unlink"></i> Hủy Liên kết Email
-                </button>
-                <button class="btn btn-secondary" onclick="backToUnbindStep2()" style="margin-left: 0.5rem;">
-                    <i class="fas fa-arrow-left"></i> Quay lại
-                </button>
-            </div>
-            
-            <div class="loading" id="unbind-loading">
-                <div class="spinner"></div>
-                <span>Đang xử lý...</span>
-            </div>
-            <div class="result-box" id="unbind-result"></div>
-        </div>
-    </div>
-
-    <!-- Change Bind Email Modal -->
-    <div class="modal" id="modal-change-bind-email">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Đổi Email Liên kết</h2>
-                <button class="close-btn" onclick="closeModal('change-bind-email')">&times;</button>
-            </div>
-            
-            <!-- Step indicator -->
-            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; padding: 0 1rem;">
-                <div id="change-step-indicator-1" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--primary); border-radius: 8px; color: white; font-weight: 600;">
-                    Bước 1/4
-                </div>
-                <div id="change-step-indicator-2" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted); margin: 0 0.5rem;">
-                    Bước 2/4
-                </div>
-                <div id="change-step-indicator-3" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted); margin: 0 0.5rem;">
-                    Bước 3/4
-                </div>
-                <div id="change-step-indicator-4" style="flex: 1; text-align: center; padding: 0.5rem; background: var(--dark-border); border-radius: 8px; color: var(--text-muted);">
-                    Bước 4/4
-                </div>
-            </div>
-            
-            <!-- Step 1: Chọn phương thức -->
-            <div id="change-step-1">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Chọn phương thức xác thực</h3>
-                <div class="form-group">
-                    <label>Phương thức</label>
-                    <select id="change-method">
-                        <option value="otp">Email OTP</option>
-                        <option value="password">Mã Bảo mật</option>
-                    </select>
-                </div>
-                <button class="btn btn-primary" onclick="goToChangeStep2()">
-                    <i class="fas fa-arrow-right"></i> Tiếp tục
-                </button>
-            </div>
-            
-            <!-- Step 2: Nhập thông tin -->
-            <div id="change-step-2" style="display: none;">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập thông tin email</h3>
-                <div class="form-group">
-                    <label>Access Token</label>
-                    <input type="text" id="change-token" placeholder="Nhập access token">
-                </div>
-                <div class="form-group">
-                    <label>Email Cũ</label>
-                    <input type="email" id="change-old-email" placeholder="Nhập email cũ">
-                </div>
-                <div class="form-group">
-                    <label>Email Mới</label>
-                    <input type="email" id="change-new-email" placeholder="Nhập email mới">
-                </div>
-                <button class="btn btn-primary" onclick="goToChangeStep3()">
-                    <i class="fas fa-arrow-right"></i> Tiếp tục
-                </button>
-                <button class="btn btn-secondary" onclick="backToChangeStep1()" style="margin-left: 0.5rem;">
-                    <i class="fas fa-arrow-left"></i> Quay lại
-                </button>
-            </div>
-            
-            <!-- Step 3: Xác thực email cũ -->
-            <div id="change-step-3" style="display: none;">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Xác thực Email Cũ</h3>
-                <div class="form-group" id="change-otp-old-group">
-                    <label>OTP cho Email Cũ</label>
-                    <input type="text" id="change-otp-old" placeholder="Nhập OTP cho email cũ">
-                    <button class="btn btn-secondary" onclick="sendChangeOTPOld()" style="margin-top: 0.5rem; width: 100%;">
-                        <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Cũ
-                    </button>
-                </div>
-                <div class="form-group" id="change-security-group" style="display:none;">
-                    <label>Mã Bảo mật (6 chữ số)</label>
-                    <input type="text" id="change-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
-                </div>
-                <button class="btn btn-primary" onclick="goToChangeStep4()">
-                    <i class="fas fa-arrow-right"></i> Tiếp tục
-                </button>
-                <button class="btn btn-secondary" onclick="backToChangeStep2()" style="margin-left: 0.5rem;">
-                    <i class="fas fa-arrow-left"></i> Quay lại
-                </button>
-            </div>
-            
-            <!-- Step 4: Xác thực email mới -->
-            <div id="change-step-4" style="display: none;">
-                <h3 style="margin-bottom: 1rem; color: var(--text);">Xác thực Email Mới</h3>
-                <div class="form-group">
-                    <label>OTP cho Email Mới</label>
-                    <input type="text" id="change-otp-new" placeholder="Nhập OTP cho email mới">
-                    <button class="btn btn-secondary" onclick="sendChangeOTPNew()" style="margin-top: 0.5rem; width: 100%;">
-                        <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Mới
-                    </button>
-                </div>
-                <button class="btn btn-primary" onclick="changeBindEmail()">
-                    <i class="fas fa-exchange-alt"></i> Đổi Email
-                </button>
-                <button class="btn btn-secondary" onclick="backToChangeStep3()" style="margin-left: 0.5rem;">
-                    <i class="fas fa-arrow-left"></i> Quay lại
-                </button>
-            </div>
-            
-            <div class="loading" id="change-loading">
-                <div class="spinner"></div>
-                <span>Đang xử lý...</span>
-            </div>
-            <div class="result-box" id="change-result"></div>
-        </div>
-    </div>
-
-    <!-- Ban 7 Modal -->
-    <div class="modal" id="modal-ban7">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Permanent Ban</h2>
-                <button class="close-btn" onclick="closeModal('ban7')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Access Token</label>
-                <input type="text" id="ban7-token" placeholder="Nhập access token">
-            </div>
-            <button class="btn btn-primary" onclick="ban7()">
-                <i class="fas fa-ban"></i> Gửi Packet Permanent Ban
-            </button>
-            <div class="loading" id="ban7-loading">
-                <div class="spinner"></div>
-                <span>Đang gửi...</span>
-            </div>
-            <div class="result-box" id="ban7-result"></div>
-        </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div class="modal" id="modal-login">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Đăng nhập</h2>
-                <button class="close-btn" onclick="closeModal('login')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Tên đăng nhập</label>
-                <input type="text" id="login-username" placeholder="Nhập tên đăng nhập">
-            </div>
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" id="login-password" placeholder="Nhập mật khẩu">
-            </div>
-            <button class="btn btn-primary" onclick="login()">
-                <i class="fas fa-sign-in-alt"></i> Đăng nhập
-            </button>
-            <div class="loading" id="login-loading">
-                <div class="spinner"></div>
-                <span>Đang đăng nhập...</span>
-            </div>
-            <div class="result-box" id="login-result"></div>
-        </div>
-    </div>
-
-    <!-- Register Modal -->
-    <div class="modal" id="modal-register">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Đăng ký</h2>
-                <button class="close-btn" onclick="closeModal('register')">&times;</button>
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="register-email" placeholder="Nhập email">
-            </div>
-            <div class="form-group">
-                <label>Tên đăng nhập</label>
-                <input type="text" id="register-username" placeholder="Nhập tên đăng nhập">
-            </div>
-            <div class="form-group">
-                <label>Mật khẩu</label>
-                <input type="password" id="register-password" placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)">
-            </div>
-            <button class="btn btn-primary" onclick="register()">
-                <i class="fas fa-user-plus"></i> Đăng ký
-            </button>
-            <div class="loading" id="register-loading">
-                <div class="spinner"></div>
-                <span>Đang đăng ký...</span>
-            </div>
-            <div class="result-box" id="register-result"></div>
-        </div>
-    </div>
-
-    <!-- Upgrade Pro Modal -->
-    <div class="modal" id="modal-upgrade-pro">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Nâng cấp gói Pro</h2>
-                <button class="close-btn" onclick="closeModal('upgrade-pro')">&times;</button>
-            </div>
-            <div style="text-align: center; margin-bottom: 1.5rem;">
-                <i class="fas fa-crown" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
-                <h3 style="margin-bottom: 0.5rem;">Gói Pro</h3>
-                <p style="color: var(--text-muted);">Sử dụng không giới hạn tính năng Ban và Spam Log</p>
-            </div>
-            <div style="background: rgba(15, 23, 42, 0.5); border: 1px solid var(--dark-border); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem;">
-                <h4 style="margin-bottom: 0.5rem; color: #f59e0b;">✨ Tính năng Pro:</h4>
-                <ul style="list-style: none; padding: 0; color: var(--text-muted);">
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #22c55e; margin-right: 0.5rem;"></i> Sử dụng Ban không giới hạn</li>
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #22c55e; margin-right: 0.5rem;"></i> Sử dụng Spam Log không giới hạn</li>
-                    <li style="margin-bottom: 0.5rem;"><i class="fas fa-check" style="color: #22c55e; margin-right: 0.5rem;"></i> Hỗ trợ ưu tiên</li>
-                </ul>
-            </div>
-            <a href="https://t.me/minhdevtcp" target="_blank" class="btn btn-primary" style="width: 100%; justify-content: center; text-decoration: none;">
-                <i class="fab fa-telegram"></i> Mua gói Pro trên Telegram
-            </a>
-            <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
-                Liên hệ @minhdevtcp trên Telegram để mua gói Pro
-            </p>
         </div>
     </div>
 
@@ -1253,1271 +549,127 @@
             meteorsContainer.appendChild(meteor);
         }
 
-        // Check authentication status on page load
-        window.currentUser = null;
-        window.userUsage = null;
+        // Floating Tooltip functionality
+        const tooltip = document.getElementById('tooltip');
+        const tooltipContent = document.getElementById('tooltip-content');
 
-        async function checkAuth() {
+        const serviceData = {
+            'free-fire-tools': {
+                type: 'functions',
+                content: `
+                    <div class="tooltip-functions">
+                        <div class="tooltip-function">
+                            <i class="fas fa-envelope-check"></i>
+                            <span>Kiểm tra Email Khôi Phục</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-link"></i>
+                            <span>Kiểm tra Nền tảng Liên kết</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Chuyển đổi EAT sang Access Token</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-code"></i>
+                            <span>Chuyển đổi EAT sang JWT</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-ticket-alt"></i>
+                            <span>Chuyển đổi Access sang JWT</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Thêm Email Khôi Phục</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-bolt"></i>
+                            <span>Spam Log</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-align-left"></i>
+                            <span>Tiểu Sử Dài</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-unlink"></i>
+                            <span>Hủy Liên kết Email</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Đổi Email Khôi Phục</span>
+                        </div>
+                        <div class="tooltip-function">
+                            <i class="fas fa-ban"></i>
+                            <span>Ban 7 Ngày</span>
+                        </div>
+                    </div>
+                `
+            },
+            'bot-tcp': {
+                type: 'unavailable',
+                content: '<div class="tooltip-content unavailable-text">Dịch vụ này hiện chưa khả dụng</div>'
+            },
+            'bot-quan-doan': {
+                type: 'unavailable',
+                content: '<div class="tooltip-content unavailable-text">Dịch vụ này hiện chưa khả dụng</div>'
+            }
+        };
+
+        function showTooltip(event, service) {
+            const data = serviceData[service];
+            if (!data) return;
+
+            tooltipContent.innerHTML = data.content;
+            
+            if (data.type === 'unavailable') {
+                tooltip.classList.add('unavailable');
+            } else {
+                tooltip.classList.remove('unavailable');
+            }
+
+            tooltip.classList.add('active');
+            moveTooltip(event);
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('active');
+        }
+
+        function moveTooltip(event) {
+            const x = event.clientX;
+            const y = event.clientY;
+            
+            tooltip.style.left = `${x}px`;
+            tooltip.style.top = `${y - 20}px`;
+        }
+
+        // Auth check and redirect
+        async function checkAuthAndRedirect() {
             try {
                 const response = await fetch('/api/check_auth');
-                const data = await response.json();
-                
-                if (data.logged_in) {
-                    window.currentUser = data.username;
-                    window.userUsage = data.usage;
-                    updateAuthUI(true);
-                } else {
-                    updateAuthUI(false);
-                }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                updateAuthUI(false);
-            }
-        }
-
-        function updateAuthUI(loggedIn) {
-            const navUserInfo = document.getElementById('nav-user-info');
-            const navAuthButtons = document.getElementById('nav-auth-buttons');
-            const upgradeProBtn = document.getElementById('upgrade-pro-btn');
-            
-            if (loggedIn) {
-                navUserInfo.classList.add('active');
-                navAuthButtons.style.display = 'none';
-                document.getElementById('nav-username').textContent = window.currentUser;
-                document.getElementById('usage-ban7').textContent = window.userUsage.ban7 || 0;
-                document.getElementById('usage-spam-log').textContent = window.userUsage.spam_log || 0;
-                
-                if (window.userUsage.is_pro) {
-                    document.getElementById('nav-pro-badge').style.display = 'inline';
-                    if (upgradeProBtn) upgradeProBtn.style.display = 'none';
-                } else {
-                    document.getElementById('nav-pro-badge').style.display = 'none';
-                    if (upgradeProBtn) upgradeProBtn.style.display = 'inline-flex';
-                }
-            } else {
-                navUserInfo.classList.remove('active');
-                navAuthButtons.style.display = 'flex';
-            }
-            
-            // Update tool cards based on auth status
-            updateToolCards();
-        }
-
-        function updateToolCards() {
-            const ban7Card = document.querySelector('.tool-card[onclick*="ban7"]');
-            const spamLogCard = document.querySelector('.tool-card[onclick*="spam-log"]');
-            
-            if (window.currentUser) {
-                // User is logged in
-                if (ban7Card) {
-                    ban7Card.classList.remove('disabled');
-                    ban7Card.onclick = () => openModal('ban7');
-                }
-                if (spamLogCard) {
-                    spamLogCard.classList.remove('disabled');
-                    spamLogCard.onclick = () => openModal('spam-log');
-                }
-            } else {
-                // User is not logged in
-                if (ban7Card) {
-                    ban7Card.classList.add('disabled');
-                    ban7Card.onclick = () => showAuthRequired();
-                }
-                if (spamLogCard) {
-                    spamLogCard.classList.add('disabled');
-                    spamLogCard.onclick = () => showAuthRequired();
-                }
-            }
-        }
-
-        function showAuthRequired() {
-            alert('Bạn cần đăng nhập để sử dụng tính năng này');
-            openModal('login');
-        }
-
-        async function login() {
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-            
-            if (!username || !password) {
-                showResult('login', false, 'Vui lòng nhập tên đăng nhập và mật khẩu');
-                return;
-            }
-            
-            setLoading('login', true);
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    showResult('login', true, 'Đăng nhập thành công');
-                    window.currentUser = data.username;
-                    await checkAuth();
-                    closeModal('login');
-                } else {
-                    showResult('login', false, data.error);
-                }
-            } catch (error) {
-                showResult('login', false, error.message);
-            }
-            setLoading('login', false);
-        }
-
-        async function register() {
-            const email = document.getElementById('register-email').value;
-            const username = document.getElementById('register-username').value;
-            const password = document.getElementById('register-password').value;
-            
-            if (!email || !username || !password) {
-                showResult('register', false, 'Vui lòng điền tất cả các trường');
-                return;
-            }
-            
-            if (password.length < 6) {
-                showResult('register', false, 'Mật khẩu phải có ít nhất 6 ký tự');
-                return;
-            }
-            
-            setLoading('register', true);
-            try {
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, username, password })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    showResult('register', true, 'Đăng ký thành công');
-                    closeModal('register');
-                    openModal('login');
-                } else {
-                    showResult('register', false, data.error);
-                }
-            } catch (error) {
-                showResult('register', false, error.message);
-            }
-            setLoading('register', false);
-        }
-
-        async function logout() {
-            try {
-                const response = await fetch('/api/logout', { method: 'POST' });
-                const data = await response.json();
-                
-                if (data.success) {
-                    window.currentUser = null;
-                    window.userUsage = null;
-                    updateAuthUI(false);
-                    alert('Đăng xuất thành công');
-                }
-            } catch (error) {
-                console.error('Logout failed:', error);
-            }
-        }
-
-        async function upgradePro() {
-            try {
-                const response = await fetch('/api/upgrade_pro', { method: 'POST' });
-                const data = await response.json();
-                
-                if (data.success) {
-                    alert(data.message);
-                    await checkAuth();
-                    closeModal('upgrade-pro');
-                } else {
-                    alert(data.error);
-                }
-            } catch (error) {
-                console.error('Upgrade failed:', error);
-                alert('Lỗi khi nâng cấp');
-            }
-        }
-
-        // Initialize auth check on page load
-        checkAuth();
-
-        function openModal(id) {
-            document.getElementById(`modal-${id}`).classList.add('active');
-        }
-
-        function closeModal(id) {
-            document.getElementById(`modal-${id}`).classList.remove('active');
-            // Clear results
-            const resultBox = document.getElementById(`${id}-result`);
-            if (resultBox) {
-                resultBox.classList.remove('active', 'success', 'error');
-                resultBox.innerHTML = '';
-            }
-            
-            // Reset add-recovery modal to step 1
-            if (id === 'add-recovery') {
-                document.getElementById('add-recovery-step-1').style.display = 'block';
-                document.getElementById('add-recovery-step-2').style.display = 'none';
-                document.getElementById('add-recovery-step-3').style.display = 'none';
-                document.getElementById('add-recovery-email').value = '';
-                document.getElementById('add-recovery-token').value = '';
-                document.getElementById('add-recovery-otp').value = '';
-                document.getElementById('add-recovery-security').value = '';
-                // Reset step indicators
-                document.getElementById('step-indicator-1').style.background = 'var(--primary)';
-                document.getElementById('step-indicator-1').style.color = 'white';
-                document.getElementById('step-indicator-2').style.background = 'var(--dark-border)';
-                document.getElementById('step-indicator-2').style.color = 'var(--text-muted)';
-                document.getElementById('step-indicator-3').style.background = 'var(--dark-border)';
-                document.getElementById('step-indicator-3').style.color = 'var(--text-muted)';
-            }
-            
-            // Reset unbind-email modal to step 1
-            if (id === 'unbind-email') {
-                document.getElementById('unbind-step-1').style.display = 'block';
-                document.getElementById('unbind-step-2').style.display = 'none';
-                document.getElementById('unbind-step-3').style.display = 'none';
-                document.getElementById('unbind-email').value = '';
-                document.getElementById('unbind-token').value = '';
-                document.getElementById('unbind-otp').value = '';
-                document.getElementById('unbind-security').value = '';
-                // Reset step indicators
-                document.getElementById('unbind-step-indicator-1').style.background = 'var(--primary)';
-                document.getElementById('unbind-step-indicator-1').style.color = 'white';
-                document.getElementById('unbind-step-indicator-2').style.background = 'var(--dark-border)';
-                document.getElementById('unbind-step-indicator-2').style.color = 'var(--text-muted)';
-                document.getElementById('unbind-step-indicator-3').style.background = 'var(--dark-border)';
-                document.getElementById('unbind-step-indicator-3').style.color = 'var(--text-muted)';
-            }
-            
-            // Reset change-bind-email modal to step 1
-            if (id === 'change-bind-email') {
-                document.getElementById('change-step-1').style.display = 'block';
-                document.getElementById('change-step-2').style.display = 'none';
-                document.getElementById('change-step-3').style.display = 'none';
-                document.getElementById('change-step-4').style.display = 'none';
-                document.getElementById('change-token').value = '';
-                document.getElementById('change-old-email').value = '';
-                document.getElementById('change-new-email').value = '';
-                document.getElementById('change-otp-old').value = '';
-                document.getElementById('change-security').value = '';
-                document.getElementById('change-otp-new').value = '';
-                // Reset step indicators
-                document.getElementById('change-step-indicator-1').style.background = 'var(--primary)';
-                document.getElementById('change-step-indicator-1').style.color = 'white';
-                document.getElementById('change-step-indicator-2').style.background = 'var(--dark-border)';
-                document.getElementById('change-step-indicator-2').style.color = 'var(--text-muted)';
-                document.getElementById('change-step-indicator-3').style.background = 'var(--dark-border)';
-                document.getElementById('change-step-indicator-3').style.color = 'var(--text-muted)';
-                document.getElementById('change-step-indicator-4').style.background = 'var(--dark-border)';
-                document.getElementById('change-step-indicator-4').style.color = 'var(--text-muted)';
-            }
-        }
-
-        function showResult(id, success, message, data = null) {
-            const resultBox = document.getElementById(`${id}-result`);
-            resultBox.classList.remove('active', 'success', 'error');
-            resultBox.classList.add('active', success ? 'success' : 'error');
-            
-            let content = `<h4>${success ? '✓ Thành Công' : '✗ Lỗi'}</h4>`;
-            content += `<div class="result-content">${message}</div>`;
-            
-            if (data) {
-                content += '<div style="margin-top: 1rem;">';
-                for (const [key, value] of Object.entries(data)) {
-                    const isToken = key.toLowerCase().includes('token') || key.toLowerCase().includes('jwt');
-                    content += `<div class="info-item">
-                        <span class="info-label">${key}:</span>
-                        <span class="info-value" style="word-break: break-all; flex: 1;">${value}</span>
-                        ${isToken ? `<button class="btn btn-secondary" onclick="copyToClipboard('${value}')" style="margin-left: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.75rem;">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>` : ''}
-                    </div>`;
-                }
-                content += '</div>';
-            }
-            
-            resultBox.innerHTML = content;
-        }
-
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Đã copy token!');
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                alert('Copy thất bại');
-            });
-        }
-
-        function setLoading(id, loading) {
-            const loadingEl = document.getElementById(`${id}-loading`);
-            if (loadingEl) {
-                loadingEl.classList.toggle('active', loading);
-            }
-        }
-
-        async function checkRecoveryEmail() {
-            const token = document.getElementById('check-recovery-token').value;
-            if (!token) {
-                showResult('check-recovery', false, 'Vui lòng nhập Access Token');
-                return;
-            }
-
-            setLoading('check-recovery', true);
-            try {
-                const response = await fetch('/api/check_recovery_email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ access_token: token })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    const info = {
-                        'Email khôi phục' : data.email || 'Không có',
-                        'Email chờ' : data.email_to_be || 'Không có',
-                        'Thời gian chờ' : data.countdown || 'N/A',
-                        'Trạng thái': data.status
-                    };
-                    showResult('check-recovery', true, 'Thông tin email khôi phục', info);
-                } else {
-                    showResult('check-recovery', false, data.error);
-                }
-            } catch (error) {
-                showResult('check-recovery', false, error.message);
-            }
-            setLoading('check-recovery', false);
-        }
-
-        async function checkPlatforms() {
-            const token = document.getElementById('check-platforms-token').value;
-            if (!token) {
-                showResult('check-platforms', false, 'Please enter access token');
-                return;
-            }
-
-            setLoading('check-platforms', true);
-            try {
-                const response = await fetch('/api/check_platforms', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ access_token: token })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    const info = {
-                        'Liên kết chính': data.main_platform,
-                        'Liên kết phụ': data.bounded.length > 0 ? data.bounded.map(a => `${a.platform}: ${a.email || a.nickname}`).join(', ') : 'None'
-                    };
-                    showResult('check-platforms', true, 'Thông tin liên kết', info);
-                } else {
-                    showResult('check-platforms', false, data.error);
-                }
-            } catch (error) {
-                showResult('check-platforms', false, error.message);
-            }
-            setLoading('check-platforms', false);
-        }
-
-        async function cancelRecovery() {
-            // Tính năng đang bảo trì (Đang bảo trì thôi)
-            showResult('cancel-recovery', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
-            return;
-            
-            /* Original code commented out for maintenance:
-            const token = document.getElementById('cancel-recovery-token').value;
-            if (!token) {
-                showResult('cancel-recovery', false, 'Please enter access token');
-                return;
-            }
-
-            setLoading('cancel-recovery', true);
-            try {
-                const response = await fetch('/api/cancel_recovery_email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ access_token: token })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    showResult('cancel-recovery', true, data.message);
-                } else {
-                    showResult('cancel-recovery', false, data.error);
-                }
-            } catch (error) {
-                showResult('cancel-recovery', false, error.message);
-            }
-            setLoading('cancel-recovery', false);
-            */
-        }
-
-        async function revokeToken() {
-            // Tính năng đang bảo trì (Đang bảo trì thôi)
-            showResult('revoke-token', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
-            return;
-            
-            /* Original code commented out for maintenance:
-            const token = document.getElementById('revoke-token-input').value;
-            if (!token) {
-                showResult('revoke-token', false, 'Please enter access token');
-                return;
-            }
-
-            setLoading('revoke-token', true);
-            try {
-                const response = await fetch('/api/revoke_token', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ access_token: token })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    showResult('revoke-token', true, data.message);
-                } else {
-                    showResult('revoke-token', false, data.error);
-                }
-            } catch (error) {
-                showResult('revoke-token', false, error.message);
-            }
-            setLoading('revoke-token', false);
-            */
-        }
-
-        async function eatToAccess() {
-            const eat = document.getElementById('eat-to-access-input').value;
-            if (!eat) {
-                showResult('eat-to-access', false, 'Please enter EAT token');
-                return;
-            }
-
-            setLoading('eat-to-access', true);
-            try {
-                const response = await fetch('/api/eat_to_access', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ eat_token: eat })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    showResult('eat-to-access', true, 'Đã lấy Access Token', { 'Access Token': data.access_token });
-                } else {
-                    showResult('eat-to-access', false, data.error);
-                }
-            } catch (error) {
-                showResult('eat-to-access', false, error.message);
-            }
-            setLoading('eat-to-access', false);
-        }
-
-        async function eatToJwt() {
-            const eat = document.getElementById('eat-to-jwt-input').value;
-            if (!eat) {
-                showResult('eat-to-jwt', false, 'Vui lòng nhập EAT token');
-                return;
-            }
-
-            setLoading('eat-to-jwt', true);
-            try {
-                const response = await fetch('/api/eat_to_jwt', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ eat_token: eat })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    const info = {
-                        'JWT Token': data.jwt_token,
-                        'Account ID': data.decoded.account_id || 'N/A',
-                        'Nickname': data.decoded.nickname || 'N/A'
-                    };
-                    showResult('eat-to-jwt', true, 'Đã lấy JWT Token', info);
-                } else {
-                    showResult('eat-to-jwt', false, data.error);
-                }
-            } catch (error) {
-                showResult('eat-to-jwt', false, error.message);
-            }
-            setLoading('eat-to-jwt', false);
-        }
-
-        async function accessToJwt() {
-            const token = document.getElementById('access-to-jwt-input').value;
-            if (!token) {
-                showResult('access-to-jwt', false, 'Vui lòng nhập access token');
-                return;
-            }
-
-            setLoading('access-to-jwt', true);
-            try {
-                const response = await fetch('/api/access_to_jwt', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ access_token: token })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    const info = {
-                        'JWT Token': data.jwt_token,
-                        'Account ID': data.decoded.account_id || 'N/A',
-                        'Nickname': data.decoded.nickname || 'N/A'
-                    };
-                    showResult('access-to-jwt', true, 'Đã lấy JWT Token', info);
-                } else {
-                    showResult('access-to-jwt', false, data.error);
-                }
-            } catch (error) {
-                showResult('access-to-jwt', false, error.message);
-            }
-            setLoading('access-to-jwt', false);
-        }
-
-        async function sendAddRecoveryOTP() {
-            const email = document.getElementById('add-recovery-email').value;
-            const token = document.getElementById('add-recovery-token').value;
-            
-            if (!email || !token) {
-                showResult('add-recovery', false, 'Vui lòng nhập email và access token');
-                return;
-            }
-
-            setLoading('add-recovery', true);
-            try {
-                const response = await fetch('/api/send_otp_add_recovery', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, access_token: token })
-                });
                 const result = await response.json();
                 
-                if (result.success) {
-                    showResult('add-recovery', true, 'OTP đã được gửi đến email của bạn');
-                    // Move to step 2
-                    document.getElementById('add-recovery-step-1').style.display = 'none';
-                    document.getElementById('add-recovery-step-2').style.display = 'block';
-                    // Update step indicators
-                    document.getElementById('step-indicator-1').style.background = 'var(--dark-border)';
-                    document.getElementById('step-indicator-1').style.color = 'var(--text-muted)';
-                    document.getElementById('step-indicator-2').style.background = 'var(--primary)';
-                    document.getElementById('step-indicator-2').style.color = 'white';
+                if (result.authenticated) {
+                    window.location.href = '/tools';
                 } else {
-                    showResult('add-recovery', false, result.error);
+                    showLoginModal();
                 }
             } catch (error) {
-                showResult('add-recovery', false, error.message);
-            }
-            setLoading('add-recovery', false);
-        }
-
-        async function verifyAddRecoveryOTP() {
-            const email = document.getElementById('add-recovery-email').value;
-            const token = document.getElementById('add-recovery-token').value;
-            const otp = document.getElementById('add-recovery-otp').value;
-            
-            if (!otp) {
-                showResult('add-recovery', false, 'Vui lòng nhập OTP');
-                return;
-            }
-
-            setLoading('add-recovery', true);
-            try {
-                const response = await fetch('/api/verify_otp_add_recovery', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, access_token: token, otp })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult('add-recovery', true, 'OTP xác thực thành công');
-                    // Move to step 3
-                    document.getElementById('add-recovery-step-2').style.display = 'none';
-                    document.getElementById('add-recovery-step-3').style.display = 'block';
-                    // Update step indicators
-                    document.getElementById('step-indicator-2').style.background = 'var(--dark-border)';
-                    document.getElementById('step-indicator-2').style.color = 'var(--text-muted)';
-                    document.getElementById('step-indicator-3').style.background = 'var(--primary)';
-                    document.getElementById('step-indicator-3').style.color = 'white';
-                } else {
-                    showResult('add-recovery', false, result.error);
-                }
-            } catch (error) {
-                showResult('add-recovery', false, error.message);
-            }
-            setLoading('add-recovery', false);
-        }
-
-        async function createAddRecoveryBind() {
-            const email = document.getElementById('add-recovery-email').value;
-            const token = document.getElementById('add-recovery-token').value;
-            const otp = document.getElementById('add-recovery-otp').value;
-            const security = document.getElementById('add-recovery-security').value;
-            
-            if (!security || security.length !== 6 || !security.match(/^\d+$/)) {
-                showResult('add-recovery', false, 'Mã bảo mật phải là 6 chữ số');
-                return;
-            }
-
-            setLoading('add-recovery', true);
-            try {
-                const response = await fetch('/api/add_recovery_email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, access_token: token, otp, security_code: security })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult('add-recovery', true, result.message);
-                    // Reset and close
-                    setTimeout(() => closeModal('add-recovery'), 2000);
-                } else {
-                    showResult('add-recovery', false, result.error);
-                }
-            } catch (error) {
-                showResult('add-recovery', false, error.message);
-            }
-            setLoading('add-recovery', false);
-        }
-
-        function backToAddRecoveryStep1() {
-            document.getElementById('add-recovery-step-2').style.display = 'none';
-            document.getElementById('add-recovery-step-1').style.display = 'block';
-            document.getElementById('add-recovery-result').classList.remove('active');
-            // Update step indicators
-            document.getElementById('step-indicator-2').style.background = 'var(--dark-border)';
-            document.getElementById('step-indicator-2').style.color = 'var(--text-muted)';
-            document.getElementById('step-indicator-1').style.background = 'var(--primary)';
-            document.getElementById('step-indicator-1').style.color = 'white';
-        }
-
-        function backToAddRecoveryStep2() {
-            document.getElementById('add-recovery-step-3').style.display = 'none';
-            document.getElementById('add-recovery-step-2').style.display = 'block';
-            document.getElementById('add-recovery-result').classList.remove('active');
-            // Update step indicators
-            document.getElementById('step-indicator-3').style.background = 'var(--dark-border)';
-            document.getElementById('step-indicator-3').style.color = 'var(--text-muted)';
-            document.getElementById('step-indicator-2').style.background = 'var(--primary)';
-            document.getElementById('step-indicator-2').style.color = 'white';
-        }
-
-        async function checkRecoveryEmail() {
-            const token = document.getElementById('check-recovery-token').value;
-            if (!token) {
-                showResult('check-recovery', false, 'Please enter access token');
-                return;
-            }
-
-            setLoading('check-recovery', true);
-            try {
-                const response = await fetch('/api/check_recovery_email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ access_token: token })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    const info = {
-                        'Email': data.email || 'None',
-                        'Pending Email': data.email_to_be || 'None',
-                        'Countdown': data.countdown || 'N/A',
-                        'Status': data.status
-                    };
-                    showResult('check-recovery', true, 'Recovery email info retrieved', info);
-                } else {
-                    showResult('check-recovery', false, data.error);
-                }
-            } catch (error) {
-                showResult('check-recovery', false, error.message);
-            }
-            setLoading('check-recovery', false);
-        }
-
-        // Spam log state
-        let spamLogRunning = false;
-        let spamLogInterval = null;
-        let spamLogStartTime = null;
-        let spamLogDuration = 0;
-
-        function toggleSpamLog() {
-            if (spamLogRunning) {
-                stopSpamLog();
-            } else {
-                startSpamLog();
+                showLoginModal();
             }
         }
 
-        async function startSpamLog() {
-            const token = document.getElementById('spam-log-token').value;
-            const duration = document.getElementById('spam-log-duration').value;
-            
-            if (!token) {
-                showResult('spam-log', false, 'Vui lòng nhập access token');
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/spam_log', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        access_token: token,
-                        duration: duration,
-                        action: 'start'
-                    })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    spamLogRunning = true;
-                    spamLogDuration = data.duration;
-                    spamLogStartTime = Date.now();
-                    
-                    // Update button
-                    const btn = document.getElementById('spam-log-toggle-btn');
-                    btn.innerHTML = '<i class="fas fa-stop"></i> Dừng Spam Log';
-                    btn.classList.remove('btn-primary');
-                    btn.classList.add('btn-secondary');
-                    
-                    // Show progress bar
-                    const progressBar = document.getElementById('spam-log-progress');
-                    progressBar.style.display = 'block';
-                    
-                    // Start progress animation
-                    updateProgress();
-                    spamLogInterval = setInterval(updateProgress, 100);
-                    
-                    showResult('spam-log', true, 'Đã bắt đầu spam log');
-                } else {
-                    showResult('spam-log', false, data.error);
-                }
-            } catch (error) {
-                showResult('spam-log', false, error.message);
-            }
+        function showLoginModal() {
+            document.getElementById('login-modal').classList.add('active');
         }
 
-        async function stopSpamLog() {
-            try {
-                const response = await fetch('/api/spam_log', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'stop' })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    spamLogRunning = false;
-                    clearInterval(spamLogInterval);
-                    
-                    // Update button
-                    const btn = document.getElementById('spam-log-toggle-btn');
-                    btn.innerHTML = '<i class="fas fa-bolt"></i> Chạy Spam Log';
-                    btn.classList.remove('btn-secondary');
-                    btn.classList.add('btn-primary');
-                    
-                    // Hide progress bar
-                    const progressBar = document.getElementById('spam-log-progress');
-                    progressBar.style.display = 'none';
-                    document.getElementById('spam-log-progress-fill').style.width = '0%';
-                    
-                    showResult('spam-log', true, 'Đã dừng spam log');
-                    
-                    // Update usage
-                    await checkAuth();
-                } else {
-                    showResult('spam-log', false, data.error);
-                }
-            } catch (error) {
-                showResult('spam-log', false, error.message);
-            }
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.remove('active');
         }
 
-        function updateProgress() {
-            if (!spamLogRunning || !spamLogStartTime) return;
-            
-            const elapsed = (Date.now() - spamLogStartTime) / 1000;
-            const progress = Math.min((elapsed / spamLogDuration) * 100, 100);
-            
-            document.getElementById('spam-log-progress-fill').style.width = progress + '%';
-            
-            if (progress >= 100) {
-                stopSpamLog();
-            }
+        function goToLogin() {
+            window.location.href = '/auth';
         }
-
-        async function spamLog() {
-            // This function is deprecated, use toggleSpamLog instead
-            toggleSpamLog();
-        }
-
-        async function checkSpamLogStatus() {
-            // This function is deprecated
-            showResult('spam-log', false, 'Tính năng này đã được thay thế');
-        }
-
-        function toggleLongBioMethod() {
-            const method = document.getElementById('long-bio-method').value;
-            document.getElementById('long-bio-jwt-group').style.display = method === 'jwt' ? 'block' : 'none';
-            document.getElementById('long-bio-access-group').style.display = method === 'access' ? 'block' : 'none';
-            document.getElementById('long-bio-guest-group').style.display = method === 'guest' ? 'block' : 'none';
-            document.getElementById('long-bio-password-group').style.display = method === 'guest' ? 'block' : 'none';
-        }
-
-        async function longBio() {
-            const method = document.getElementById('long-bio-method').value;
-            const bioText = document.getElementById('long-bio-text').value;
-            
-            if (!bioText) {
-                showResult('long-bio', false, 'Vui lòng nhập nội dung bio');
-                return;
-            }
-
-            const data = { method, bio_text: bioText };
-
-            if (method === 'jwt') {
-                const jwt = document.getElementById('long-bio-jwt').value;
-                if (!jwt) {
-                    showResult('long-bio', false, 'Vui lòng nhập JWT token');
-                    return;
-                }
-                data.jwt_token = jwt;
-            } else if (method === 'access') {
-                const access = document.getElementById('long-bio-access').value;
-                if (!access) {
-                    showResult('long-bio', false, 'Vui lòng nhập access token');
-                    return;
-                }
-                data.access_token = access;
-            } else if (method === 'guest') {
-                const uid = document.getElementById('long-bio-uid').value;
-                const password = document.getElementById('long-bio-password').value;
-                if (!uid || !password) {
-                    showResult('long-bio', false, 'Vui lòng nhập UID và password');
-                    return;
-                }
-                data.uid = uid;
-                data.password = password;
-            }
-
-            setLoading('long-bio', true);
-            try {
-                const response = await fetch('/api/long_bio', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult('long-bio', true, result.message);
-                } else {
-                    showResult('long-bio', false, result.error);
-                }
-            } catch (error) {
-                showResult('long-bio', false, error.message);
-            }
-            setLoading('long-bio', false);
-        }
-
-        function toggleUnbindMethod() {
-            const method = document.getElementById('unbind-method').value;
-            document.getElementById('unbind-otp-group').style.display = method === 'otp' ? 'block' : 'none';
-            document.getElementById('unbind-security-group').style.display = method === 'password' ? 'block' : 'none';
-        }
-
-        function goToUnbindStep2() {
-            document.getElementById('unbind-step-1').style.display = 'none';
-            document.getElementById('unbind-step-2').style.display = 'block';
-            // Update step indicators
-            document.getElementById('unbind-step-indicator-1').style.background = 'var(--dark-border)';
-            document.getElementById('unbind-step-indicator-1').style.color = 'var(--text-muted)';
-            document.getElementById('unbind-step-indicator-2').style.background = 'var(--primary)';
-            document.getElementById('unbind-step-indicator-2').style.color = 'white';
-        }
-
-        function goToUnbindStep3() {
-            const email = document.getElementById('unbind-email').value;
-            const token = document.getElementById('unbind-token').value;
-            
-            if (!email || !token) {
-                showResult('unbind', false, 'Vui lòng nhập email và access token');
-                return;
-            }
-
-            document.getElementById('unbind-step-2').style.display = 'none';
-            document.getElementById('unbind-step-3').style.display = 'block';
-            
-            // Show/hide OTP or security based on method
-            toggleUnbindMethod();
-            
-            // Update step indicators
-            document.getElementById('unbind-step-indicator-2').style.background = 'var(--dark-border)';
-            document.getElementById('unbind-step-indicator-2').style.color = 'var(--text-muted)';
-            document.getElementById('unbind-step-indicator-3').style.background = 'var(--primary)';
-            document.getElementById('unbind-step-indicator-3').style.color = 'white';
-        }
-
-        function backToUnbindStep1() {
-            document.getElementById('unbind-step-2').style.display = 'none';
-            document.getElementById('unbind-step-1').style.display = 'block';
-            document.getElementById('unbind-result').classList.remove('active');
-            // Update step indicators
-            document.getElementById('unbind-step-indicator-2').style.background = 'var(--dark-border)';
-            document.getElementById('unbind-step-indicator-2').style.color = 'var(--text-muted)';
-            document.getElementById('unbind-step-indicator-1').style.background = 'var(--primary)';
-            document.getElementById('unbind-step-indicator-1').style.color = 'white';
-        }
-
-        function backToUnbindStep2() {
-            document.getElementById('unbind-step-3').style.display = 'none';
-            document.getElementById('unbind-step-2').style.display = 'block';
-            document.getElementById('unbind-result').classList.remove('active');
-            // Update step indicators
-            document.getElementById('unbind-step-indicator-3').style.background = 'var(--dark-border)';
-            document.getElementById('unbind-step-indicator-3').style.color = 'var(--text-muted)';
-            document.getElementById('unbind-step-indicator-2').style.background = 'var(--primary)';
-            document.getElementById('unbind-step-indicator-2').style.color = 'white';
-        }
-
-        async function sendUnbindOTP() {
-            const email = document.getElementById('unbind-email').value;
-            const token = document.getElementById('unbind-token').value;
-            
-            if (!email || !token) {
-                showResult('unbind', false, 'Vui lòng nhập email và access token');
-                return;
-            }
-
-            setLoading('unbind', true);
-            try {
-                const response = await fetch('/api/send_otp_unbind', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, access_token: token })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult('unbind', true, result.message);
-                } else {
-                    showResult('unbind', false, result.error);
-                }
-            } catch (error) {
-                showResult('unbind', false, error.message);
-            }
-            setLoading('unbind', false);
-        }
-
-        async function unbindEmail() {
-            const method = document.getElementById('unbind-method').value;
-            const email = document.getElementById('unbind-email').value;
-            const token = document.getElementById('unbind-token').value;
-            
-            if (!email || !token) {
-                showResult('unbind', false, 'Vui lòng điền tất cả các trường bắt buộc');
-                return;
-            }
-
-            const data = { email, access_token: token, method };
-
-            if (method === 'otp') {
-                const otp = document.getElementById('unbind-otp').value;
-                if (!otp) {
-                    showResult('unbind', false, 'Vui lòng nhập OTP');
-                    return;
-                }
-                data.otp = otp;
-            } else if (method === 'password') {
-                const security = document.getElementById('unbind-security').value;
-                if (!security || security.length !== 6 || !security.match(/^\d+$/)) {
-                    showResult('unbind', false, 'Mã bảo mật phải là 6 chữ số');
-                    return;
-                }
-                data.security_code = security;
-            }
-
-            setLoading('unbind', true);
-            try {
-                const response = await fetch('/api/unbind_email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult('unbind', true, result.message);
-                } else {
-                    showResult('unbind', false, result.error);
-                }
-            } catch (error) {
-                showResult('unbind', false, error.message);
-            }
-            setLoading('unbind', false);
-        }
-
-        function toggleChangeMethod() {
-            const method = document.getElementById('change-method').value;
-            document.getElementById('change-otp-old-group').style.display = method === 'otp' ? 'block' : 'none';
-            document.getElementById('change-security-group').style.display = method === 'password' ? 'block' : 'none';
-        }
-
-        function goToChangeStep2() {
-            document.getElementById('change-step-1').style.display = 'none';
-            document.getElementById('change-step-2').style.display = 'block';
-            // Update step indicators
-            document.getElementById('change-step-indicator-1').style.background = 'var(--dark-border)';
-            document.getElementById('change-step-indicator-1').style.color = 'var(--text-muted)';
-            document.getElementById('change-step-indicator-2').style.background = 'var(--primary)';
-            document.getElementById('change-step-indicator-2').style.color = 'white';
-        }
-
-        function goToChangeStep3() {
-            const token = document.getElementById('change-token').value;
-            const oldEmail = document.getElementById('change-old-email').value;
-            const newEmail = document.getElementById('change-new-email').value;
-            
-            if (!token || !oldEmail || !newEmail) {
-                showResult('change', false, 'Vui lòng nhập access token, email cũ và email mới');
-                return;
-            }
-
-            document.getElementById('change-step-2').style.display = 'none';
-            document.getElementById('change-step-3').style.display = 'block';
-            
-            // Show/hide OTP or security based on method
-            toggleChangeMethod();
-            
-            // Update step indicators
-            document.getElementById('change-step-indicator-2').style.background = 'var(--dark-border)';
-            document.getElementById('change-step-indicator-2').style.color = 'var(--text-muted)';
-            document.getElementById('change-step-indicator-3').style.background = 'var(--primary)';
-            document.getElementById('change-step-indicator-3').style.color = 'white';
-        }
-
-        function goToChangeStep4() {
-            const method = document.getElementById('change-method').value;
-            const otpOld = document.getElementById('change-otp-old').value;
-            const security = document.getElementById('change-security').value;
-            
-            if (method === 'otp' && !otpOld) {
-                showResult('change', false, 'Vui lòng nhập OTP cho email cũ');
-                return;
-            }
-            if (method === 'password' && (!security || security.length !== 6 || !security.match(/^\d+$/))) {
-                showResult('change', false, 'Mã bảo mật phải là 6 chữ số');
-                return;
-            }
-
-            document.getElementById('change-step-3').style.display = 'none';
-            document.getElementById('change-step-4').style.display = 'block';
-            
-            // Update step indicators
-            document.getElementById('change-step-indicator-3').style.background = 'var(--dark-border)';
-            document.getElementById('change-step-indicator-3').style.color = 'var(--text-muted)';
-            document.getElementById('change-step-indicator-4').style.background = 'var(--primary)';
-            document.getElementById('change-step-indicator-4').style.color = 'white';
-        }
-
-        function backToChangeStep1() {
-            document.getElementById('change-step-2').style.display = 'none';
-            document.getElementById('change-step-1').style.display = 'block';
-            document.getElementById('change-result').classList.remove('active');
-            // Update step indicators
-            document.getElementById('change-step-indicator-2').style.background = 'var(--dark-border)';
-            document.getElementById('change-step-indicator-2').style.color = 'var(--text-muted)';
-            document.getElementById('change-step-indicator-1').style.background = 'var(--primary)';
-            document.getElementById('change-step-indicator-1').style.color = 'white';
-        }
-
-        function backToChangeStep2() {
-            document.getElementById('change-step-3').style.display = 'none';
-            document.getElementById('change-step-2').style.display = 'block';
-            document.getElementById('change-result').classList.remove('active');
-            // Update step indicators
-            document.getElementById('change-step-indicator-3').style.background = 'var(--dark-border)';
-            document.getElementById('change-step-indicator-3').style.color = 'var(--text-muted)';
-            document.getElementById('change-step-indicator-2').style.background = 'var(--primary)';
-            document.getElementById('change-step-indicator-2').style.color = 'white';
-        }
-
-        function backToChangeStep3() {
-            document.getElementById('change-step-4').style.display = 'none';
-            document.getElementById('change-step-3').style.display = 'block';
-            document.getElementById('change-result').classList.remove('active');
-            // Update step indicators
-            document.getElementById('change-step-indicator-4').style.background = 'var(--dark-border)';
-            document.getElementById('change-step-indicator-4').style.color = 'var(--text-muted)';
-            document.getElementById('change-step-indicator-3').style.background = 'var(--primary)';
-            document.getElementById('change-step-indicator-3').style.color = 'white';
-        }
-
-        async function sendChangeOTPOld() {
-            const oldEmail = document.getElementById('change-old-email').value;
-            const token = document.getElementById('change-token').value;
-            
-            if (!oldEmail || !token) {
-                showResult('change', false, 'Vui lòng nhập email cũ và access token');
-                return;
-            }
-
-            setLoading('change', true);
-            try {
-                const response = await fetch('/api/send_otp_change_old', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ old_email: oldEmail, access_token: token })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult('change', true, result.message);
-                } else {
-                    showResult('change', false, result.error);
-                }
-            } catch (error) {
-                showResult('change', false, error.message);
-            }
-            setLoading('change', false);
-        }
-
-        async function sendChangeOTPNew() {
-            const newEmail = document.getElementById('change-new-email').value;
-            const token = document.getElementById('change-token').value;
-            
-            if (!newEmail || !token) {
-                showResult('change', false, 'Vui lòng nhập email mới và access token');
-                return;
-            }
-
-            setLoading('change', true);
-            try {
-                const response = await fetch('/api/send_otp_change_new', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ new_email: newEmail, access_token: token })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult('change', true, result.message);
-                } else {
-                    showResult('change', false, result.error);
-                }
-            } catch (error) {
-                showResult('change', false, error.message);
-            }
-            setLoading('change', false);
-        }
-
-        async function changeBindEmail() {
-            const method = document.getElementById('change-method').value;
-            const token = document.getElementById('change-token').value;
-            const oldEmail = document.getElementById('change-old-email').value;
-            const newEmail = document.getElementById('change-new-email').value;
-            const otpNew = document.getElementById('change-otp-new').value;
-            
-            if (!token || !oldEmail || !newEmail || !otpNew) {
-                showResult('change', false, 'Vui lòng điền tất cả các trường bắt buộc');
-                return;
-            }
-
-            const data = { access_token: token, old_email: oldEmail, new_email: newEmail, method, otp_new: otpNew };
-
-            if (method === 'otp') {
-                const otpOld = document.getElementById('change-otp-old').value;
-                if (!otpOld) {
-                    showResult('change', false, 'Vui lòng nhập OTP cho email cũ');
-                    return;
-                }
-                data.otp_old = otpOld;
-            } else if (method === 'password') {
-                const security = document.getElementById('change-security').value;
-                if (!security || security.length !== 6 || !security.match(/^\d+$/)) {
-                    showResult('change', false, 'Mã bảo mật phải là 6 chữ số');
-                    return;
-                }
-                data.security_code = security;
-            }
-
-            setLoading('change', true);
-            try {
-                const response = await fetch('/api/change_bind_email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    showResult('change', true, result.message);
-                } else {
-                    showResult('change', false, result.error);
-                }
-            } catch (error) {
-                showResult('change', false, error.message);
-            }
-            setLoading('change', false);
-        }
-
-        async function ban7() {
-            const token = document.getElementById('ban7-token').value;
-            
-            if (!token) {
-                showResult('ban7', false, 'Vui lòng nhập access token');
-                return;
-            }
-
-            setLoading('ban7', true);
-            try {
-                const response = await fetch('/api/ban7', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ access_token: token })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    const info = {
-                        'Account ID': result.account_id,
-                        'Open ID': result.open_id,
-                        'Platform': result.platform,
-                        'Response Data': result.data
-                    };
-                    showResult('ban7', true, 'Đã gửi packet permanent ban thành công', info);
-                } else {
-                    showResult('ban7', false, result.message || result.error);
-                }
-            } catch (error) {
-                showResult('ban7', false, error.message);
-            }
-            setLoading('ban7', false);
-        }
-
-        // Close modal on outside click
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-        });
-
-        // Close modal on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal.active').forEach(modal => {
-                    modal.classList.remove('active');
-                });
-            }
-        });
     </script>
 </body>
 </html>
