@@ -519,107 +519,6 @@
             .tools-grid { grid-template-columns: 1fr; }
             .navbar { padding: 1rem; }
         }
-
-        /* Login Required Modal */
-        .login-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 2000;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
-        .login-modal.active {
-            display: flex;
-        }
-
-        .login-modal-content {
-            background: var(--dark-card);
-            border: 1px solid var(--dark-border);
-            border-radius: 20px;
-            padding: 2.5rem;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-            position: relative;
-        }
-
-        .login-modal-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: rgba(99, 102, 241, 0.1);
-            border: 2px solid rgba(99, 102, 241, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            font-size: 2.5rem;
-            color: #818cf8;
-        }
-
-        .login-modal h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            color: var(--text);
-        }
-
-        .login-modal p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        .login-modal-btn {
-            width: 100%;
-            padding: 0.875rem 1.5rem;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            background: var(--gradient);
-            color: white;
-            box-shadow: 0 0 30px rgba(99,102,241,0.3);
-        }
-
-        .login-modal-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(99,102,241,0.4);
-        }
-
-        .login-modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: color 0.2s;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .login-modal-close:hover {
-            color: var(--text);
-        }
     </style>
 </head>
 <body>
@@ -644,10 +543,6 @@
                     <i class="fas fa-crown"></i> Nâng cấp Pro
                 </button>
                 <button class="nav-btn nav-btn-secondary" onclick="logout()">Đăng xuất</button>
-            </div>
-            <div id="nav-auth-buttons">
-                <button class="nav-btn nav-btn-secondary" onclick="openModal('login')">Đăng nhập</button>
-                <button class="nav-btn nav-btn-primary" onclick="openModal('register')">Đăng ký</button>
             </div>
         </div>
     </nav>
@@ -2627,42 +2522,15 @@
                 const result = await response.json();
                 
                 if (!result.authenticated) {
-                    showLoginModal();
+                    window.location.href = '/auth';
                 }
             } catch (error) {
-                showLoginModal();
+                window.location.href = '/auth';
             }
-        }
-
-        function showLoginModal() {
-            document.getElementById('login-modal').classList.add('active');
-        }
-
-        function closeLoginModal() {
-            document.getElementById('login-modal').classList.remove('active');
-        }
-
-        function goToLogin() {
-            window.location.href = '/auth';
         }
 
         // Check auth on page load
         checkAuth();
     </script>
-
-    <!-- Login Required Modal -->
-    <div class="login-modal" id="login-modal">
-        <div class="login-modal-content">
-            <button class="login-modal-close" onclick="closeLoginModal()">&times;</button>
-            <div class="login-modal-icon">
-                <i class="fas fa-lock"></i>
-            </div>
-            <h2>Bạn chưa đăng nhập</h2>
-            <p>Vui lòng đăng nhập để sử dụng các dịch vụ của chúng tôi</p>
-            <button class="login-modal-btn" onclick="goToLogin()">
-                <i class="fas fa-sign-in-alt"></i> Đăng nhập ngay
-            </button>
-        </div>
-    </div>
 </body>
 </html>
