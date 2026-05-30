@@ -16,7 +16,10 @@ import urllib3
 import random
 import uuid
 import os
+import threading
 from google.protobuf.timestamp_pb2 import Timestamp
+import mjologin
+import MajorLogin_res_pb2
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -30,6 +33,204 @@ AES_IV  = bytes([54,111,121,90,68,114,50,50,69,51,121,99,104,106,77,37])
 # Firebase configuration
 FIREBASE_URL = "https://freefiretools-a5470-default-rtdb.asia-southeast1.firebasedatabase.app"
 FIREBASE_SECRET = "bIIZjhwOHgrkxLawK2Lbcfbdd75zxQQ3JVqWQC4b"
+
+# Spam Log global state
+spam_log_threads = {}
+spam_log_stop_events = {}
+
+# SimpleProtobuf class for SpamLog
+class SimpleProtobuf:
+    @staticmethod
+    def encode_varint(value):
+        result = bytearray()
+        while value > 0x7F:
+            result.append((value & 0x7F) | 0x80)
+            value >>= 7
+        result.append(value & 0x7F)
+        return bytes(result)
+
+    @staticmethod
+    def encode_string(field_number, value):
+        if isinstance(value, str):
+            value = value.encode('utf-8')
+        res = bytearray()
+        res.extend(SimpleProtobuf.encode_varint((field_number << 3) | 2))
+        res.extend(SimpleProtobuf.encode_varint(len(value)))
+        res.extend(value)
+        return bytes(res)
+
+    @staticmethod
+    def create_login_payload(open_id, access_token, platform):
+        payload = bytearray()
+        curr = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        payload.extend(SimpleProtobuf.encode_string(3, curr))
+        payload.extend(SimpleProtobuf.encode_string(22, open_id))
+        payload.extend(SimpleProtobuf.encode_string(23, platform))
+        payload.extend(SimpleProtobuf.encode_string(29, access_token))
+        payload.extend(SimpleProtobuf.encode_string(99, platform))
+        return bytes(payload)
+
+def get_available_room_spam(hex_data):
+    """Parse GetLoginData response to get server IP and port"""
+    try:
+        data = bytes.fromhex(hex_data)
+        result = {}
+        index = 0
+        while index < len(data):
+            tag = data[index]
+            field_num = tag >> 3
+            wire_type = tag & 0x07
+            index += 1
+            if wire_type == 0:
+                val = 0
+                shift = 0
+                while index < len(data):
+                    byte = data[index]
+                    index += 1
+                    val |= (byte & 0x7F) << shift
+                    if not (byte & 0x80):
+                        break
+                    shift += 7
+                result[str(field_num)] = {"data": val}
+            elif wire_type == 2:
+                length = 0
+                shift = 0
+                while index < len(data):
+                    byte = data[index]
+                    index += 1
+                    length |= (byte & 0x7F) << shift
+                    if not (byte & 0x80):
+                        break
+                    shift += 7
+                val_bytes = data[index:index + length]
+                index += length
+                try:
+                    result[str(field_num)] = {"data": val_bytes.decode('utf-8')}
+                except:
+                    result[str(field_num)] = {"data": val_bytes.hex()}
+            else:
+                break
+        return result
+    except:
+        return {}
+
+def process_spam_log(access_token, duration_seconds, stop_event):
+    """Process spam log in background thread"""
+    try:
+        mjologin.init_system(access_token)
+
+        headers = {
+            "Host": "loginbp.ggpolarbear.com",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "User-Agent": "FreeFire/2.103.1 (iPhone; iOS 15.5; Scale/3.00)",
+            "X-GA": "v1 1",
+            "ReleaseVersion": "OB53",
+            "Connection": "keep-alive"
+        }
+
+        session_start = time.time()
+        while time.time() - session_start < duration_seconds:
+            # Check if stop event is set
+            if stop_event and stop_event.is_set():
+                break
+
+            try:
+                # Token inspection
+                r_inspect = requests.get(
+                    f"https://100067.connect.garena.com/oauth/token/inspect?token={access_token}",
+                    timeout=10
+                ).json()
+                if 'error' in r_inspect:
+                    break
+
+                open_id = r_inspect.get('open_id')
+                platform = str(r_inspect.get('platform'))
+
+                # Build payload
+                key, iv = b'Yg&tc%DEuh6%Zc^8', b'6oyZDr22E3ychjM%'
+                pb_payload = SimpleProtobuf.create_login_payload(open_id, access_token, platform)
+                enc_payload = AES.new(key, AES.MODE_CBC, iv).encrypt(pad(pb_payload, 16))
+
+                # MajorLogin
+                r1 = requests.post(
+                    "https://loginbp.ggpolarbear.com/MajorLogin",
+                    headers=headers,
+                    data=enc_payload,
+                    timeout=15,
+                    verify=False
+                )
+
+                if r1.status_code == 503:
+                    time.sleep(10)
+                    continue
+                elif r1.status_code != 200:
+                    time.sleep(5)
+                    continue
+
+                # Parse MajorLogin response
+                resp_pb = MajorLogin_res_pb2.MajorLoginRes()
+                try:
+                    dec = unpad(AES.new(key, AES.MODE_CBC, iv).decrypt(r1.content), 16)
+                    resp_pb.ParseFromString(dec)
+                except:
+                    resp_pb.ParseFromString(r1.content)
+
+                # GetLoginData
+                headers["Host"] = "clientbp.ggpolarbear.com"
+                headers["Authorization"] = f"Bearer {resp_pb.account_jwt}"
+                r2 = requests.post(
+                    "https://clientbp.ggpolarbear.com/GetLoginData",
+                    headers=headers,
+                    data=enc_payload,
+                    timeout=12,
+                    verify=False
+                )
+
+                # Parse server address
+                room_info = get_available_room_spam(r2.content.hex())
+                addr = room_info.get('14', {}).get('data')
+                if not addr:
+                    time.sleep(5)
+                    continue
+
+                online_ip = addr[:-6]
+                online_port = int(addr[-5:])
+
+                # Build final packet
+                jwt_parts = resp_pb.account_jwt.split('.')
+                jwt_payload = json.loads(base64.urlsafe_b64decode(jwt_parts[1] + "==").decode())
+                acc_id = int(jwt_payload.get("account_id", 0))
+                exp_adj = max(int(jwt_payload.get("exp", 0)) - 28800, 0)
+
+                cipher_jwt = AES.new(resp_pb.key, AES.MODE_CBC, resp_pb.iv)
+                enc_jwt = cipher_jwt.encrypt(pad(resp_pb.account_jwt.encode(), 16))
+                final_packet = bytes.fromhex(
+                    "0115" + acc_id.to_bytes(8, "big").hex() + 
+                    exp_adj.to_bytes(4, "big").hex() + 
+                    len(enc_jwt).to_bytes(4, "big").hex()
+                ) + enc_jwt
+
+                # Send packets
+                packet_start = time.time()
+                while time.time() - packet_start < 10:  # Send for 10 seconds per session
+                    if stop_event and stop_event.is_set():
+                        break
+                    try:
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                            s.settimeout(3)
+                            s.connect((online_ip, online_port))
+                            s.sendall(final_packet)
+                        time.sleep(2.0)
+                    except:
+                        time.sleep(1)
+                        continue
+
+            except Exception as e:
+                time.sleep(5)
+                continue
+
+    except Exception as e:
+        pass
 
 def firebase_get(path):
     """Get data from Firebase"""
@@ -1297,31 +1498,45 @@ def spam_log():
         if total_seconds <= 0 or total_seconds > max_duration:
             return jsonify({'success': False, 'error': f'Duration must be between 1 second and 15 days'})
         
-        # For now, return a simplified response
-        # In a real implementation, this would start/stop the spam log process
         if action == 'start':
-            import uuid as _uuid
-            task_id = _uuid.uuid4().hex
-            task_data = {
-                'task_id':      task_id,
-                'type':         'spam_log',
-                'username':     username,
-                'access_token': access_token,
-                'duration':     total_seconds,
-                'status':       'pending',
-                'created_at':   datetime.now().isoformat()
-            }
-            save_task(task_id, task_data)
+            # Check if already running for this user
+            if username in spam_log_threads and username in spam_log_stop_events:
+                if spam_log_threads[username].is_alive():
+                    return jsonify({'success': False, 'error': 'Spam log already running'})
+            
+            # Create stop event
+            stop_event = threading.Event()
+            spam_log_stop_events[username] = stop_event
+            
+            # Start spam log in background thread
+            thread = threading.Thread(
+                target=process_spam_log,
+                args=(access_token, total_seconds, stop_event),
+                daemon=True
+            )
+            thread.start()
+            spam_log_threads[username] = thread
+            
+            # Update usage
             update_user_usage(username, 'spam_log')
+            
             return jsonify({
-                'success':  True,
-                'message':  'Spam log queued — worker sẽ xử lý',
-                'task_id':  task_id,
+                'success': True,
+                'message': 'Spam log started',
                 'duration': total_seconds,
-                'status':   'pending'
+                'status': 'running'
             })
         elif action == 'stop':
-            return jsonify({'success': True, 'message': 'Spam log stopped', 'status': 'stopped'})
+            # Stop spam log for this user
+            if username in spam_log_stop_events:
+                spam_log_stop_events[username].set()
+                if username in spam_log_threads:
+                    spam_log_threads[username].join(timeout=5)
+                    del spam_log_threads[username]
+                del spam_log_stop_events[username]
+                return jsonify({'success': True, 'message': 'Spam log stopped', 'status': 'stopped'})
+            else:
+                return jsonify({'success': False, 'error': 'No active spam log to stop'})
         else:
             return jsonify({'success': False, 'error': 'Invalid action'})
     except Exception as e:
