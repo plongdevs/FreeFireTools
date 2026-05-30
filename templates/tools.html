@@ -567,15 +567,15 @@
                 <p>Liệt kê tất cả nền tảng mạng xã hội đã liên kết với tài khoản</p>
             </div>
 
-            <div class="tool-card disabled">
+            <div class="tool-card">
                 <div class="tool-icon"><i class="fas fa-times-circle"></i></div>
-                <h3>Huỷ yêu cầu gắn email khôi phục (đang bảo trì)</h3>
+                <h3>Huỷ yêu cầu gắn email khôi phục</h3>
                 <p>Hủy yêu cầu gắn email khôi phục đang chờ</p>
             </div>
 
-            <div class="tool-card disabled">
+            <div class="tool-card">
                 <div class="tool-icon"><i class="fas fa-key"></i></div>
-                <h3>Vô hiệu hoá Access Token (đang bảo trì)</h3>
+                <h3>Vô hiệu hoá Access Token</h3>
                 <p>Vô hiệu hoá access token hiện tại</p>
             </div>
 
@@ -1603,8 +1603,8 @@
                 
                 if (data.success) {
                     const info = {
-                        'Liên kết chính': data.main_platform,
-                        'Liên kết phụ': data.bounded.length > 0 ? data.bounded.map(a => `${a.platform}: ${a.email || a.nickname}`).join(', ') : 'None'
+                        'Liên kết chính ': data.main_platform,
+                        'Liên kết phụ ': data.bounded.length > 0 ? data.bounded.map(a => `${a.platform}: ${a.email || a.nickname}`).join(', ') : 'None'
                     };
                     showResult('check-platforms', true, 'Thông tin liên kết', info);
                 } else {
@@ -1617,11 +1617,10 @@
         }
 
         async function cancelRecovery() {
-            // Tính năng đang bảo trì (Đang bảo trì thôi)
+
             showResult('cancel-recovery', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
             return;
             
-            /* Original code commented out for maintenance:
             const token = document.getElementById('cancel-recovery-token').value;
             if (!token) {
                 showResult('cancel-recovery', false, 'Please enter access token');
@@ -1646,15 +1645,12 @@
                 showResult('cancel-recovery', false, error.message);
             }
             setLoading('cancel-recovery', false);
-            */
         }
 
         async function revokeToken() {
-            // Tính năng đang bảo trì (Đang bảo trì thôi)
             showResult('revoke-token', false, 'Tính năng này đang bảo trì (Đang bảo trì thôi)');
             return;
             
-            /* Original code commented out for maintenance:
             const token = document.getElementById('revoke-token-input').value;
             if (!token) {
                 showResult('revoke-token', false, 'Please enter access token');
@@ -1679,7 +1675,6 @@
                 showResult('revoke-token', false, error.message);
             }
             setLoading('revoke-token', false);
-            */
         }
 
         async function eatToAccess() {
@@ -1921,12 +1916,12 @@
                 
                 if (data.success) {
                     const info = {
-                        'Email': data.email || 'None',
-                        'Pending Email': data.email_to_be || 'None',
-                        'Countdown': data.countdown || 'N/A',
-                        'Status': data.status
+                        'Email ': data.email || 'Không có',
+                        'Email chờ ': data.email_to_be || 'Không có',
+                        'Thời gian chờ ': data.countdown || 'N/A',
+                        'Trạng thái ': data.status
                     };
-                    showResult('check-recovery', true, 'Recovery email info retrieved', info);
+                    showResult('check-recovery', true, 'Thông tin email khôi phục', info);
                 } else {
                     showResult('check-recovery', false, data.error);
                 }
