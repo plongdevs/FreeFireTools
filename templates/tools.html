@@ -6,6 +6,7 @@
     <title>Công cụ Free Fire</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -938,8 +939,40 @@
                 <input type="text" id="spam-log-token" placeholder="Nhập access token">
             </div>
             <div class="form-group">
+                <label>Tốc độ gửi (ms)</label>
+                <select id="spam-log-interval">
+                    <option value="500">500ms (Nhanh)</option>
+                    <option value="1000" selected>1000ms (Trung bình)</option>
+                    <option value="2000">2000ms (Chậm)</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>Thời gian (tối đa 15 ngày, ví dụ: 10s, 1m, 1h)</label>
                 <input type="text" id="spam-log-duration" placeholder="10s" value="10s">
+            </div>
+            <div id="spam-log-status" style="display: none; margin: 1rem 0; padding: 1rem; background: rgba(15, 23, 42, 0.5); border-radius: 10px; border: 1px solid var(--dark-border);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--text-muted);">Trạng thái:</span>
+                    <span id="spam-log-status-text" style="color: var(--primary); font-weight: 600;">Running</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <span style="color: var(--text-muted);">Server:</span>
+                    <span id="spam-log-server" style="color: var(--text);">-</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
+                    <div style="text-align: center; padding: 0.5rem; background: rgba(99, 102, 241, 0.1); border-radius: 8px;">
+                        <div id="spam-log-sent" style="font-size: 1.5rem; font-weight: 700; color: var(--text);">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Đã gửi</div>
+                    </div>
+                    <div style="text-align: center; padding: 0.5rem; background: rgba(34, 197, 94, 0.1); border-radius: 8px;">
+                        <div id="spam-log-ok" style="font-size: 1.5rem; font-weight: 700; color: #22c55e;">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Thành công</div>
+                    </div>
+                    <div style="text-align: center; padding: 0.5rem; background: rgba(239, 68, 68, 0.1); border-radius: 8px;">
+                        <div id="spam-log-fail" style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">0</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Thất bại</div>
+                    </div>
+                </div>
             </div>
             <button class="btn btn-primary" id="spam-log-toggle-btn" onclick="toggleSpamLog()">
                 <i class="fas fa-bolt"></i> Chạy Spam Log
@@ -1617,13 +1650,27 @@
         }
 
         function showResult(id, success, message, data = null) {
+            // Use SweetAlert2 for errors and failures
+            if (!success) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: message,
+                    background: '#0c0c10',
+                    color: '#fafafa',
+                    confirmButtonColor: '#6366f1'
+                });
+                return;
+            }
+
+            // Use custom result box for success with data
             const resultBox = document.getElementById(`${id}-result`);
             resultBox.classList.remove('active', 'success', 'error');
-            resultBox.classList.add('active', success ? 'success' : 'error');
-            
-            let content = `<h4>${success ? '✓ Thành Công' : '✗ Lỗi'}</h4>`;
+            resultBox.classList.add('active', 'success');
+
+            let content = `<h4>✓ Thành Công</h4>`;
             content += `<div class="result-content">${message}</div>`;
-            
+
             if (data) {
                 content += '<div style="margin-top: 1rem;">';
                 for (const [key, value] of Object.entries(data)) {
@@ -1638,16 +1685,32 @@
                 }
                 content += '</div>';
             }
-            
+
             resultBox.innerHTML = content;
         }
 
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                alert('Đã copy token!');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đã copy!',
+                    text: 'Token đã được copy vào clipboard',
+                    background: '#0c0c10',
+                    color: '#fafafa',
+                    confirmButtonColor: '#6366f1',
+                    timer: 1500,
+                    timerProgressBar: true
+                });
             }).catch(err => {
                 console.error('Failed to copy:', err);
-                alert('Copy thất bại');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Copy thất bại',
+                    background: '#0c0c10',
+                    color: '#fafafa',
+                    confirmButtonColor: '#6366f1'
+                });
             });
         }
 
@@ -2053,6 +2116,8 @@
         let spamLogInterval = null;
         let spamLogStartTime = null;
         let spamLogDuration = 0;
+        let spamStatusInterval = null;
+        let _idleCount = 0;
 
         function toggleSpamLog() {
             if (spamLogRunning) {
@@ -2064,44 +2129,67 @@
 
         async function startSpamLog() {
             const token = document.getElementById('spam-log-token').value;
+            const interval = parseInt(document.getElementById('spam-log-interval').value);
             const duration = document.getElementById('spam-log-duration').value;
-            
+
             if (!token) {
                 showResult('spam-log', false, 'Vui lòng nhập access token');
                 return;
+            }
+
+            // Parse duration to milliseconds
+            let durationMs = 10000; // Default 10 seconds
+            if (duration.endsWith('s')) {
+                durationMs = parseInt(duration) * 1000;
+            } else if (duration.endsWith('m')) {
+                durationMs = parseInt(duration) * 60 * 1000;
+            } else if (duration.endsWith('h')) {
+                durationMs = parseInt(duration) * 60 * 60 * 1000;
             }
 
             try {
                 const response = await fetch('/api/spam_log', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
+                    body: JSON.stringify({
                         access_token: token,
-                        duration: duration,
+                        interval: interval,
+                        duration_ms: durationMs,
                         action: 'start'
                     })
                 });
                 const data = await response.json();
-                
+
                 if (data.success) {
                     spamLogRunning = true;
-                    spamLogDuration = data.duration;
+                    spamLogDuration = durationMs / 1000;
                     spamLogStartTime = Date.now();
-                    
+
+                    // Save token to localStorage for recovery
+                    localStorage.setItem('running_spam_at', token);
+
                     // Update button
                     const btn = document.getElementById('spam-log-toggle-btn');
                     btn.innerHTML = '<i class="fas fa-stop"></i> Dừng Spam Log';
                     btn.classList.remove('btn-primary');
                     btn.classList.add('btn-secondary');
-                    
+
+                    // Show status panel
+                    document.getElementById('spam-log-status').style.display = 'block';
+
                     // Show progress bar
                     const progressBar = document.getElementById('spam-log-progress');
                     progressBar.style.display = 'block';
-                    
+
                     // Start progress animation
                     updateProgress();
                     spamLogInterval = setInterval(updateProgress, 100);
-                    
+
+                    // Start status polling (WebCu style)
+                    if (spamStatusInterval) clearInterval(spamStatusInterval);
+                    spamStatusInterval = setInterval(refreshSpamStatus, 2000);
+                    refreshSpamStatus(true);
+
                     showResult('spam-log', true, 'Đã bắt đầu spam log');
                 } else {
                     showResult('spam-log', false, data.error);
@@ -2119,11 +2207,15 @@
                     body: JSON.stringify({ action: 'stop' })
                 });
                 const data = await response.json();
-                
+
                 if (data.success) {
                     spamLogRunning = false;
                     clearInterval(spamLogInterval);
-                    
+                    clearInterval(spamStatusInterval);
+
+                    // Remove token from localStorage
+                    localStorage.removeItem('running_spam_at');
+
                     // Update button
                     const btn = document.getElementById('spam-log-toggle-btn');
                     btn.innerHTML = '<i class="fas fa-bolt"></i> Chạy Spam Log';
@@ -2134,9 +2226,12 @@
                     const progressBar = document.getElementById('spam-log-progress');
                     progressBar.style.display = 'none';
                     document.getElementById('spam-log-progress-fill').style.width = '0%';
-                    
+
+                    // Hide status panel
+                    document.getElementById('spam-log-status').style.display = 'none';
+
                     showResult('spam-log', true, 'Đã dừng spam log');
-                    
+
                     // Update usage
                     await checkAuth();
                 } else {
@@ -2149,14 +2244,67 @@
 
         function updateProgress() {
             if (!spamLogRunning || !spamLogStartTime) return;
-            
+
             const elapsed = (Date.now() - spamLogStartTime) / 1000;
             const progress = Math.min((elapsed / spamLogDuration) * 100, 100);
-            
+
             document.getElementById('spam-log-progress-fill').style.width = progress + '%';
-            
+
             if (progress >= 100) {
                 stopSpamLog();
+            }
+        }
+
+        async function refreshSpamStatus(firstLoad = false) {
+            try {
+                const response = await fetch('/api/spam_status');
+                const result = await response.json();
+
+                if (result.success) {
+                    if (result.status === 'idle' || result.status === 'stopped' || result.status === 'finished') {
+                        _idleCount++;
+                        if (_idleCount >= 2 || firstLoad) {
+                            updateSpamUI({ status: 'idle' });
+                            localStorage.removeItem('running_spam_at');
+                        }
+                    } else {
+                        _idleCount = 0;
+                        updateSpamUI(result);
+                        if (firstLoad) {
+                            showResult('spam-log', true, 'Đã khôi phục tiến trình Spam!');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error refreshing spam status:', error);
+            }
+        }
+
+        function updateSpamUI(data) {
+            const statusPanel = document.getElementById('spam-log-status');
+            const statusText = document.getElementById('spam-log-status-text');
+            const serverText = document.getElementById('spam-log-server');
+            const sentText = document.getElementById('spam-log-sent');
+            const okText = document.getElementById('spam-log-ok');
+            const failText = document.getElementById('spam-log-fail');
+
+            if (data.status === 'idle' || data.status === 'stopped') {
+                statusPanel.style.display = 'none';
+                spamLogRunning = false;
+                clearInterval(spamLogInterval);
+                clearInterval(spamStatusInterval);
+
+                const btn = document.getElementById('spam-log-toggle-btn');
+                btn.innerHTML = '<i class="fas fa-bolt"></i> Chạy Spam Log';
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-primary');
+            } else {
+                statusPanel.style.display = 'block';
+                statusText.textContent = 'Running';
+                serverText.textContent = `${data.ip}:${data.port}`;
+                sentText.textContent = data.sent || 0;
+                okText.textContent = data.ok || 0;
+                failText.textContent = data.fail || 0;
             }
         }
 
@@ -2169,6 +2317,17 @@
             // This function is deprecated
             showResult('spam-log', false, 'Tính năng này đã được thay thế');
         }
+
+        // Restore token from localStorage on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedToken = localStorage.getItem('running_spam_at');
+            const inputToken = document.getElementById('spam-log-token');
+            if (savedToken && inputToken && !inputToken.value) {
+                inputToken.value = savedToken;
+                // Auto-check status to restore running spam
+                setTimeout(() => refreshSpamStatus(true), 1000);
+            }
+        });
 
         function toggleLongBioMethod() {
             const method = document.getElementById('long-bio-method').value;
