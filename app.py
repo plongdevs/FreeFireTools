@@ -875,7 +875,7 @@ def process_ban7(access_token):
 def ban7():
     try:
         # Check if user is logged in
-        if 'logged_in' not in session or not session['logged_in']:
+        if 'authenticated' not in session or not session['authenticated']:
             return jsonify({'success': False, 'error': 'Bạn cần đăng nhập để sử dụng tính năng này'})
         
         username = session.get('username')
@@ -1036,7 +1036,7 @@ def dashboard():
 def upgrade_pro():
     try:
         # Check if user is logged in
-        if 'logged_in' not in session or not session['logged_in']:
+        if 'authenticated' not in session or not session['authenticated']:
             return jsonify({'success': False, 'error': 'Bạn cần đăng nhập để nâng cấp'})
         
         username = session.get('username')
@@ -1472,7 +1472,7 @@ def add_recovery_email():
 def spam_log():
     try:
         # Check if user is logged in
-        if 'logged_in' not in session or not session['logged_in']:
+        if 'authenticated' not in session or not session['authenticated']:
             return jsonify({'success': False, 'error': 'Bạn cần đăng nhập để sử dụng tính năng này'})
         
         username = session.get('username')

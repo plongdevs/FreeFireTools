@@ -181,6 +181,51 @@
             font-weight: 700;
         }
 
+        .otp-inputs {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--dark-border);
+            border-radius: 10px;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .otp-input::placeholder {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .countdown-timer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .countdown-timer.warning {
+            color: #f59e0b;
+        }
+
+        .countdown-timer.danger {
+            color: #ef4444;
+        }
+
         @keyframes cyan-circular-flow {
             0% { background-position: 0% 50%; }
             25% { background-position: 100% 50%; }
@@ -831,7 +876,17 @@
                 <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập mã OTP</h3>
                 <div class="form-group">
                     <label>OTP đã gửi đến email</label>
-                    <input type="text" id="add-recovery-otp" placeholder="Nhập OTP nhận được">
+                    <div class="otp-inputs" id="add-recovery-otp-container">
+                        <input type="text" class="otp-input" maxlength="1" data-index="0">
+                        <input type="text" class="otp-input" maxlength="1" data-index="1">
+                        <input type="text" class="otp-input" maxlength="1" data-index="2">
+                        <input type="text" class="otp-input" maxlength="1" data-index="3">
+                        <input type="text" class="otp-input" maxlength="1" data-index="4">
+                        <input type="text" class="otp-input" maxlength="1" data-index="5">
+                    </div>
+                    <div class="countdown-timer" id="add-recovery-countdown" style="display: none;">
+                        OTP hết hạn sau: <span id="add-recovery-timer">10:00</span>
+                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="verifyAddRecoveryOTP()">
                     <i class="fas fa-check"></i> Xác thực OTP
@@ -840,13 +895,20 @@
                     <i class="fas fa-arrow-left"></i> Quay lại
                 </button>
             </div>
-            
+
             <!-- Step 3: Nhập security code -->
             <div id="add-recovery-step-3" style="display: none;">
                 <h3 style="margin-bottom: 1rem; color: var(--text);">Nhập mã bảo mật</h3>
                 <div class="form-group">
                     <label>Mã Bảo mật (6 chữ số)</label>
-                    <input type="text" id="add-recovery-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+                    <div class="otp-inputs" id="add-recovery-security-container">
+                        <input type="text" class="otp-input" maxlength="1" data-index="0">
+                        <input type="text" class="otp-input" maxlength="1" data-index="1">
+                        <input type="text" class="otp-input" maxlength="1" data-index="2">
+                        <input type="text" class="otp-input" maxlength="1" data-index="3">
+                        <input type="text" class="otp-input" maxlength="1" data-index="4">
+                        <input type="text" class="otp-input" maxlength="1" data-index="5">
+                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="createAddRecoveryBind()">
                     <i class="fas fa-plus-circle"></i> Thêm Email
@@ -995,14 +1057,31 @@
                 <h3 style="margin-bottom: 1rem; color: var(--text);">Xác thực</h3>
                 <div class="form-group" id="unbind-otp-group">
                     <label>OTP</label>
-                    <input type="text" id="unbind-otp" placeholder="Nhập OTP nhận được">
+                    <div class="otp-inputs" id="unbind-otp-container">
+                        <input type="text" class="otp-input" maxlength="1" data-index="0">
+                        <input type="text" class="otp-input" maxlength="1" data-index="1">
+                        <input type="text" class="otp-input" maxlength="1" data-index="2">
+                        <input type="text" class="otp-input" maxlength="1" data-index="3">
+                        <input type="text" class="otp-input" maxlength="1" data-index="4">
+                        <input type="text" class="otp-input" maxlength="1" data-index="5">
+                    </div>
                     <button class="btn btn-secondary" onclick="sendUnbindOTP()" style="margin-top: 0.5rem; width: 100%;">
                         <i class="fas fa-paper-plane"></i> Gửi OTP
                     </button>
+                    <div class="countdown-timer" id="unbind-countdown" style="display: none;">
+                        OTP hết hạn sau: <span id="unbind-timer">10:00</span>
+                    </div>
                 </div>
                 <div class="form-group" id="unbind-security-group" style="display:none;">
                     <label>Mã Bảo mật (6 chữ số)</label>
-                    <input type="text" id="unbind-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+                    <div class="otp-inputs" id="unbind-security-container">
+                        <input type="text" class="otp-input" maxlength="1" data-index="0">
+                        <input type="text" class="otp-input" maxlength="1" data-index="1">
+                        <input type="text" class="otp-input" maxlength="1" data-index="2">
+                        <input type="text" class="otp-input" maxlength="1" data-index="3">
+                        <input type="text" class="otp-input" maxlength="1" data-index="4">
+                        <input type="text" class="otp-input" maxlength="1" data-index="5">
+                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="unbindEmail()">
                     <i class="fas fa-unlink"></i> Hủy Liên kết Email
@@ -1087,14 +1166,31 @@
                 <h3 style="margin-bottom: 1rem; color: var(--text);">Xác thực Email Cũ</h3>
                 <div class="form-group" id="change-otp-old-group">
                     <label>OTP cho Email Cũ</label>
-                    <input type="text" id="change-otp-old" placeholder="Nhập OTP cho email cũ">
+                    <div class="otp-inputs" id="change-otp-old-container">
+                        <input type="text" class="otp-input" maxlength="1" data-index="0">
+                        <input type="text" class="otp-input" maxlength="1" data-index="1">
+                        <input type="text" class="otp-input" maxlength="1" data-index="2">
+                        <input type="text" class="otp-input" maxlength="1" data-index="3">
+                        <input type="text" class="otp-input" maxlength="1" data-index="4">
+                        <input type="text" class="otp-input" maxlength="1" data-index="5">
+                    </div>
                     <button class="btn btn-secondary" onclick="sendChangeOTPOld()" style="margin-top: 0.5rem; width: 100%;">
                         <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Cũ
                     </button>
+                    <div class="countdown-timer" id="change-otp-old-countdown" style="display: none;">
+                        OTP hết hạn sau: <span id="change-otp-old-timer">10:00</span>
+                    </div>
                 </div>
                 <div class="form-group" id="change-security-group" style="display:none;">
                     <label>Mã Bảo mật (6 chữ số)</label>
-                    <input type="text" id="change-security" placeholder="Nhập mã bảo mật 6 chữ số" maxlength="6">
+                    <div class="otp-inputs" id="change-security-container">
+                        <input type="text" class="otp-input" maxlength="1" data-index="0">
+                        <input type="text" class="otp-input" maxlength="1" data-index="1">
+                        <input type="text" class="otp-input" maxlength="1" data-index="2">
+                        <input type="text" class="otp-input" maxlength="1" data-index="3">
+                        <input type="text" class="otp-input" maxlength="1" data-index="4">
+                        <input type="text" class="otp-input" maxlength="1" data-index="5">
+                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="goToChangeStep4()">
                     <i class="fas fa-arrow-right"></i> Tiếp tục
@@ -1103,16 +1199,26 @@
                     <i class="fas fa-arrow-left"></i> Quay lại
                 </button>
             </div>
-            
+
             <!-- Step 4: Xác thực email mới -->
             <div id="change-step-4" style="display: none;">
                 <h3 style="margin-bottom: 1rem; color: var(--text);">Xác thực Email Mới</h3>
                 <div class="form-group">
                     <label>OTP cho Email Mới</label>
-                    <input type="text" id="change-otp-new" placeholder="Nhập OTP cho email mới">
+                    <div class="otp-inputs" id="change-otp-new-container">
+                        <input type="text" class="otp-input" maxlength="1" data-index="0">
+                        <input type="text" class="otp-input" maxlength="1" data-index="1">
+                        <input type="text" class="otp-input" maxlength="1" data-index="2">
+                        <input type="text" class="otp-input" maxlength="1" data-index="3">
+                        <input type="text" class="otp-input" maxlength="1" data-index="4">
+                        <input type="text" class="otp-input" maxlength="1" data-index="5">
+                    </div>
                     <button class="btn btn-secondary" onclick="sendChangeOTPNew()" style="margin-top: 0.5rem; width: 100%;">
                         <i class="fas fa-paper-plane"></i> Gửi OTP cho Email Mới
                     </button>
+                    <div class="countdown-timer" id="change-otp-new-countdown" style="display: none;">
+                        OTP hết hạn sau: <span id="change-otp-new-timer">10:00</span>
+                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="changeBindEmail()">
                     <i class="fas fa-exchange-alt"></i> Đổi Email
@@ -1764,7 +1870,7 @@
         async function sendAddRecoveryOTP() {
             const email = document.getElementById('add-recovery-email').value;
             const token = document.getElementById('add-recovery-token').value;
-            
+
             if (!email || !token) {
                 showResult('add-recovery', false, 'Vui lòng nhập email và access token');
                 return;
@@ -1778,7 +1884,7 @@
                     body: JSON.stringify({ email, access_token: token })
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult('add-recovery', true, 'OTP đã được gửi đến email của bạn');
                     // Move to step 2
@@ -1789,6 +1895,10 @@
                     document.getElementById('step-indicator-1').style.color = 'var(--text-muted)';
                     document.getElementById('step-indicator-2').style.background = 'var(--primary)';
                     document.getElementById('step-indicator-2').style.color = 'white';
+                    // Start countdown
+                    startCountdown('add-recovery-timer');
+                    // Focus first OTP input
+                    document.querySelector('#add-recovery-otp-container .otp-input').focus();
                 } else {
                     showResult('add-recovery', false, result.error);
                 }
@@ -1801,10 +1911,10 @@
         async function verifyAddRecoveryOTP() {
             const email = document.getElementById('add-recovery-email').value;
             const token = document.getElementById('add-recovery-token').value;
-            const otp = document.getElementById('add-recovery-otp').value;
-            
-            if (!otp) {
-                showResult('add-recovery', false, 'Vui lòng nhập OTP');
+            const otp = getOTPValue('add-recovery-otp-container');
+
+            if (!otp || otp.length !== 6) {
+                showResult('add-recovery', false, 'Vui lòng nhập đủ 6 chữ số OTP');
                 return;
             }
 
@@ -1816,7 +1926,7 @@
                     body: JSON.stringify({ email, access_token: token, otp })
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult('add-recovery', true, 'OTP xác thực thành công');
                     // Move to step 3
@@ -1827,6 +1937,11 @@
                     document.getElementById('step-indicator-2').style.color = 'var(--text-muted)';
                     document.getElementById('step-indicator-3').style.background = 'var(--primary)';
                     document.getElementById('step-indicator-3').style.color = 'white';
+                    // Stop countdown and clear OTP
+                    stopCountdown('add-recovery-timer');
+                    clearOTPInputs('add-recovery-otp-container');
+                    // Focus first security input
+                    document.querySelector('#add-recovery-security-container .otp-input').focus();
                 } else {
                     showResult('add-recovery', false, result.error);
                 }
@@ -1839,9 +1954,9 @@
         async function createAddRecoveryBind() {
             const email = document.getElementById('add-recovery-email').value;
             const token = document.getElementById('add-recovery-token').value;
-            const otp = document.getElementById('add-recovery-otp').value;
-            const security = document.getElementById('add-recovery-security').value;
-            
+            const otp = getOTPValue('add-recovery-otp-container');
+            const security = getOTPValue('add-recovery-security-container');
+
             if (!security || security.length !== 6 || !security.match(/^\d+$/)) {
                 showResult('add-recovery', false, 'Mã bảo mật phải là 6 chữ số');
                 return;
@@ -1855,11 +1970,15 @@
                     body: JSON.stringify({ email, access_token: token, otp, security_code: security })
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult('add-recovery', true, result.message);
                     // Reset and close
                     setTimeout(() => closeModal('add-recovery'), 2000);
+                    // Clear inputs and stop countdown
+                    clearOTPInputs('add-recovery-otp-container');
+                    clearOTPInputs('add-recovery-security-container');
+                    stopCountdown('add-recovery-timer');
                 } else {
                     showResult('add-recovery', false, result.error);
                 }
@@ -1878,6 +1997,9 @@
             document.getElementById('step-indicator-2').style.color = 'var(--text-muted)';
             document.getElementById('step-indicator-1').style.background = 'var(--primary)';
             document.getElementById('step-indicator-1').style.color = 'white';
+            // Clear OTP and stop countdown
+            clearOTPInputs('add-recovery-otp-container');
+            stopCountdown('add-recovery-timer');
         }
 
         function backToAddRecoveryStep2() {
@@ -1889,6 +2011,8 @@
             document.getElementById('step-indicator-3').style.color = 'var(--text-muted)';
             document.getElementById('step-indicator-2').style.background = 'var(--primary)';
             document.getElementById('step-indicator-2').style.color = 'white';
+            // Clear security input
+            clearOTPInputs('add-recovery-security-container');
         }
 
         async function checkRecoveryEmail() {
@@ -2157,6 +2281,10 @@
             document.getElementById('unbind-step-indicator-2').style.color = 'var(--text-muted)';
             document.getElementById('unbind-step-indicator-1').style.background = 'var(--primary)';
             document.getElementById('unbind-step-indicator-1').style.color = 'white';
+            // Clear OTP and stop countdown
+            clearOTPInputs('unbind-otp-container');
+            clearOTPInputs('unbind-security-container');
+            stopCountdown('unbind-timer');
         }
 
         function backToUnbindStep2() {
@@ -2168,12 +2296,15 @@
             document.getElementById('unbind-step-indicator-3').style.color = 'var(--text-muted)';
             document.getElementById('unbind-step-indicator-2').style.background = 'var(--primary)';
             document.getElementById('unbind-step-indicator-2').style.color = 'white';
+            // Clear OTP and security inputs
+            clearOTPInputs('unbind-otp-container');
+            clearOTPInputs('unbind-security-container');
         }
 
         async function sendUnbindOTP() {
             const email = document.getElementById('unbind-email').value;
             const token = document.getElementById('unbind-token').value;
-            
+
             if (!email || !token) {
                 showResult('unbind', false, 'Vui lòng nhập email và access token');
                 return;
@@ -2187,9 +2318,13 @@
                     body: JSON.stringify({ email, access_token: token })
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult('unbind', true, result.message);
+                    // Start countdown
+                    startCountdown('unbind-timer');
+                    // Focus first OTP input
+                    document.querySelector('#unbind-otp-container .otp-input').focus();
                 } else {
                     showResult('unbind', false, result.error);
                 }
@@ -2203,7 +2338,7 @@
             const method = document.getElementById('unbind-method').value;
             const email = document.getElementById('unbind-email').value;
             const token = document.getElementById('unbind-token').value;
-            
+
             if (!email || !token) {
                 showResult('unbind', false, 'Vui lòng điền tất cả các trường bắt buộc');
                 return;
@@ -2212,14 +2347,14 @@
             const data = { email, access_token: token, method };
 
             if (method === 'otp') {
-                const otp = document.getElementById('unbind-otp').value;
-                if (!otp) {
-                    showResult('unbind', false, 'Vui lòng nhập OTP');
+                const otp = getOTPValue('unbind-otp-container');
+                if (!otp || otp.length !== 6) {
+                    showResult('unbind', false, 'Vui lòng nhập đủ 6 chữ số OTP');
                     return;
                 }
                 data.otp = otp;
             } else if (method === 'password') {
-                const security = document.getElementById('unbind-security').value;
+                const security = getOTPValue('unbind-security-container');
                 if (!security || security.length !== 6 || !security.match(/^\d+$/)) {
                     showResult('unbind', false, 'Mã bảo mật phải là 6 chữ số');
                     return;
@@ -2235,9 +2370,13 @@
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult('unbind', true, result.message);
+                    // Clear inputs and stop countdown
+                    clearOTPInputs('unbind-otp-container');
+                    clearOTPInputs('unbind-security-container');
+                    stopCountdown('unbind-timer');
                 } else {
                     showResult('unbind', false, result.error);
                 }
@@ -2319,6 +2458,10 @@
             document.getElementById('change-step-indicator-2').style.color = 'var(--text-muted)';
             document.getElementById('change-step-indicator-1').style.background = 'var(--primary)';
             document.getElementById('change-step-indicator-1').style.color = 'white';
+            // Clear OTP and stop countdown
+            clearOTPInputs('change-otp-old-container');
+            clearOTPInputs('change-security-container');
+            stopCountdown('change-otp-old-timer');
         }
 
         function backToChangeStep2() {
@@ -2330,6 +2473,9 @@
             document.getElementById('change-step-indicator-3').style.color = 'var(--text-muted)';
             document.getElementById('change-step-indicator-2').style.background = 'var(--primary)';
             document.getElementById('change-step-indicator-2').style.color = 'white';
+            // Clear OTP and security inputs
+            clearOTPInputs('change-otp-old-container');
+            clearOTPInputs('change-security-container');
         }
 
         function backToChangeStep3() {
@@ -2341,12 +2487,15 @@
             document.getElementById('change-step-indicator-4').style.color = 'var(--text-muted)';
             document.getElementById('change-step-indicator-3').style.background = 'var(--primary)';
             document.getElementById('change-step-indicator-3').style.color = 'white';
+            // Clear OTP and stop countdown
+            clearOTPInputs('change-otp-new-container');
+            stopCountdown('change-otp-new-timer');
         }
 
         async function sendChangeOTPOld() {
             const oldEmail = document.getElementById('change-old-email').value;
             const token = document.getElementById('change-token').value;
-            
+
             if (!oldEmail || !token) {
                 showResult('change', false, 'Vui lòng nhập email cũ và access token');
                 return;
@@ -2360,9 +2509,13 @@
                     body: JSON.stringify({ old_email: oldEmail, access_token: token })
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult('change', true, result.message);
+                    // Start countdown
+                    startCountdown('change-otp-old-timer');
+                    // Focus first OTP input
+                    document.querySelector('#change-otp-old-container .otp-input').focus();
                 } else {
                     showResult('change', false, result.error);
                 }
@@ -2375,7 +2528,7 @@
         async function sendChangeOTPNew() {
             const newEmail = document.getElementById('change-new-email').value;
             const token = document.getElementById('change-token').value;
-            
+
             if (!newEmail || !token) {
                 showResult('change', false, 'Vui lòng nhập email mới và access token');
                 return;
@@ -2389,9 +2542,13 @@
                     body: JSON.stringify({ new_email: newEmail, access_token: token })
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult('change', true, result.message);
+                    // Start countdown
+                    startCountdown('change-otp-new-timer');
+                    // Focus first OTP input
+                    document.querySelector('#change-otp-new-container .otp-input').focus();
                 } else {
                     showResult('change', false, result.error);
                 }
@@ -2406,9 +2563,9 @@
             const token = document.getElementById('change-token').value;
             const oldEmail = document.getElementById('change-old-email').value;
             const newEmail = document.getElementById('change-new-email').value;
-            const otpNew = document.getElementById('change-otp-new').value;
-            
-            if (!token || !oldEmail || !newEmail || !otpNew) {
+            const otpNew = getOTPValue('change-otp-new-container');
+
+            if (!token || !oldEmail || !newEmail || !otpNew || otpNew.length !== 6) {
                 showResult('change', false, 'Vui lòng điền tất cả các trường bắt buộc');
                 return;
             }
@@ -2416,14 +2573,14 @@
             const data = { access_token: token, old_email: oldEmail, new_email: newEmail, method, otp_new: otpNew };
 
             if (method === 'otp') {
-                const otpOld = document.getElementById('change-otp-old').value;
-                if (!otpOld) {
-                    showResult('change', false, 'Vui lòng nhập OTP cho email cũ');
+                const otpOld = getOTPValue('change-otp-old-container');
+                if (!otpOld || otpOld.length !== 6) {
+                    showResult('change', false, 'Vui lòng nhập đủ 6 chữ số OTP cho email cũ');
                     return;
                 }
                 data.otp_old = otpOld;
             } else if (method === 'password') {
-                const security = document.getElementById('change-security').value;
+                const security = getOTPValue('change-security-container');
                 if (!security || security.length !== 6 || !security.match(/^\d+$/)) {
                     showResult('change', false, 'Mã bảo mật phải là 6 chữ số');
                     return;
@@ -2439,9 +2596,15 @@
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult('change', true, result.message);
+                    // Clear inputs and stop countdowns
+                    clearOTPInputs('change-otp-old-container');
+                    clearOTPInputs('change-security-container');
+                    clearOTPInputs('change-otp-new-container');
+                    stopCountdown('change-otp-old-timer');
+                    stopCountdown('change-otp-new-timer');
                 } else {
                     showResult('change', false, result.error);
                 }
@@ -2508,7 +2671,7 @@
             try {
                 const response = await fetch('/api/check_auth');
                 const result = await response.json();
-                
+
                 if (!result.authenticated) {
                     window.location.href = '/auth';
                 }
@@ -2516,6 +2679,131 @@
                 window.location.href = '/auth';
             }
         }
+
+        // OTP Input Handler
+        function setupOTPInputs(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const inputs = container.querySelectorAll('.otp-input');
+
+            inputs.forEach((input, index) => {
+                // Handle input
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    if (value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                // Handle backspace
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        inputs[index - 1].focus();
+                    }
+                });
+
+                // Handle paste
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pastedData = e.clipboardData.getData('text').slice(0, 6);
+                    pastedData.split('').forEach((char, i) => {
+                        if (inputs[i]) {
+                            inputs[i].value = char;
+                        }
+                    });
+                    if (inputs[Math.min(pastedData.length, inputs.length - 1)]) {
+                        inputs[Math.min(pastedData.length, inputs.length - 1)].focus();
+                    }
+                });
+            });
+        }
+
+        // Get OTP value from container
+        function getOTPValue(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return '';
+            const inputs = container.querySelectorAll('.otp-input');
+            let value = '';
+            inputs.forEach(input => {
+                value += input.value;
+            });
+            return value;
+        }
+
+        // Clear OTP inputs
+        function clearOTPInputs(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const inputs = container.querySelectorAll('.otp-input');
+            inputs.forEach(input => {
+                input.value = '';
+            });
+            inputs[0].focus();
+        }
+
+        // Countdown Timer
+        let countdownIntervals = {};
+
+        function startCountdown(timerId, duration = 600) {
+            const timerElement = document.getElementById(timerId);
+            const timerContainer = timerElement.closest('.countdown-timer');
+            if (!timerElement) return;
+
+            timerContainer.style.display = 'block';
+            let remaining = duration;
+
+            if (countdownIntervals[timerId]) {
+                clearInterval(countdownIntervals[timerId]);
+            }
+
+            function updateTimer() {
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+                if (remaining <= 60) {
+                    timerContainer.classList.add('danger');
+                    timerContainer.classList.remove('warning');
+                } else if (remaining <= 120) {
+                    timerContainer.classList.add('warning');
+                    timerContainer.classList.remove('danger');
+                }
+
+                if (remaining <= 0) {
+                    clearInterval(countdownIntervals[timerId]);
+                    timerElement.textContent = '00:00';
+                }
+                remaining--;
+            }
+
+            updateTimer();
+            countdownIntervals[timerId] = setInterval(updateTimer, 1000);
+        }
+
+        function stopCountdown(timerId) {
+            if (countdownIntervals[timerId]) {
+                clearInterval(countdownIntervals[timerId]);
+                delete countdownIntervals[timerId];
+            }
+            const timerElement = document.getElementById(timerId);
+            if (timerElement) {
+                const timerContainer = timerElement.closest('.countdown-timer');
+                timerContainer.style.display = 'none';
+                timerContainer.classList.remove('warning', 'danger');
+            }
+        }
+
+        // Setup all OTP inputs on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setupOTPInputs('add-recovery-otp-container');
+            setupOTPInputs('add-recovery-security-container');
+            setupOTPInputs('unbind-otp-container');
+            setupOTPInputs('unbind-security-container');
+            setupOTPInputs('change-otp-old-container');
+            setupOTPInputs('change-security-container');
+            setupOTPInputs('change-otp-new-container');
+        });
 
         // Check auth on page load
         checkAuth();

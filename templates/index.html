@@ -142,6 +142,41 @@
             box-shadow: 0 5px 25px rgba(99, 102, 241, 0.4);
         }
 
+        .nav-auth {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-user-info {
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-user-info.active {
+            display: flex;
+        }
+
+        .nav-user-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .nav-user-usage {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .pro-badge {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
         @keyframes cyan-circular-flow {
             0% { background-position: 0% 50%; }
             25% { background-position: 100% 50%; }
@@ -514,13 +549,28 @@
             <i class="fas fa-gamepad" style="color: var(--primary);"></i>
             <span class="nav-brand-text">Free Fire Tools</span>
         </a>
-        <div class="nav-links">
-            <a href="/auth" class="nav-btn nav-btn-login">
-                <i class="fas fa-sign-in-alt"></i> Đăng nhập
-            </a>
-            <a href="/auth" class="nav-btn nav-btn-register">
-                <i class="fas fa-user-plus"></i> Đăng ký
-            </a>
+        <div class="nav-auth">
+            <div class="nav-links" id="nav-login-buttons">
+                <a href="/auth" class="nav-btn nav-btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                </a>
+                <a href="/auth" class="nav-btn nav-btn-register">
+                    <i class="fas fa-user-plus"></i> Đăng ký
+                </a>
+            </div>
+            <div class="nav-user-info" id="nav-user-info" style="display: none;">
+                <div>
+                    <span class="nav-user-name" id="nav-username"></span>
+                    <span class="pro-badge" id="nav-pro-badge" style="display: none;">PRO</span>
+                </div>
+                <div class="nav-user-usage">
+                    Ban: <span id="usage-ban7">0</span>/1 | Spam Log: <span id="usage-spam-log">0</span>/1
+                </div>
+                <button class="nav-btn nav-btn-primary" id="upgrade-pro-btn" onclick="window.location.href='/tools'" style="display: none;">
+                    <i class="fas fa-tools"></i> Sử dụng công cụ
+                </button>
+                <button class="nav-btn nav-btn-secondary" onclick="logout()">Đăng xuất</button>
+            </div>
         </div>
     </nav>
 
@@ -721,6 +771,51 @@
         function goToLogin() {
             window.location.href = '/auth';
         }
+
+        // Check authentication status on page load
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/check_auth');
+                const result = await response.json();
+                
+                if (result.authenticated) {
+                    // Show user info, hide login buttons
+                    document.getElementById('nav-login-buttons').style.display = 'none';
+                    document.getElementById('nav-user-info').style.display = 'flex';
+                    document.getElementById('nav-username').textContent = result.username;
+                    
+                    // Update usage
+                    document.getElementById('usage-ban7').textContent = result.usage?.ban7 || 0;
+                    document.getElementById('usage-spam-log').textContent = result.usage?.spam_log || 0;
+                    
+                    // Show pro badge if pro
+                    if (result.usage?.is_pro) {
+                        document.getElementById('nav-pro-badge').style.display = 'inline';
+                    }
+                } else {
+                    // Show login buttons, hide user info
+                    document.getElementById('nav-login-buttons').style.display = 'flex';
+                    document.getElementById('nav-user-info').style.display = 'none';
+                }
+            } catch (error) {
+                // Show login buttons on error
+                document.getElementById('nav-login-buttons').style.display = 'flex';
+                document.getElementById('nav-user-info').style.display = 'none';
+            }
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                await fetch('/api/logout', { method: 'POST' });
+                window.location.href = '/';
+            } catch (error) {
+                window.location.href = '/';
+            }
+        }
+
+        // Check auth on page load
+        checkAuth();
     </script>
 </body>
 </html>
